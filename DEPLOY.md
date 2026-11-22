@@ -122,7 +122,7 @@ When prompted:
 
    **Framework Preset**: Next.js
 
-   **Root Directory**: `apps/web`
+   **Root Directory**: `apps/web` (configure this in Vercel dashboard, not in vercel.json)
 
    **Build Command**: `npm run build`
 
