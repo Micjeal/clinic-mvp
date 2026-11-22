@@ -44,10 +44,10 @@ export type Database = {
           notes?: string | null
           organization_id: string
           patient_id: string
-          service_id?: string | null
           reason?: string | null
           scheduled_end?: string | null
           scheduled_start: string
+          service_id?: string | null
           status?: string
           updated_at?: string
         }
@@ -62,10 +62,10 @@ export type Database = {
           notes?: string | null
           organization_id?: string
           patient_id?: string
-          service_id?: string | null
           reason?: string | null
           scheduled_end?: string | null
           scheduled_start?: string
+          service_id?: string | null
           status?: string
           updated_at?: string
         }
@@ -198,7 +198,6 @@ export type Database = {
           note_type?: string
           organization_id?: string
           patient_id?: string
-          service_id?: string | null
           patient_visible?: boolean
           updated_at?: string
         }
@@ -229,6 +228,392 @@ export type Database = {
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinician_achievements: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          membership_id: string
+          organization_id: string
+          sort_order: number
+          title: string
+          updated_at: string
+          year: number | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          membership_id: string
+          organization_id: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+          year?: number | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          membership_id?: string
+          organization_id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinician_achievements_membership_id_fkey"
+            columns: ["membership_id"]
+            isOneToOne: false
+            referencedRelation: "staff_memberships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinician_achievements_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinician_availability_exceptions: {
+        Row: {
+          created_at: string
+          ends_at: string
+          facility_id: string
+          id: string
+          membership_id: string
+          organization_id: string
+          starts_at: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          ends_at: string
+          facility_id: string
+          id?: string
+          membership_id: string
+          organization_id: string
+          starts_at: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string
+          facility_id?: string
+          id?: string
+          membership_id?: string
+          organization_id?: string
+          starts_at?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinician_availability_exceptions_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinician_availability_exceptions_membership_id_fkey"
+            columns: ["membership_id"]
+            isOneToOne: false
+            referencedRelation: "staff_memberships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinician_availability_exceptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinician_availability_rules: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          effective_from: string | null
+          effective_to: string | null
+          end_time: string
+          facility_id: string
+          id: string
+          is_active: boolean
+          membership_id: string
+          organization_id: string
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          effective_from?: string | null
+          effective_to?: string | null
+          end_time: string
+          facility_id: string
+          id?: string
+          is_active?: boolean
+          membership_id: string
+          organization_id: string
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          effective_from?: string | null
+          effective_to?: string | null
+          end_time?: string
+          facility_id?: string
+          id?: string
+          is_active?: boolean
+          membership_id?: string
+          organization_id?: string
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinician_availability_rules_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinician_availability_rules_membership_id_fkey"
+            columns: ["membership_id"]
+            isOneToOne: false
+            referencedRelation: "staff_memberships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinician_availability_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinician_photo_objects: {
+        Row: {
+          created_at: string
+          membership_id: string
+          object_path: string
+          organization_id: string
+        }
+        Insert: {
+          created_at?: string
+          membership_id: string
+          object_path: string
+          organization_id: string
+        }
+        Update: {
+          created_at?: string
+          membership_id?: string
+          object_path?: string
+          organization_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinician_photo_objects_membership_id_fkey"
+            columns: ["membership_id"]
+            isOneToOne: false
+            referencedRelation: "staff_memberships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinician_photo_objects_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinician_profiles: {
+        Row: {
+          accepting_appointments: boolean
+          created_at: string
+          display_name: string
+          experience_summary: string | null
+          is_public: boolean
+          languages: string[] | null
+          membership_id: string
+          photo_path: string | null
+          professional_title: string | null
+          public_bio: string | null
+          public_id: string
+          slug: string | null
+          updated_at: string
+          user_id: string
+          years_experience: number | null
+        }
+        Insert: {
+          accepting_appointments?: boolean
+          created_at?: string
+          display_name: string
+          experience_summary?: string | null
+          is_public?: boolean
+          languages?: string[] | null
+          membership_id: string
+          photo_path?: string | null
+          professional_title?: string | null
+          public_bio?: string | null
+          public_id?: string
+          slug?: string | null
+          updated_at?: string
+          user_id: string
+          years_experience?: number | null
+        }
+        Update: {
+          accepting_appointments?: boolean
+          created_at?: string
+          display_name?: string
+          experience_summary?: string | null
+          is_public?: boolean
+          languages?: string[] | null
+          membership_id?: string
+          photo_path?: string | null
+          professional_title?: string | null
+          public_bio?: string | null
+          public_id?: string
+          slug?: string | null
+          updated_at?: string
+          user_id?: string
+          years_experience?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinician_profiles_membership_id_fkey"
+            columns: ["membership_id"]
+            isOneToOne: true
+            referencedRelation: "staff_memberships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinician_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinician_qualifications: {
+        Row: {
+          country: string | null
+          created_at: string
+          id: string
+          institution: string
+          membership_id: string
+          organization_id: string
+          qualification: string
+          qualification_type: string
+          sort_order: number
+          updated_at: string
+          year: number | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          id?: string
+          institution: string
+          membership_id: string
+          organization_id: string
+          qualification: string
+          qualification_type: string
+          sort_order?: number
+          updated_at?: string
+          year?: number | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          id?: string
+          institution?: string
+          membership_id?: string
+          organization_id?: string
+          qualification?: string
+          qualification_type?: string
+          sort_order?: number
+          updated_at?: string
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinician_qualifications_membership_id_fkey"
+            columns: ["membership_id"]
+            isOneToOne: false
+            referencedRelation: "staff_memberships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinician_qualifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinician_specializations: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          membership_id: string
+          name: string
+          organization_id: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          membership_id: string
+          name: string
+          organization_id: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          membership_id?: string
+          name?: string
+          organization_id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinician_specializations_membership_id_fkey"
+            columns: ["membership_id"]
+            isOneToOne: false
+            referencedRelation: "staff_memberships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinician_specializations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -469,6 +854,13 @@ export type Database = {
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "encounters_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
             referencedColumns: ["id"]
           },
         ]
@@ -1148,6 +1540,51 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          message: string
+          metadata: Json | null
+          recipient_email: string
+          recipient_name: string | null
+          sent_at: string | null
+          status: string
+          subject: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          message: string
+          metadata?: Json | null
+          recipient_email: string
+          recipient_name?: string | null
+          sent_at?: string | null
+          status?: string
+          subject: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          message?: string
+          metadata?: Json | null
+          recipient_email?: string
+          recipient_name?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       organizations: {
         Row: {
           created_at: string
@@ -1581,6 +2018,93 @@ export type Database = {
         }
         Relationships: []
       }
+      queue_entries: {
+        Row: {
+          checked_in_at: string
+          created_at: string
+          created_by: string | null
+          department_id: string
+          encounter_id: string
+          facility_id: string
+          id: string
+          organization_id: string
+          priority: string
+          ready_for_clinician_at: string | null
+          status: string
+          triage_completed_at: string | null
+          triage_started_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          checked_in_at?: string
+          created_at?: string
+          created_by?: string | null
+          department_id: string
+          encounter_id: string
+          facility_id: string
+          id?: string
+          organization_id: string
+          priority?: string
+          ready_for_clinician_at?: string | null
+          status?: string
+          triage_completed_at?: string | null
+          triage_started_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          checked_in_at?: string
+          created_at?: string
+          created_by?: string | null
+          department_id?: string
+          encounter_id?: string
+          facility_id?: string
+          id?: string
+          organization_id?: string
+          priority?: string
+          ready_for_clinician_at?: string | null
+          status?: string
+          triage_completed_at?: string | null
+          triage_started_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "queue_entries_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "queue_entries_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "queue_entries_encounter_id_fkey"
+            columns: ["encounter_id"]
+            isOneToOne: true
+            referencedRelation: "encounters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "queue_entries_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "queue_entries_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_permissions: {
         Row: {
           permission_key: string
@@ -1838,59 +2362,41 @@ export type Database = {
           },
         ]
       }
-      clinician_profiles: {
-        Row: { membership_id: string; public_id: string; user_id: string; slug: string | null; display_name: string; professional_title: string | null; public_bio: string | null; photo_path: string | null; years_experience: number | null; experience_summary: string | null; languages: string[] | null; is_public: boolean; accepting_appointments: boolean; created_at: string; updated_at: string }
-        Insert: { membership_id: string; public_id?: string; user_id: string; slug?: string | null; display_name: string; professional_title?: string | null; public_bio?: string | null; photo_path?: string | null; years_experience?: number | null; experience_summary?: string | null; languages?: string[] | null; is_public?: boolean; accepting_appointments?: boolean; created_at?: string; updated_at?: string }
-        Update: { membership_id?: string; public_id?: string; user_id?: string; slug?: string | null; display_name?: string; professional_title?: string | null; public_bio?: string | null; photo_path?: string | null; years_experience?: number | null; experience_summary?: string | null; languages?: string[] | null; is_public?: boolean; accepting_appointments?: boolean; created_at?: string; updated_at?: string }
-        Relationships: []
-      }
-      clinician_photo_objects: {
-        Row: { object_path: string; organization_id: string; membership_id: string; created_at: string }
-        Insert: { object_path: string; organization_id: string; membership_id: string; created_at?: string }
-        Update: { object_path?: string; organization_id?: string; membership_id?: string; created_at?: string }
-        Relationships: []
-      }
-      clinician_specializations: {
-        Row: { id: string; membership_id: string; organization_id: string; name: string; description: string | null; sort_order: number; created_at: string; updated_at: string }
-        Insert: { id?: string; membership_id: string; organization_id: string; name: string; description?: string | null; sort_order?: number; created_at?: string; updated_at?: string }
-        Update: { id?: string; membership_id?: string; organization_id?: string; name?: string; description?: string | null; sort_order?: number; created_at?: string; updated_at?: string }
-        Relationships: []
-      }
-      clinician_qualifications: {
-        Row: { id: string; membership_id: string; organization_id: string; qualification_type: string; qualification: string; institution: string; country: string | null; year: number | null; sort_order: number; created_at: string; updated_at: string }
-        Insert: { id?: string; membership_id: string; organization_id: string; qualification_type: string; qualification: string; institution: string; country?: string | null; year?: number | null; sort_order?: number; created_at?: string; updated_at?: string }
-        Update: { id?: string; membership_id?: string; organization_id?: string; qualification_type?: string; qualification?: string; institution?: string; country?: string | null; year?: number | null; sort_order?: number; created_at?: string; updated_at?: string }
-        Relationships: []
-      }
-      clinician_achievements: {
-        Row: { id: string; membership_id: string; organization_id: string; title: string; description: string | null; year: number | null; sort_order: number; created_at: string; updated_at: string }
-        Insert: { id?: string; membership_id: string; organization_id: string; title: string; description?: string | null; year?: number | null; sort_order?: number; created_at?: string; updated_at?: string }
-        Update: { id?: string; membership_id?: string; organization_id?: string; title?: string; description?: string | null; year?: number | null; sort_order?: number; created_at?: string; updated_at?: string }
-        Relationships: []
-      }
-      clinician_availability_rules: {
-        Row: { id: string; organization_id: string; membership_id: string; facility_id: string; day_of_week: number; start_time: string; end_time: string; effective_from: string | null; effective_to: string | null; is_active: boolean; created_at: string; updated_at: string }
-        Insert: { id?: string; organization_id: string; membership_id: string; facility_id: string; day_of_week: number; start_time: string; end_time: string; effective_from?: string | null; effective_to?: string | null; is_active?: boolean; created_at?: string; updated_at?: string }
-        Update: { id?: string; organization_id?: string; membership_id?: string; facility_id?: string; day_of_week?: number; start_time?: string; end_time?: string; effective_from?: string | null; effective_to?: string | null; is_active?: boolean; created_at?: string; updated_at?: string }
-        Relationships: []
-      }
-      clinician_availability_exceptions: {
-        Row: { id: string; organization_id: string; membership_id: string; facility_id: string; starts_at: string; ends_at: string; type: string; created_at: string; updated_at: string }
-        Insert: { id?: string; organization_id: string; membership_id: string; facility_id: string; starts_at: string; ends_at: string; type: string; created_at?: string; updated_at?: string }
-        Update: { id?: string; organization_id?: string; membership_id?: string; facility_id?: string; starts_at?: string; ends_at?: string; type?: string; created_at?: string; updated_at?: string }
-        Relationships: []
-      }
       staff_service_assignments: {
-        Row: { membership_id: string; service_id: string; is_active: boolean; created_at: string }
-        Insert: { membership_id: string; service_id: string; is_active?: boolean; created_at?: string }
-        Update: { membership_id?: string; service_id?: string; is_active?: boolean; created_at?: string }
-        Relationships: []
-      }
-      queue_entries: {
-        Row: { id: string; organization_id: string; facility_id: string; department_id: string; encounter_id: string; status: string; priority: string; checked_in_at: string; triage_started_at: string | null; triage_completed_at: string | null; ready_for_clinician_at: string | null; created_by: string | null; created_at: string; updated_at: string }
-        Insert: { id?: string; organization_id: string; facility_id: string; department_id: string; encounter_id: string; status?: string; priority?: string; checked_in_at?: string; triage_started_at?: string | null; triage_completed_at?: string | null; ready_for_clinician_at?: string | null; created_by?: string | null; created_at?: string; updated_at?: string }
-        Update: { id?: string; organization_id?: string; facility_id?: string; department_id?: string; encounter_id?: string; status?: string; priority?: string; checked_in_at?: string; triage_started_at?: string | null; triage_completed_at?: string | null; ready_for_clinician_at?: string | null; created_by?: string | null; created_at?: string; updated_at?: string }
-        Relationships: []
+        Row: {
+          created_at: string
+          is_active: boolean
+          membership_id: string
+          service_id: string
+        }
+        Insert: {
+          created_at?: string
+          is_active?: boolean
+          membership_id: string
+          service_id: string
+        }
+        Update: {
+          created_at?: string
+          is_active?: boolean
+          membership_id?: string
+          service_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_service_assignments_membership_id_fkey"
+            columns: ["membership_id"]
+            isOneToOne: false
+            referencedRelation: "staff_memberships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_service_assignments_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       stock_movements: {
         Row: {
@@ -2056,14 +2562,91 @@ export type Database = {
         ]
       }
     }
-    Views: { [_ in never]: never }
+    Views: {
+      [_ in never]: never
+    }
     Functions: {
-      get_public_clinician_directory: { Args: Record<PropertyKey, never>; Returns: { slug: string; display_name: string; professional_title: string | null; public_bio: string | null; photo_path: string | null; years_experience: number | null; experience_summary: string | null; languages: string[]; accepting_appointments: boolean; department_id: string; department_name: string; service_id: string | null; service_name: string | null; service_duration_minutes: number | null; facility_id: string | null; facility_name: string | null; facility_city: string | null; facility_timezone: string | null; specializations: Json; qualifications: Json; achievements: Json }[] }
-      get_public_clinician_schedule: { Args: { p_slug: string; p_facility_id: string; p_day_of_week: number; p_bounds_start: string; p_bounds_end: string }; Returns: Json }
-      replace_clinician_availability: { Args: { p_membership_id: string; p_facility_id: string; p_periods: Json }; Returns: number }
-      replace_clinician_assignments: { Args: { p_membership_id: string; p_department_ids: Json; p_service_ids: Json }; Returns: Json }
-      replace_clinician_profile: { Args: { p_membership_id: string; p_slug: string; p_display_name: string; p_professional_title: string; p_public_bio: string; p_photo_path: string | null; p_years_experience: number | null; p_experience_summary: string; p_languages: string[]; p_specializations: Json; p_qualifications: Json; p_achievements: Json }; Returns: string | null }
-      request_patient_appointment: { Args: { p_patient_id: string; p_facility_id: string; p_department_id: string; p_service_id: string; p_clinician_slug: string; p_scheduled_start: string; p_reason: string | null }; Returns: string }
+      get_public_clinician_directory: {
+        Args: never
+        Returns: {
+          accepting_appointments: boolean
+          achievements: Json
+          department_id: string
+          department_name: string
+          display_name: string
+          experience_summary: string
+          facility_city: string
+          facility_id: string
+          facility_name: string
+          facility_timezone: string
+          languages: string[]
+          photo_path: string
+          professional_title: string
+          public_bio: string
+          qualifications: Json
+          service_duration_minutes: number
+          service_id: string
+          service_name: string
+          slug: string
+          specializations: Json
+          years_experience: number
+        }[]
+      }
+      get_public_clinician_schedule: {
+        Args: {
+          p_bounds_end: string
+          p_bounds_start: string
+          p_day_of_week: number
+          p_facility_id: string
+          p_slug: string
+        }
+        Returns: Json
+      }
+      replace_clinician_assignments: {
+        Args: {
+          p_department_ids: Json
+          p_membership_id: string
+          p_service_ids: Json
+        }
+        Returns: Json
+      }
+      replace_clinician_availability: {
+        Args: {
+          p_facility_id: string
+          p_membership_id: string
+          p_periods: Json
+        }
+        Returns: number
+      }
+      replace_clinician_profile: {
+        Args: {
+          p_achievements: Json
+          p_display_name: string
+          p_experience_summary: string
+          p_languages: string[]
+          p_membership_id: string
+          p_photo_path: string
+          p_professional_title: string
+          p_public_bio: string
+          p_qualifications: Json
+          p_slug: string
+          p_specializations: Json
+          p_years_experience: number
+        }
+        Returns: string
+      }
+      request_patient_appointment: {
+        Args: {
+          p_clinician_slug: string
+          p_department_id: string
+          p_facility_id: string
+          p_patient_id: string
+          p_reason: string
+          p_scheduled_start: string
+          p_service_id: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
@@ -2196,4 +2779,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-
