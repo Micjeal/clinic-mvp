@@ -1,0 +1,40 @@
+import { Clock3 } from "lucide-react";
+import { getQueue } from "@/server/services/reception.service";
+import { QueueAction } from "@/features/staff/components/reception-actions";
+import { StaffPageHeader } from "@/features/staff/components/staff-content";
+import { getStaffPortalContext } from "@/server/services/staff-portal.service";
+
+const stages = [
+  ["waiting_triage", "Waiting for triage"],
+  ["in_triage", "In triage"],
+  ["waiting_clinician", "Ready for clinician"],
+] as const;
+const priorityRank: Record<string, number> = { emergency: 0, urgent: 1, priority: 2, routine: 3 };
+
+function waitingSince(value: string) {
+  const minutes = Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / 60000));
+  return minutes < 1 ? "Just checked in" : `${minutes} min waiting`;
+}
+
+export const metadata = { title: "Queue" };
+
+export default async function QueuePage() {
+  const [entries, context] = await Promise.all([getQueue(), getStaffPortalContext()]);
+  return <div className="staff-page">
+    <StaffPageHeader eyebrow="Patient flow" title="Patient Queue" description="Track patients waiting for triage or clinician care." />
+    <div className="staff-queue-board">
+      {stages.map(([status, label]) => {
+        const group = entries.filter((entry) => entry.status === status).sort((a, b) => (priorityRank[a.priority] ?? 9) - (priorityRank[b.priority] ?? 9) || new Date(a.checked_in_at).getTime() - new Date(b.checked_in_at).getTime());
+        return <section className="staff-queue-group" key={status}>
+          <header className="staff-queue-group__header"><div><p className="eyebrow">Queue stage</p><h2>{label}</h2></div><span className="staff-queue-count">{group.length}</span></header>
+          {group.length ? <div className="staff-queue-cards">{group.map((entry) => { const patient = entry.encounters?.patients; return <article className="staff-queue-card" key={entry.id}>
+            <div className="staff-queue-card__identity"><h3>{patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}</h3><p>{patient?.patient_number ?? "Patient number unavailable"}</p></div>
+            <span className={`staff-priority staff-priority--${entry.priority}`}>{entry.priority}</span>
+            <dl><div><dt>Department</dt><dd>{entry.departments?.name ?? "Department unavailable"}</dd></div><div><dt>Waiting</dt><dd><Clock3 aria-hidden="true" />{waitingSince(entry.checked_in_at)}</dd></div></dl>
+            {context.permissions?.includes("triage.write") ? <QueueAction id={entry.id} status={entry.status as "waiting_triage" | "in_triage" | "waiting_clinician"} priority={entry.priority as "routine" | "priority" | "urgent" | "emergency"} /> : null}
+          </article>; })}</div> : <div className="staff-empty staff-empty--compact"><p>No patients in this stage.</p></div>}
+        </section>;
+      })}
+    </div>
+  </div>;
+}

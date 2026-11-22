@@ -1,0 +1,13 @@
+{
+  "name": "clinic-platform",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "npm --workspace @clinic/web run dev",
+    "build": "npm --workspace @clinic/web run build",
+    "lint": "npm --workspace @clinic/web run lint",
+    "typecheck": "npm --workspace @clinic/web run typecheck",
+    "test": "npm --workspace @clinic/web run test"
+  }
+}

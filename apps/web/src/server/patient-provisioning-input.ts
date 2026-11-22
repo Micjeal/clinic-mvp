@@ -1,0 +1,6 @@
+import type {TablesInsert} from "@clinic/database";
+import type {User} from "@supabase/supabase-js";
+
+export const patientSetupMessage="We couldn't finish setting up your patient profile. Please complete your details or contact the clinic.";
+export function patientRegistrationDetails(user:Pick<User,"email"|"user_metadata">){const metadata=user.user_metadata??{};const firstName=typeof metadata.first_name==="string"?metadata.first_name.trim():"";const lastName=typeof metadata.last_name==="string"?metadata.last_name.trim():"";if(!firstName||!lastName)return null;return {firstName,lastName,phone:typeof metadata.phone==="string"?metadata.phone.trim()||null:null,email:user.email??null};}
+export function buildPatientInsert(user:Pick<User,"id"|"email"|"user_metadata">,organizationId:string,facilityId:string|null):TablesInsert<"patients">{const details=patientRegistrationDetails(user);if(!details)throw new Error(patientSetupMessage);return {organization_id:organizationId,primary_facility_id:facilityId,auth_user_id:user.id,first_name:details.firstName,last_name:details.lastName,phone:details.phone,email:details.email,created_by:user.id};}

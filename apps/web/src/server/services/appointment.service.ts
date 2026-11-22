@@ -1,0 +1,92 @@
+import "server-only";
+import { Permissions } from "@clinic/permissions";
+import type { AppointmentRequestInput } from "@clinic/validation";
+import { canTransition, isFutureAppointmentDate, isPatientCancellationStatus } from "@clinic/shared";
+import { NotFoundError, ValidationError } from "@/server/errors";
+import { requirePatient } from "@/server/auth/require-patient";
+import { requireUser } from "@/server/auth/require-user";
+import { requirePermission } from "@/server/permissions/require-permission";
+import { findPublicFacility } from "@/server/repositories/facility.repository";
+import { findPublicDepartmentForFacility } from "@/server/repositories/department.repository";
+import { findPublicService } from "@/server/repositories/service.repository";
+import { listAssignableClinicians, listClinicianAvailability, listClinicianBusyIntervals } from "@/server/repositories/scheduling.repository";
+import { generateSlots, type OpeningHours } from "@/server/services/scheduling.service";
+import { instantInTimeZone } from "@/lib/facility-time";
+import { resolveGeneratedBookingSlot } from "@/server/services/booking.service";
+import { resolvePatient } from "@/server/services/patient.service";
+import { createValidatedAppointmentRequest, listAppointmentsForPatient, findAppointmentForPatient, findPatientAppointmentDetails, cancelPatientAppointment, listAppointmentsForOrganization, findAppointmentForOrganization, updateAppointmentStatus, updateAppointmentClinician } from "@/server/repositories/appointment.repository";
+
+export async function requestAppointment(input: AppointmentRequestInput) {
+  const user = await requireUser();
+  if (input.clinician_user_id) throw new ValidationError("Choose a Doctor using the public booking options.");
+  const serviceId = input.service_id;
+  if (!serviceId) throw new ValidationError("Choose a service before selecting an appointment time.");
+  if (!isFutureAppointmentDate(input.scheduled_start)) throw new ValidationError("Choose a future date and time.");
+  const facility = await findPublicFacility(input.facility_id);
+  const department = await findPublicDepartmentForFacility(input.department_id, input.facility_id);
+  if (facility.organization_id !== department.organization_id) throw new ValidationError("The selected care location is no longer available.");
+  if (serviceId) {
+    const service = await findPublicService(serviceId);
+    if (service.organization_id !== facility.organization_id || (service.facility_id && service.facility_id !== facility.id) || (service.department_id && service.department_id !== department.id)) throw new ValidationError("The selected service is not available at this location.");
+    if (!service.duration_minutes) throw new ValidationError("This service is not configured for online booking yet.");
+  }
+  const localStart = instantInTimeZone(input.scheduled_start, facility.timezone);
+  if (!localStart) throw new ValidationError("Choose a valid appointment time.");
+  const generatedSlot = await resolveGeneratedBookingSlot({
+    facilityId: facility.id,
+    departmentId: department.id,
+    serviceId,
+    clinicianSlug: input.clinician_slug || undefined,
+    date: localStart.date,
+  }, new Date(input.scheduled_start).toISOString());
+  if (!generatedSlot) {
+    throw new ValidationError("That appointment time is no longer available. Please choose another time.");
+  }
+  const patient = await resolvePatient(user.id, { organizationId: facility.organization_id, facilityId: facility.id, firstName: input.first_name, lastName: input.last_name, phone: input.phone, email: input.email });
+  try {
+    return await createValidatedAppointmentRequest({
+      patientId: patient.id,
+      facilityId: facility.id,
+      departmentId: department.id,
+      serviceId,
+      clinicianSlug: generatedSlot.clinicianSlug,
+      scheduledStart: generatedSlot.startsAt,
+      reason: input.reason || null,
+    });
+  } catch {
+    throw new ValidationError("That appointment time is no longer available. Please choose another time.");
+  }
+}
+export async function getPatientAppointments(){const {patient}=await requirePatient();return listAppointmentsForPatient(patient.id);}
+export async function getPatientAppointment(id:string){const {patient}=await requirePatient();return findPatientAppointmentDetails(id,patient.id);}
+export async function cancelPatientAppointmentById(id:string){const {patient}=await requirePatient();const current=await findAppointmentForPatient(id,patient.id);if(!current||!isPatientCancellationStatus(current.status))throw new ValidationError("This appointment is not eligible for cancellation.");await cancelPatientAppointment(id,patient.id);}
+export async function getStaffAppointments(){const staff=await requirePermission(Permissions.APPOINTMENT_READ);return listAppointmentsForOrganization(staff.membership.organization_id);}
+export async function getStaffAppointment(id:string){const staff=await requirePermission(Permissions.APPOINTMENT_READ);const appointment=await findAppointmentForOrganization(id,staff.membership.organization_id);if(!appointment)throw new NotFoundError("Appointment not found");return appointment;}
+export async function updateStaffAppointmentStatus(id:string,status:string){const staff=await requirePermission(Permissions.APPOINTMENT_UPDATE);const current=await findAppointmentForOrganization(id,staff.membership.organization_id);if(!current)throw new NotFoundError("Appointment not found");if(!canTransition(current.status,status))throw new ValidationError("This appointment status can no longer be changed that way.");await updateAppointmentStatus(id,staff.membership.organization_id,status);}
+
+export async function assignStaffAppointmentClinician(id: string, clinicianUserId: string | null) {
+  const staff = await requirePermission(Permissions.APPOINTMENT_UPDATE);
+  const current = await findAppointmentForOrganization(id, staff.membership.organization_id);
+  if (!current) throw new NotFoundError("Appointment not found");
+  if (clinicianUserId) {
+    const clinicians = await listAssignableClinicians({ organizationId: staff.membership.organization_id, facilityId: current.facility.id, departmentId: current.department.id, serviceId: current.service?.id });
+    const clinician = clinicians.find((item) => item.userId === clinicianUserId);
+    if (!clinician) throw new ValidationError("That clinician is not eligible for this appointment.");
+    const timeZone = current.facility.timezone ?? "Africa/Kampala";
+    const date = instantInTimeZone(current.scheduledStart, timeZone)?.date;
+    if (!date) throw new ValidationError("This appointment time is invalid.");
+    const [availability, busy] = await Promise.all([listClinicianAvailability(clinician.membershipId, current.facility.id, date, timeZone), listClinicianBusyIntervals(clinician.userId, date, timeZone)]);
+    const slots = generateSlots({ date, timeZone, durationMinutes: Math.max(1, Math.round((new Date(current.scheduledEnd ?? current.scheduledStart).getTime() - new Date(current.scheduledStart).getTime()) / 60000)), intervals: availability.rules, exceptions: availability.exceptions, busy: busy.filter((item) => item.startsAt !== current.scheduledStart), openingHours: current.department.openingHours as unknown as OpeningHours });
+    if (!slots.some((slot) => slot.startsAt === current.scheduledStart)) throw new ValidationError("This clinician is not available for this appointment time.");
+  }
+  await updateAppointmentClinician(id, staff.membership.organization_id, clinicianUserId);
+}
+
+export async function getAssignableCliniciansForAppointment(id: string) {
+  const staff = await requirePermission(Permissions.APPOINTMENT_UPDATE);
+  const current = await findAppointmentForOrganization(id, staff.membership.organization_id);
+  if (!current) throw new NotFoundError("Appointment not found");
+  const clinicians = await listAssignableClinicians({ organizationId: staff.membership.organization_id, facilityId: current.facility.id, departmentId: current.department.id, serviceId: current.service?.id });
+  const durationMinutes = Math.max(1, Math.round((new Date(current.scheduledEnd ?? current.scheduledStart).getTime() - new Date(current.scheduledStart).getTime()) / 60000));
+  return Promise.all(clinicians.map(async (clinician) => { const timeZone = current.facility.timezone ?? "Africa/Kampala"; const date = instantInTimeZone(current.scheduledStart, timeZone)?.date; if (!date) throw new ValidationError("This appointment time is invalid."); const [availability, busy] = await Promise.all([listClinicianAvailability(clinician.membershipId, current.facility.id, date, timeZone), listClinicianBusyIntervals(clinician.userId, date, timeZone)]); const slots = generateSlots({ date, timeZone, durationMinutes, intervals: availability.rules, exceptions: availability.exceptions, busy: busy.filter((item) => item.startsAt !== current.scheduledStart), openingHours: current.department.openingHours as unknown as OpeningHours }); return { ...clinician, available: slots.some((slot) => slot.startsAt === current.scheduledStart) }; }));
+}

@@ -1,0 +1,2 @@
+-- Intentionally empty. Production clinic configuration and test fixtures must
+-- be supplied explicitly; this refactor does not create live data.

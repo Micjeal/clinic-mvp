@@ -1,0 +1,91 @@
+"use client";
+
+import {ArrowLeft,CalendarDays,CalendarPlus,CircleHelp,Cross,LayoutDashboard,LogOut,Menu,PanelLeftClose,PanelLeftOpen,UserRound,X} from "lucide-react";
+import Link from "next/link";
+import {usePathname} from "next/navigation";
+import {useEffect,useRef,useState} from "react";
+
+import {patientSignOutAction} from "@/server/actions/auth.actions";
+
+const portalNavigation=[
+  {href:"/portal",label:"Overview",icon:LayoutDashboard},
+  {href:"/portal/appointments",label:"Appointments",icon:CalendarDays},
+  {href:"/portal/appointments/new",label:"Book Appointment",mobileLabel:"Book",icon:CalendarPlus},
+  {href:"/portal/profile",label:"My Profile",mobileLabel:"Profile",icon:UserRound},
+  {href:"/portal/help",label:"Help & Contact",icon:CircleHelp},
+] as const;
+
+function isActiveRoute(pathname:string,href:string){
+  if(href==="/portal")return pathname===href;
+  return pathname===href||pathname.startsWith(`${href}/`);
+}
+
+function PortalNavigation({close}:{close?:()=>void}){
+  const pathname=usePathname();
+  return <nav aria-label="Patient portal navigation" className="patient-portal-nav">
+    {portalNavigation.map(item=>{const Icon=item.icon,active=isActiveRoute(pathname,item.href);return <Link aria-current={active?"page":undefined} className={active?"is-active":""} href={item.href} key={item.href} onClick={close}><Icon aria-hidden="true" /><span>{item.label}</span></Link>;})}
+  </nav>;
+}
+
+function SignOutButton({className="patient-portal-signout"}:{className?:string}){
+  return <form action={patientSignOutAction}><button className={className} type="submit"><LogOut aria-hidden="true" />Sign Out</button></form>;
+}
+
+function MobileBottomNavigation(){
+  const pathname=usePathname();
+  const items=portalNavigation.slice(0,4);
+  return <nav aria-label="Patient portal mobile navigation" className="patient-bottom-nav">
+    {items.map(item=>{const Icon=item.icon,active=isActiveRoute(pathname,item.href),isBook=item.href==="/portal/appointments/new";return <Link aria-current={active?"page":undefined} className={`${active?"is-active ":""}${isBook?"patient-bottom-nav__book":""}`.trim()} href={item.href} key={item.href}><span><Icon aria-hidden="true" /></span><small>{"mobileLabel" in item?item.mobileLabel:item.label}</small></Link>;})}
+  </nav>;
+}
+
+export function PatientPortalShell({children,clinic,patient}:{children:React.ReactNode;clinic:string;patient:{name:string;email:string;initials:string}}){
+  const [accountOpen,setAccountOpen]=useState(false);
+  const [sidebarCollapsed,setSidebarCollapsed]=useState(false);
+  const accountButtonRef=useRef<HTMLButtonElement>(null),drawerRef=useRef<HTMLElement>(null),closeButtonRef=useRef<HTMLButtonElement>(null);
+  const closeAccount=()=>{setAccountOpen(false);requestAnimationFrame(()=>accountButtonRef.current?.focus());};
+
+  useEffect(()=>{
+    if(!accountOpen)return;
+    const previousOverflow=document.body.style.overflow;
+    document.body.style.overflow="hidden";
+    closeButtonRef.current?.focus();
+    const onKeyDown=(event:KeyboardEvent)=>{
+      if(event.key==="Escape"){closeAccount();return;}
+      if(event.key!=="Tab")return;
+      const focusable=drawerRef.current?.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])');
+      if(!focusable?.length)return;
+      const first=focusable[0],last=focusable[focusable.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    };
+    document.addEventListener("keydown",onKeyDown);
+    return()=>{document.body.style.overflow=previousOverflow;document.removeEventListener("keydown",onKeyDown);};
+  },[accountOpen]);
+
+  return <div className={`patient-portal-shell${sidebarCollapsed?" is-sidebar-collapsed":""}`}>
+    <a className="skip-link" href="#portal-main-content">Skip to portal content</a>
+    <aside className="patient-portal-sidebar">
+      <div className="patient-portal-brand-row"><Link aria-label={`${clinic} patient portal overview`} className="patient-portal-brand" href="/portal"><span><Cross aria-hidden="true" /></span><span><strong>{clinic}</strong><small>Patient portal</small></span></Link><button aria-expanded={!sidebarCollapsed} aria-label={sidebarCollapsed?"Expand sidebar":"Collapse sidebar"} className="patient-sidebar-toggle" onClick={()=>setSidebarCollapsed(value=>!value)} title={sidebarCollapsed?"Expand sidebar":"Collapse sidebar"} type="button">{sidebarCollapsed?<PanelLeftOpen aria-hidden="true"/>:<PanelLeftClose aria-hidden="true"/>}</button></div>
+      <PortalNavigation />
+      <div className="patient-sidebar-profile"><span className="patient-avatar" aria-hidden="true">{patient.initials}</span><span><strong>{patient.name}</strong><small>Patient</small></span></div>
+      <div className="patient-portal-sidebar__footer"><Link href="/"><ArrowLeft aria-hidden="true" />Back to Hospital Website</Link><SignOutButton /></div>
+    </aside>
+    <div className="patient-portal-workspace">
+      <header className="patient-portal-topbar">
+        <Link className="patient-portal-topbar__clinic" href="/portal"><span><Cross aria-hidden="true" /></span><span><strong>{clinic}</strong><small>Patient portal</small></span></Link>
+        <button aria-controls="patient-account-drawer" aria-expanded={accountOpen} className="patient-account-control" onClick={()=>setAccountOpen(true)} ref={accountButtonRef} type="button"><span className="patient-avatar" aria-hidden="true">{patient.initials}</span><span><strong>{patient.name}</strong><small>Patient account</small></span><Menu aria-hidden="true" /></button>
+      </header>
+      <main className="patient-portal-main" id="portal-main-content">{children}</main>
+    </div>
+    <MobileBottomNavigation />
+    <div className={`patient-account-layer${accountOpen?" is-open":""}`}>
+      <button aria-label="Close account menu" className="patient-account-backdrop" onClick={closeAccount} tabIndex={accountOpen?0:-1} type="button" />
+      <aside aria-hidden={!accountOpen} aria-label="Patient account menu" className="patient-account-drawer" id="patient-account-drawer" inert={!accountOpen} ref={drawerRef}>
+        <div className="patient-account-drawer__heading"><div><span className="patient-avatar" aria-hidden="true">{patient.initials}</span><span><strong>{patient.name}</strong><small>{patient.email}</small></span></div><button aria-label="Close account menu" onClick={closeAccount} ref={closeButtonRef} type="button"><X aria-hidden="true" /></button></div>
+        <nav aria-label="Patient account links"><Link href="/portal/help" onClick={closeAccount}><CircleHelp aria-hidden="true" />Help & Contact</Link><Link href="/" onClick={closeAccount}><ArrowLeft aria-hidden="true" />Back to Hospital Website</Link></nav>
+        <SignOutButton className="patient-account-signout" />
+      </aside>
+    </div>
+  </div>;
+}

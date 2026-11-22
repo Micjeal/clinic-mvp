@@ -1,0 +1,4 @@
+import {NextResponse,type NextRequest} from "next/server";
+import {updateSession} from "@/lib/supabase/proxy";
+export async function proxy(req:NextRequest){const {response,user}=await updateSession(req);const isStaffRoute=req.nextUrl.pathname==="/staff"||req.nextUrl.pathname.startsWith("/staff/");const isStaffLogin=req.nextUrl.pathname==="/staff/login";if(isStaffRoute&&!isStaffLogin&&!user){const redirect=NextResponse.redirect(new URL("/staff/login",req.url));response.cookies.getAll().forEach(cookie=>redirect.cookies.set(cookie));return redirect;}if(req.nextUrl.pathname.startsWith("/portal")&&!user){const redirect=NextResponse.redirect(new URL("/login?next="+encodeURIComponent(req.nextUrl.pathname),req.url));response.cookies.getAll().forEach(cookie=>redirect.cookies.set(cookie));return redirect;}return response;}
+export const config={matcher:["/((?!_next/static|_next/image|favicon.ico).*)"]};
