@@ -6,5 +6,7 @@ const user={id:"user-1",email:"patient@example.com",user_metadata:{first_name:" 
 describe("patient provisioning inputs",()=>{
   it("maps personal registration metadata and verified email",()=>{expect(patientRegistrationDetails(user)).toEqual({firstName:"Ada",lastName:"Lovelace",phone:"0700 000 000",email:"patient@example.com"});});
   it("rejects incomplete patient names",()=>{expect(patientRegistrationDetails({...user,user_metadata:{first_name:"Ada",last_name:""}})).toBeNull();});
+  it("falls back to splitting full_name when first/last are missing",()=>{expect(patientRegistrationDetails({...user,user_metadata:{full_name:"Ada Byron Lovelace",phone:"1"}})).toEqual({firstName:"Ada",lastName:"Byron Lovelace",phone:"1",email:"patient@example.com"});});
+  it("still rejects when no usable name metadata exists",()=>{expect(patientRegistrationDetails({...user,user_metadata:{full_name:"Ada"}})).toBeNull();expect(patientRegistrationDetails({...user,user_metadata:{}})).toBeNull();});
   it("uses server-supplied organization and facility values",()=>{const record=buildPatientInsert(user,"org-server","facility-server");expect(record.organization_id).toBe("org-server");expect(record.primary_facility_id).toBe("facility-server");expect(record.organization_id).not.toBe(user.user_metadata.organization_id);expect(record.auth_user_id).toBe("user-1");expect(record.created_by).toBe("user-1");});
 });
