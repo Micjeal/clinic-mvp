@@ -1,10 +1,12 @@
 name: CI
 
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
+  workflow_dispatch:  # Manual trigger only to save CI minutes
+  # Uncomment below to enable automatic CI on push/PR (uses more minutes)
+  # push:
+  #   branches: [main, develop]
+  # pull_request:
+  #   branches: [main, develop]
 
 jobs:
   test:
