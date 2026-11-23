@@ -3536,3 +3536,13 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 .staff-permission-item { display: inline-flex; align-items: center; gap: .4rem; font-size: .78rem; color: var(--navy-950); cursor: pointer; }
 .staff-permission-item input { accent-color: var(--teal-600); }
 .staff-permission-item code { font-size: .72rem; color: var(--slate-700); }
+
+/* Settings sub-pages: breathing room between stacked cards */
+.staff-page .staff-panel + .staff-panel { margin-top: 1.25rem; }
+.staff-page .staff-panel + .staff-form-page,
+.staff-page .staff-form-page + .staff-panel { margin-top: 1.25rem; }
+.staff-editor-section__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.staff-editor-section__header > div { min-width: 0; }
+.staff-editor-section__header .eyebrow { margin-bottom: .3rem; }
+.staff-editor-section__header h2 { margin: 0; }
+.staff-editor-section__header .staff-section-description { margin-top: .3rem; }
