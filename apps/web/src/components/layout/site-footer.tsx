@@ -1,4 +1,4 @@
-import { Cross, Mail, MapPin, Phone } from "lucide-react";
+import { Globe, Cross, Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 
 import { site } from "@/config/site";
@@ -23,13 +23,14 @@ export async function SiteFooter() {
         <div className="footer-brand">
           <Link className="brand brand--footer" href="/">
             <span className="brand__mark"><Cross aria-hidden="true" /></span>
-            <strong>{clinicName()}</strong>
+            <strong>{organization?.name || clinicName()}</strong>
           </Link>
           <p>{organization?.description || clinicDescription()}</p>
           <ul className="footer-contact" aria-label="Clinic contact details">
             <li><MapPin aria-hidden="true" /><span>{contactLabel(address, "Location information is being prepared")}</span></li>
             <li><Phone aria-hidden="true" /><span>{contactLabel(phone, "Phone details are being prepared")}</span></li>
             <li><Mail aria-hidden="true" /><span>{contactLabel(email, "Email details are being prepared")}</span></li>
+            {organization?.website ? <li><Globe aria-hidden="true" /><a href={organization.website} rel="noreferrer" target="_blank">{organization.website.replace(/^https?:\/\//, "")}</a></li> : null}
           </ul>
         </div>
         {footerGroups.map((group) => (
@@ -40,7 +41,7 @@ export async function SiteFooter() {
         ))}
       </div>
       <div className="site-container footer-bottom">
-        <p>© {new Date().getFullYear()} {clinicName()}. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} {organization?.name || clinicName()}. All rights reserved.</p>
         <p>Appointment submissions are requests and require clinic review.</p>
       </div>
     </footer>

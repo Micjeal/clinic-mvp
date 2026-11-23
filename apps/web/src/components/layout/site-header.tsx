@@ -15,9 +15,9 @@ export async function SiteHeader() {
       <UtilityBar />
       <div className="main-header">
         <div className="site-container main-header__inner">
-          <Link className="brand" href="/" aria-label={`${clinicName()} home`}>
+          <Link className="brand" href="/" aria-label={`${organization?.name || clinicName()} home`}>
             <span className="brand__mark">{organization?.logo_url ? <img alt="" className="brand__logo" src={organization.logo_url} /> : <Cross aria-hidden="true" />}</span>
-            <span><strong>{clinicName()}</strong><small>Care that keeps you informed</small></span>
+            <span><strong>{organization?.name || clinicName()}</strong><small>Care that keeps you informed</small></span>
           </Link>
           <DesktopNavigation />
           <div className="main-header__actions">

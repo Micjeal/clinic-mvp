@@ -3,15 +3,17 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { clinicDescription } from "@/lib/public-content";
+import { getPublicOrganizationProfile } from "@/server/services/settings.service";
 
-export function HeroSection() {
+export async function HeroSection() {
+  const organization = await getPublicOrganizationProfile();
   return (
     <section className="home-hero" aria-labelledby="home-hero-title">
       <div className="site-container home-hero__grid">
         <div className="home-hero__content">
           <p className="eyebrow">Patient-centred healthcare</p>
           <h1 id="home-hero-title">Healthcare you can rely on, when it matters most.</h1>
-          <p className="lead">{clinicDescription()}</p>
+          <p className="lead">{organization?.description || clinicDescription()}</p>
           <div className="actions">
             <Link className="btn" href="/appointments">Book an appointment</Link>
             <Link className="text-link" href="/services">Explore services <span aria-hidden="true">→</span></Link>

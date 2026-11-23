@@ -198,7 +198,7 @@ async function fetchPublicOrganizationProfile() {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("organizations")
-    .select("id,name,legal_name,email,phone,website,description,address_line,city,district,country_code,timezone,currency_code,logo_path,status,is_public")
+    .select("id,name,legal_name,email,phone,website,description,address_line,city,district,country_code,timezone,currency_code,logo_path,emergency_phone,status,is_public")
     .eq("id", organizationId)
     .eq("is_public", true)
     .eq("status", "active")

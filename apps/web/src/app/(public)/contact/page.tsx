@@ -1,4 +1,4 @@
-import { CalendarPlus, Mail, MapPin, Phone } from "lucide-react";
+import { CalendarPlus, Mail, MapPin, Phone, Siren } from "lucide-react";
 import Link from "next/link";
 
 import { PageHero } from "@/components/layout/page-hero";
@@ -21,6 +21,7 @@ export default async function ContactPage() {
     { title: "Call", value: contactLabel(phone, "Phone details are being prepared."), icon: Phone, href: isPlaceholderValue(phone) ? undefined : `tel:${phone.replace(/\s/g, "")}` },
     { title: "Email", value: contactLabel(email, "Email details are being prepared."), icon: Mail, href: isPlaceholderValue(email) ? undefined : `mailto:${email}` },
     { title: "Location", value: contactLabel(address, "Location information is being prepared."), icon: MapPin },
+    ...(organization?.emergency_phone ? [{ title: "Emergency", value: organization.emergency_phone, icon: Siren, href: `tel:${organization.emergency_phone.replace(/\s/g, "")}` }] : []),
   ];
   return (
     <>
