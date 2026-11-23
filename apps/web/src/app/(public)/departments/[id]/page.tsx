@@ -7,6 +7,7 @@ import { DepartmentIcon } from "@/components/ui/department-icon";
 import { getPublicDepartment, getPublicDepartments } from "@/server/services/department.service";
 import { getPublicServicesForDepartment } from "@/server/services/service.service";
 import { listPublicDirectoryClinicians } from "@/server/repositories/clinician.repository";
+import { openingHoursToSchedule } from "@/lib/opening-hours";
 import { safePublicCopy } from "@/lib/public-content";
 
 export default async function DepartmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -20,6 +21,7 @@ export default async function DepartmentDetailPage({ params }: { params: Promise
   if (!department) notFound();
   const related = allDepartments.filter((item) => item.id !== department.id).slice(0, 3);
   const departmentDoctors = clinicians.filter((doctor) => doctor.departments.some((item) => item.id === department.id));
+  const hours = openingHoursToSchedule(department.opening_hours as Record<string, unknown> | null);
 
   return (
     <>
@@ -32,6 +34,12 @@ export default async function DepartmentDetailPage({ params }: { params: Promise
           </div>
           <aside className="appointment-aside" aria-labelledby="department-appointment-title">
             <span className="icon-box"><CalendarPlus aria-hidden="true" /></span><h2 id="department-appointment-title">Request an appointment</h2><p>Choose this department in the appointment form and tell the clinic your preferred time.</p><p className="request-note">Your request is not confirmed until reviewed by clinic staff.</p><Link className="btn" href={`/appointments?department=${department.id}`}>Book appointment</Link>
+            {department.phone || department.email || hours.length ? <div className="department-contact">
+              <h3>Contact &amp; hours</h3>
+              {department.phone ? <p><a href={`tel:${department.phone}`}>{department.phone}</a></p> : null}
+              {department.email ? <p><a href={`mailto:${department.email}`}>{department.email}</a></p> : null}
+              {hours.length ? <ul>{hours.map((item) => <li key={item.day}><span>{item.day}</span><span>{item.windows}</span></li>)}</ul> : null}
+            </div> : null}
           </aside>
         </div>
       </section>

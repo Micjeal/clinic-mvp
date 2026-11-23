@@ -2998,3 +2998,65 @@ html:has(.doctor-setup-page) { scroll-behavior: smooth; }
   to { opacity: 1; transform: translateY(0); }
 }
 @media print { .quick-links-dock { display: none; } }
+
+/* ------------------------- staff catalog management ------------------------- */
+.staff-form-grid__wide { grid-column: 1 / -1; }
+.staff-form-grid__wide textarea { min-height: 5.5rem; }
+.staff-catalog-check { display: flex; align-items: flex-start; gap: .6rem; padding: .7rem 0; border-top: 1px solid #eef3f6; cursor: pointer; }
+.staff-catalog-check input { width: 1rem; height: 1rem; min-height: 0; margin-top: .15rem; accent-color: var(--teal-600); }
+.staff-catalog-check span { display: grid; gap: .15rem; }
+.staff-catalog-check strong { color: #17384f; font-size: .8rem; }
+.staff-catalog-check small { color: #6b7f8e; font-size: .7rem; }
+.staff-catalog-badges { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
+.staff-catalog-visibility { display: inline-flex; align-items: center; min-height: 1.55rem; border-radius: 5px; padding: .22rem .45rem; background: #eef3f7; color: #5c7183; font-size: .62rem; font-weight: 800; letter-spacing: .02em; }
+.staff-catalog-visibility.is-public { background: #e8f6f1; color: #176b50; }
+.staff-catalog-row-actions { display: inline-flex; align-items: center; gap: .5rem; white-space: nowrap; }
+.staff-catalog-row-actions .btn { min-height: 2rem; padding: .3rem .65rem; font-size: .72rem; }
+.staff-catalog-toggle { display: inline-flex; align-items: center; gap: .5rem; }
+.staff-catalog-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: .8rem; margin-bottom: 1.2rem; }
+.staff-catalog-stat { border: 1px solid #d7e3ea; border-radius: 10px; padding: .9rem 1rem; background: var(--white); }
+.staff-catalog-stat span { display: block; color: #6b7f8e; font-size: .68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.staff-catalog-stat strong { display: block; margin-top: .3rem; color: #092941; font-size: 1.35rem; }
+.staff-catalog-workspace-grid { display: grid; grid-template-columns: minmax(0, 1fr) 20rem; gap: 1.2rem; align-items: start; }
+.staff-catalog-workspace-main { display: grid; gap: 1.2rem; min-width: 0; }
+.staff-catalog-workspace-side { display: grid; gap: 1.2rem; min-width: 0; position: sticky; top: 1rem; }
+.staff-catalog-detail-list { display: grid; gap: .55rem; margin: 0 0 1rem; }
+.staff-catalog-detail-list div { display: flex; justify-content: space-between; gap: 1rem; }
+.staff-catalog-detail-list dt { color: #6b7f8e; font-size: .72rem; font-weight: 700; }
+.staff-catalog-detail-list dd { margin: 0; color: #17384f; font-size: .78rem; font-weight: 600; text-align: right; }
+.staff-catalog-subheading { margin: 1rem 0 .5rem; color: #17384f; font-size: .8rem; font-weight: 750; }
+.staff-catalog-hours { display: grid; gap: .3rem; margin: 0; padding: 0; list-style: none; }
+.staff-catalog-hours li { display: flex; justify-content: space-between; gap: .75rem; border-bottom: 1px solid #eef3f6; padding: .35rem 0; font-size: .75rem; }
+.staff-catalog-hours span { color: #6b7f8e; }
+.staff-catalog-hours strong { color: #17384f; font-weight: 650; text-align: right; }
+.staff-catalog-link-list { display: grid; gap: .55rem; margin: 0; padding: 0; list-style: none; }
+.staff-catalog-link-list li { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid #e2ebf1; border-radius: 9px; padding: .7rem .85rem; background: #fbfcfd; }
+.staff-catalog-link-list li > div { display: grid; gap: .15rem; min-width: 0; }
+.staff-catalog-link-list strong { color: #17384f; font-size: .82rem; }
+.staff-catalog-link-list small { color: #6b7f8e; font-size: .68rem; }
+.staff-catalog-staff-list { display: grid; gap: .55rem; margin: 0 0 .9rem; padding: 0; list-style: none; }
+.staff-catalog-staff-list li { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid #e2ebf1; border-radius: 9px; padding: .7rem .85rem; background: #fbfcfd; }
+.staff-catalog-staff-list li > div:first-child { display: grid; gap: .15rem; min-width: 0; }
+.staff-catalog-staff-list strong { color: #17384f; font-size: .82rem; }
+.staff-catalog-staff-list small { color: #6b7f8e; font-size: .68rem; }
+.staff-catalog-staff-actions { display: inline-flex; align-items: center; gap: .45rem; flex-shrink: 0; }
+.staff-catalog-staff-actions .btn { min-height: 2rem; padding: .3rem .65rem; font-size: .72rem; }
+.staff-catalog-head-badge { display: inline-flex; align-items: center; min-height: 1.55rem; border-radius: 5px; padding: .22rem .45rem; background: #e8f6f1; color: #176b50; font-size: .62rem; font-weight: 800; letter-spacing: .02em; }
+.staff-catalog-assign { display: flex; gap: .55rem; align-items: center; }
+.staff-catalog-assign select { flex: 1; min-height: 2.6rem; border: 1px solid #cbdbe4; border-radius: 8px; padding: .55rem .7rem; background: var(--white); color: #17384f; font: inherit; font-size: .78rem; }
+.staff-catalog-pagination { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1rem; color: #6b7f8e; font-size: .75rem; }
+.staff-catalog-pagination .is-disabled { opacity: .45; pointer-events: none; }
+.staff-catalog-booking-note { margin: 0 0 1rem; border: 1px solid #f0dfae; border-radius: 9px; padding: .75rem .9rem; background: #fdf8ec; color: #7a5b12; font-size: .78rem; }
+.staff-catalog-edit-panel { margin-top: 1.2rem; }
+@media (max-width: 1100px) { .staff-catalog-workspace-grid { grid-template-columns: 1fr; } .staff-catalog-workspace-side { position: static; } }
+@media (max-width: 640px) { .staff-catalog-stats { grid-template-columns: repeat(2, 1fr); } .staff-catalog-staff-list li, .staff-catalog-link-list li { flex-direction: column; align-items: stretch; } .staff-catalog-staff-actions { justify-content: flex-end; } .staff-catalog-assign { flex-direction: column; align-items: stretch; } }
+
+/* -------------------- public department contact & hours -------------------- */
+.department-contact { margin-top: 1.4rem; border-top: 1px solid rgba(255, 255, 255, .14); padding-top: 1rem; }
+.department-contact h3 { margin: 0 0 .6rem; font-size: .95rem; }
+.department-contact p { margin: 0 0 .4rem; font-size: .82rem; }
+.department-contact a { color: inherit; }
+.department-contact ul { display: grid; gap: .3rem; margin: .6rem 0 0; padding: 0; list-style: none; font-size: .78rem; }
+.department-contact li { display: flex; justify-content: space-between; gap: .75rem; }
+.department-contact li span:first-child { opacity: .75; }
+.department-contact li span:last-child { font-weight: 600; text-align: right; }

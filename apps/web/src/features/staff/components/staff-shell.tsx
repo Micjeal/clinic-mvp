@@ -1,11 +1,14 @@
 "use client";
 
 import {
+  BriefcaseMedical,
+  Building,
   Building2,
   CalendarDays,
   ClipboardCheck,
   ClipboardList,
   Globe2,
+  Hospital,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -28,6 +31,9 @@ const navigation = [
   { href: "/staff/triage", label: "Triage", icon: Stethoscope, permission: "triage.write", group: "Front office" },
   { href: "/staff/appointments", label: "Appointments", icon: CalendarDays, group: "Care" },
   { href: "/staff/users", label: "Staff", icon: Building2, permission: "staff.manage", group: "Administration" },
+  { href: "/staff/facilities", label: "Facilities", icon: Hospital, permission: "facility.manage", group: "Administration" },
+  { href: "/staff/departments", label: "Departments", icon: Building, permission: "department.manage", group: "Administration" },
+  { href: "/staff/services", label: "Services", icon: BriefcaseMedical, permission: "service.manage", group: "Administration" },
 ];
 
 function initialsFromName(name: string) {
@@ -189,7 +195,13 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
           ? "Triage"
           : pathname.startsWith("/staff/users")
             ? "Staff"
-            : "Dashboard";
+            : pathname.startsWith("/staff/facilities")
+              ? "Facilities"
+              : pathname.startsWith("/staff/departments")
+                ? "Departments"
+                : pathname.startsWith("/staff/services")
+                  ? "Services"
+                  : "Dashboard";
 
   return (
     <div className={`staff-surface staff-shell${collapsed ? " is-collapsed" : ""}`}>
@@ -248,7 +260,7 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
             <strong>{pageName}</strong>
           </div>
           <div className="staff-topbar__context" ref={accountRef}>
-            <span className="staff-date">{new Intl.DateTimeFormat("en-UG", { dateStyle: "medium" }).format(new Date())}</span>
+            <span className="staff-date" suppressHydrationWarning>{new Intl.DateTimeFormat("en-UG", { dateStyle: "medium" }).format(new Date())}</span>
             <button
               aria-expanded={accountOpen}
               className="staff-account-trigger"
