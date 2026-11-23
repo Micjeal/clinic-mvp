@@ -10,6 +10,7 @@ export type DepartmentStaffMember = {
   membership_id: string;
   department_id: string;
   is_primary: boolean;
+  is_department_head: boolean;
   full_name: string;
   job_title: string | null;
   role_name: string;
@@ -130,7 +131,7 @@ export async function listDepartmentStaff(departmentId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("staff_department_assignments")
-    .select("membership_id,department_id,is_primary,staff_memberships!staff_department_assignments_membership_id_fkey(id,is_active,job_title,profiles!staff_memberships_user_id_fkey(full_name),roles!staff_memberships_role_id_fkey(name))")
+    .select("membership_id,department_id,is_primary,is_department_head,staff_memberships!staff_department_assignments_membership_id_fkey(id,is_active,job_title,profiles!staff_memberships_user_id_fkey(full_name),roles!staff_memberships_role_id_fkey(name))")
     .eq("department_id", departmentId);
   if (error) throw error;
   return ((data ?? []) as unknown as Array<Record<string, unknown>>).map((row) => {
@@ -141,12 +142,13 @@ export async function listDepartmentStaff(departmentId: string) {
       membership_id: row.membership_id as string,
       department_id: row.department_id as string,
       is_primary: Boolean(row.is_primary),
+      is_department_head: Boolean(row.is_department_head),
       full_name: profile?.full_name ?? "Staff member",
       job_title: (membership.job_title as string | null) ?? null,
       role_name: role?.name ?? "Staff",
       is_active: Boolean(membership.is_active),
     } satisfies DepartmentStaffMember;
-  }).sort((a, b) => Number(b.is_primary) - Number(a.is_primary) || a.full_name.localeCompare(b.full_name));
+  }).sort((a, b) => Number(b.is_department_head) - Number(a.is_department_head) || Number(b.is_primary) - Number(a.is_primary) || a.full_name.localeCompare(b.full_name));
 }
 
 export async function assignDepartmentStaff(departmentId: string, membershipId: string) {

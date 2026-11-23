@@ -2277,18 +2277,21 @@ export type Database = {
         Row: {
           created_at: string
           department_id: string
+          is_department_head: boolean
           is_primary: boolean
           membership_id: string
         }
         Insert: {
           created_at?: string
           department_id: string
+          is_department_head?: boolean
           is_primary?: boolean
           membership_id: string
         }
         Update: {
           created_at?: string
           department_id?: string
+          is_department_head?: boolean
           is_primary?: boolean
           membership_id?: string
         }

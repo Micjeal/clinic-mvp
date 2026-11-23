@@ -192,7 +192,7 @@ export function ActiveToggle({id, isActive, kind, redirectTo}: {id: string; isAc
 /* --------------------------- department staff manager --------------------------- */
 
 export type AssignableMember = {id: string; full_name: string; role_name: string};
-export type AssignedMember = {membership_id: string; department_id: string; is_primary: boolean; full_name: string; job_title: string | null; role_name: string; is_active: boolean};
+export type AssignedMember = {membership_id: string; department_id: string; is_primary: boolean; is_department_head: boolean; full_name: string; job_title: string | null; role_name: string; is_active: boolean};
 
 export function DepartmentStaffManager({departmentId, members, assignable}: {departmentId: string; members: AssignedMember[]; assignable: AssignableMember[]}) {
   const [state, setState] = useState<ActionResult>(null);
@@ -213,9 +213,9 @@ export function DepartmentStaffManager({departmentId, members, assignable}: {dep
     <FormMessage state={state} />
     {members.length ? <ul className="staff-catalog-staff-list">
       {members.map((member) => <li key={member.membership_id}>
-        <div><strong>{member.full_name}</strong><small>{member.role_name}{member.job_title ? ` · ${member.job_title}` : ""}{member.is_primary ? " · Department head" : ""}{!member.is_active ? " · inactive" : ""}</small></div>
+        <div><strong>{member.full_name}</strong><small>{member.role_name}{member.job_title ? ` · ${member.job_title}` : ""}{member.is_department_head ? " · Department head" : ""}{member.is_primary ? " · Primary dept." : ""}{!member.is_active ? " · inactive" : ""}</small></div>
         <div className="staff-catalog-staff-actions">
-          {!member.is_primary ? <button className="btn btn-secondary" disabled={pending !== null} onClick={() => void run(`head-${member.membership_id}`, () => setDepartmentHeadAction(departmentId, member.membership_id))} type="button">{pending === `head-${member.membership_id}` ? "Setting…" : "Set as head"}</button> : <span className="staff-catalog-head-badge">Head</span>}
+          {!member.is_department_head ? <button className="btn btn-secondary" disabled={pending !== null} onClick={() => void run(`head-${member.membership_id}`, () => setDepartmentHeadAction(departmentId, member.membership_id))} type="button">{pending === `head-${member.membership_id}` ? "Setting…" : "Set as head"}</button> : <span className="staff-catalog-head-badge">Head</span>}
           <button className="btn btn-secondary" disabled={pending !== null} onClick={() => { if (window.confirm(`Remove ${member.full_name} from this department?`)) void run(`rm-${member.membership_id}`, () => removeDepartmentStaffAction(departmentId, member.membership_id)); }} type="button">{pending === `rm-${member.membership_id}` ? "Removing…" : "Remove"}</button>
         </div>
       </li>)}
