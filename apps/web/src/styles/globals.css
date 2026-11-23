@@ -1265,7 +1265,7 @@ body:has(.staff-surface) { background: #f4f7f8; }
 .staff-page-heading__context strong { max-width: 18rem; overflow: hidden; color: var(--navy-950); font-size: .86rem; text-overflow: ellipsis; white-space: nowrap; }
 .staff-count strong { color: var(--navy-950); font-size: 1.5rem; line-height: 1; }
 
-.staff-metrics-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .75rem; }
+.staff-metrics-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(10rem,1fr)); gap: .75rem; }
 .staff-metric { min-height: 7.25rem; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--slate-200); border-radius: 11px; padding: 1rem; background: var(--white); box-shadow: 0 4px 16px rgba(10,39,66,.035); }
 .staff-metric span { color: var(--slate-600); font-size: .72rem; font-weight: 700; line-height: 1.35; }
 .staff-metric strong { color: var(--navy-950); font-size: clamp(1.7rem,3vw,2.35rem); font-weight: 700; line-height: 1; }
@@ -1824,6 +1824,33 @@ body:has(.staff-surface) { background: #f4f7f8; }
 .staff-form-grid label, .staff-form label { gap: .35rem; color: #2d465c; }
 .staff-breadcrumb { margin-bottom: .5rem; }
 .staff-breadcrumb a { color: #087f80; }
+
+.staff-page-heading__context { border: 1px solid #dce6ee; border-left: 3px solid #159c96; border-radius: 10px; background: #fff; padding: .55rem .9rem; box-shadow: 0 2px 8px rgba(10,39,64,.04); }
+.staff-page-heading__context span { font-size: .58rem; }
+.staff-page-heading__context strong { font-size: .88rem; }
+.staff-panel-count { display: inline-grid; place-items: center; min-width: 1.55rem; height: 1.55rem; margin-left: .5rem; padding: 0 .4rem; border-radius: 999px; background: #eef6f8; color: #175d7a; font-size: .68rem; font-weight: 800; letter-spacing: 0; vertical-align: middle; }
+.staff-metric { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.staff-metric:hover { transform: translateY(-2px); border-color: #bcd2e0; box-shadow: 0 12px 26px rgba(12,39,64,.08); }
+.staff-metric__top span { font-size: .64rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+.staff-metric .staff-metric__icon { width: 2.35rem; height: 2.35rem; display: grid; place-items: center; flex: 0 0 auto; border-radius: 10px; background: var(--metric-soft, #e2f5f3); color: var(--metric-strong, #0b7d78); }
+.staff-metric .staff-metric__icon svg { width: 1.1rem; height: 1.1rem; color: inherit; }
+.staff-metric--teal { --metric-soft: #e2f5f3; --metric-strong: #0b7d78; }
+.staff-metric--amber { --metric-soft: #fbeed3; --metric-strong: #8a5a06; }
+.staff-metric--blue { --metric-soft: #e6f0fd; --metric-strong: #1d5fb8; }
+.staff-metric--green { --metric-soft: #e7f6ec; --metric-strong: #1c7c43; }
+.staff-metric--cyan { --metric-soft: #e2f6fa; --metric-strong: #0b6d84; }
+.staff-metric--violet { --metric-soft: #f0edfc; --metric-strong: #5b49b8; }
+.staff-metric--emerald { --metric-soft: #e4f8ef; --metric-strong: #0d7a4f; }
+.staff-metric--rose { --metric-soft: #fdeceb; --metric-strong: #b02a20; }
+.staff-metric--orange { --metric-soft: #fcebdd; --metric-strong: #a34d0c; }
+.staff-priority-list article { transition: background-color .15s ease; }
+.staff-priority-list article:hover { background: #f4faf9; }
+.staff-priority-list article > a { border: 1px solid #cfe2e4; border-radius: 8px; padding: 0 .75rem; background: #f2faf9; color: #0b7d78; transition: background-color .15s ease, border-color .15s ease; }
+.staff-priority-list article > a:hover { background: #e0f3f1; border-color: #9fd4cf; }
+.staff-recent-grid article { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.staff-recent-grid article:hover { transform: translateY(-2px); border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12,39,64,.07); }
+.staff-dashboard-mobile-card { transition: border-color .15s ease, box-shadow .15s ease; }
+.staff-dashboard-mobile-card:hover { border-color: #bcd2e0; box-shadow: 0 8px 20px rgba(12,39,64,.06); }
 
 @media (max-width: 900px) {
   .staff-dashboard-sections { grid-template-columns: 1fr; }
