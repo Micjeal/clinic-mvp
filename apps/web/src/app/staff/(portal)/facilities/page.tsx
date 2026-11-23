@@ -4,7 +4,7 @@ import {listFacilities} from "@/server/services/catalog.service";
 import {StaffPageHeader} from "@/features/staff/components/staff-content";
 import {StaffAccessDenied} from "@/features/staff/components/access-denied";
 import {AuthorizationError} from "@/server/errors";
-import {StatusBadge, CatalogPagination, CatalogEmpty} from "@/features/catalog/catalog-ui";
+import {StatusBadge, CatalogPagination, CatalogEmpty, CatalogStats} from "@/features/catalog/catalog-ui";
 import {ActiveToggle} from "@/features/catalog/catalog-forms";
 
 export const metadata = {title: "Facilities"};
@@ -27,6 +27,9 @@ export default async function FacilitiesPage({searchParams}: {searchParams: Prom
   const page = Math.max(1, Number(params.page) || 1);
   const total = filtered.length;
   const items = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const activeCount = facilities.filter((facility) => facility.is_active).length;
+  const publicCount = facilities.filter((facility) => facility.is_active && facility.is_public).length;
+  const departmentTotal = facilities.reduce((sum, facility) => sum + (facility.department_count ?? 0), 0);
 
   return <div className="staff-page">
     <StaffPageHeader
@@ -35,6 +38,12 @@ export default async function FacilitiesPage({searchParams}: {searchParams: Prom
       description="Manage clinic locations, contact details and public visibility."
       actions={<Link className="btn" href="/staff/facilities/new"><Plus aria-hidden="true" />Add facility</Link>}
     />
+    <CatalogStats items={[
+      {label: "Total facilities", value: facilities.length},
+      {label: "Active", value: activeCount},
+      {label: "Publicly visible", value: publicCount, hint: "shown on the website"},
+      {label: "Active departments", value: departmentTotal},
+    ]} />
     <form className="staff-directory-filters" method="get">
       <label className="staff-directory-search"><span className="sr-only">Search facilities</span><input name="search" placeholder="Search name, code or city" type="search" defaultValue={params.search ?? ""} /></label>
       <label><span className="sr-only">Status</span><select name="status" defaultValue={status}><option value="all">All statuses</option><option value="active">Active</option><option value="inactive">Inactive</option></select></label>

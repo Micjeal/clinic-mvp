@@ -26,6 +26,15 @@ export function CatalogStat({label, value}: {label: string; value: ReactNode}) {
   return <div className="staff-catalog-stat"><span>{label}</span><strong>{value}</strong></div>;
 }
 
+export function CatalogStats({items}: {items: {label: string; value: ReactNode; hint?: string}[]}) {
+  return <dl className="staff-stat-strip" aria-label="Summary statistics">
+    {items.map((item) => <div className="staff-stat" key={item.label}>
+      <dt>{item.label}</dt>
+      <dd><strong>{item.value}</strong>{item.hint ? <small>{item.hint}</small> : null}</dd>
+    </div>)}
+  </dl>;
+}
+
 export function CatalogEmpty({title, description, action}: {title: string; description: string; action?: ReactNode}) {
   return <div className="staff-empty staff-directory-empty"><h2>{title}</h2><p>{description}</p>{action}</div>;
 }

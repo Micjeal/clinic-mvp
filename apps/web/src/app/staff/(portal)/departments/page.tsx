@@ -1,18 +1,18 @@
 import Link from "next/link";
 import {Plus} from "lucide-react";
-import {listDepartments, listFacilities} from "@/server/services/catalog.service";
+import {getDepartmentStats, listDepartments, listFacilities} from "@/server/services/catalog.service";
 import {StaffPageHeader} from "@/features/staff/components/staff-content";
 import {StaffAccessDenied} from "@/features/staff/components/access-denied";
 import {AuthorizationError} from "@/server/errors";
-import {StatusBadge, CatalogPagination, CatalogEmpty} from "@/features/catalog/catalog-ui";
+import {StatusBadge, CatalogPagination, CatalogEmpty, CatalogStats} from "@/features/catalog/catalog-ui";
 
 export const metadata = {title: "Departments"};
 
 export default async function DepartmentsPage({searchParams}: {searchParams: Promise<{search?: string; facility?: string; status?: string; page?: string}>}) {
   const params = await searchParams;
-  let result, facilities;
+  let result, facilities, stats;
   try {
-    [result, facilities] = await Promise.all([
+    [result, facilities, stats] = await Promise.all([
       listDepartments({
         facilityId: params.facility || undefined,
         status: params.status === "active" || params.status === "inactive" ? params.status : "all",
@@ -21,6 +21,7 @@ export default async function DepartmentsPage({searchParams}: {searchParams: Pro
         pageSize: 25,
       }),
       listFacilities(),
+      getDepartmentStats(),
     ]);
   } catch (error) { if (error instanceof AuthorizationError) return <StaffAccessDenied />; throw error; }
 
@@ -31,6 +32,12 @@ export default async function DepartmentsPage({searchParams}: {searchParams: Pro
       description="Manage clinical departments, their facilities, visibility and ordering."
       actions={<Link className="btn" href="/staff/departments/new"><Plus aria-hidden="true" />Add department</Link>}
     />
+    <CatalogStats items={[
+      {label: "Total departments", value: stats.total},
+      {label: "Active", value: stats.active},
+      {label: "Publicly visible", value: stats.public, hint: "shown on the website"},
+      {label: "Facilities", value: facilities.length},
+    ]} />
     <form className="staff-directory-filters" method="get">
       <label className="staff-directory-search"><span className="sr-only">Search departments</span><input name="search" placeholder="Search name or code" type="search" defaultValue={params.search ?? ""} /></label>
       <label><span className="sr-only">Facility</span><select name="facility" defaultValue={params.facility ?? ""}><option value="">All facilities</option>{facilities.map((facility) => <option key={facility.id} value={facility.id}>{facility.name}</option>)}</select></label>

@@ -95,6 +95,11 @@ export async function listDepartments(filters: repo.DepartmentListFilters = {}) 
   return repo.listDepartmentsForOrganization(staff.membership.organization_id, filters);
 }
 
+export async function getDepartmentStats() {
+  const staff = await requirePermission(Permissions.DEPARTMENT_MANAGE);
+  return repo.countDepartmentsSummary(staff.membership.organization_id);
+}
+
 export async function getDepartment(id: string) {
   const staff = await requirePermission(Permissions.DEPARTMENT_MANAGE);
   const department = await repo.findDepartmentForOrganization(id, staff.membership.organization_id);
@@ -182,6 +187,11 @@ export async function setDepartmentHead(departmentId: string, membershipId: stri
 export async function listServices(filters: repo.ServiceListFilters = {}) {
   const staff = await requirePermission(Permissions.SERVICE_MANAGE);
   return repo.listServicesForOrganization(staff.membership.organization_id, filters);
+}
+
+export async function getServiceStats() {
+  const staff = await requirePermission(Permissions.SERVICE_MANAGE);
+  return repo.countServicesSummary(staff.membership.organization_id);
 }
 
 export async function getService(id: string) {
