@@ -3442,7 +3442,17 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 @media (max-width: 900px) { .staff-create-context { position: static; } }
 
 /* ---- Settings workspace ---- */
-.staff-settings-search { margin-bottom: 1.1rem; max-width: 34rem; }
+.staff-settings-searchbar { margin-bottom: 1.25rem; max-width: 36rem; }
+.staff-settings-search { position: relative; display: flex !important; align-items: center; width: 100%; border: 1px solid #d3e0e8; border-radius: 14px; background: #fff; box-shadow: 0 2px 10px rgba(10, 39, 66, .04); transition: border-color .15s ease, box-shadow .15s ease; }
+.staff-settings-search:focus-within { border-color: var(--teal-500); box-shadow: 0 0 0 4px rgba(13, 148, 136, .12), 0 2px 10px rgba(10, 39, 66, .04); }
+.staff-settings-search > svg { position: absolute; left: 1rem; width: 1.05rem; height: 1.05rem; color: #7d93a4; pointer-events: none; }
+.staff-settings-search input { width: 100%; min-height: 3rem; border: 0; border-radius: inherit; background: transparent; padding: .8rem 2.75rem .8rem 2.85rem; color: var(--navy-950); font: inherit; font-size: .92rem; outline: none; }
+.staff-settings-search input::placeholder { color: #8aa0b0; }
+.staff-settings-search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+.staff-settings-search__clear { position: absolute; right: .6rem; display: grid; place-items: center; width: 1.7rem; height: 1.7rem; border: 0; border-radius: 8px; background: #eef4f7; color: #607689; cursor: pointer; transition: background .15s ease, color .15s ease; }
+.staff-settings-search__clear:hover { background: #e2ebf1; color: var(--navy-950); }
+.staff-settings-search__clear svg { width: .8rem; height: .8rem; }
+.staff-settings-search__meta { margin: .5rem 0 0 .25rem; color: #7d93a4; font-size: .75rem; font-weight: 650; }
 .staff-settings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: .9rem; }
 .staff-settings-card { display: flex; align-items: center; gap: .85rem; border: 1px solid #dce6ee; border-radius: 14px; padding: .95rem 1.05rem; background: #fff; box-shadow: 0 3px 14px rgba(10, 39, 66, .025); transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease; }
 .staff-settings-card:hover { border-color: #9fc9c4; box-shadow: 0 8px 22px rgba(10, 39, 66, .07); transform: translateY(-1px); }

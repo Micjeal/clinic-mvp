@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
+  Search,
+  X,
   Bell,
   Building2,
   CalendarDays,
@@ -55,15 +57,28 @@ export function SettingsCategoryGrid({ categories }: { categories: SettingsCateg
 
   return (
     <div className="staff-settings-browser">
-      <label className="staff-directory-search staff-settings-search">
-        <span className="sr-only">Search settings</span>
-        <input
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search settings — try “booking”, “logo”, “audit”…"
-          type="search"
-          value={query}
-        />
-      </label>
+      <div className="staff-settings-searchbar">
+        <label className="staff-settings-search">
+          <Search aria-hidden="true" />
+          <span className="sr-only">Search settings</span>
+          <input
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search settings — try “booking”, “logo”, “audit”…"
+            type="search"
+            value={query}
+          />
+          {query ? (
+            <button aria-label="Clear search" className="staff-settings-search__clear" onClick={() => setQuery("")} type="button">
+              <X aria-hidden="true" />
+            </button>
+          ) : null}
+        </label>
+        {query.trim() ? (
+          <p className="staff-settings-search__meta">
+            {filtered.length} {filtered.length === 1 ? "result" : "results"} for “{query.trim()}”
+          </p>
+        ) : null}
+      </div>
       {filtered.length ? (
         <div className="staff-settings-grid">
           {filtered.map((category) => {
