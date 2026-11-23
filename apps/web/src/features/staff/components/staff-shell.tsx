@@ -243,7 +243,7 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
         </div>
       </aside>
       <div className="staff-workspace">
-        <header className="staff-topbar">
+        <header className="staff-topbar" style={{ backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}>
           <button
             aria-controls="staff-mobile-drawer"
             aria-expanded={open}
@@ -260,7 +260,7 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
             <strong>{pageName}</strong>
           </div>
           <div className="staff-topbar__context" ref={accountRef}>
-            <span className="staff-date" suppressHydrationWarning>{new Intl.DateTimeFormat("en-UG", { dateStyle: "medium" }).format(new Date())}</span>
+            <span className="staff-date" suppressHydrationWarning><CalendarDays aria-hidden="true" />{new Intl.DateTimeFormat("en-UG", { dateStyle: "medium" }).format(new Date())}</span>
             <button
               aria-expanded={accountOpen}
               className="staff-account-trigger"
