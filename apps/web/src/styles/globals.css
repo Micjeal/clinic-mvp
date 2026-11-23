@@ -414,7 +414,8 @@ textarea { resize: vertical; }
 
 @media (max-width: 1120px) {
   .desktop-nav, .main-header__actions > .btn { display: none; }
-  .portal-shortcut, .mobile-nav { display: block; }
+  .portal-shortcut { display: inline-flex; }
+  .mobile-nav { display: block; }
   .main-header__actions { margin-left: auto; }
   .home-hero__grid { grid-template-columns: minmax(0, 1fr) minmax(23rem, .85fr); gap: 2.5rem; }
   .quick-actions__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
