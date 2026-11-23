@@ -5,15 +5,22 @@ import { PageHero } from "@/components/layout/page-hero";
 import { site } from "@/config/site";
 import { contactLabel, isPlaceholderValue, safeFacilityLocation, safeFacilityName } from "@/lib/public-content";
 import { getPublicFacilities } from "@/server/services/facility.service";
+import { getPublicOrganizationProfile } from "@/server/services/settings.service";
 
 export const metadata = { title: "Contact" };
 
 export default async function ContactPage() {
-  const facilities = await getPublicFacilities();
+  const [facilities, organization] = await Promise.all([getPublicFacilities(), getPublicOrganizationProfile()]);
+  const orgAddress = organization
+    ? [organization.address_line, organization.city, organization.district, organization.country_code].filter(Boolean).join(", ")
+    : "";
+  const phone = organization?.phone || site.phone;
+  const email = organization?.email || site.email;
+  const address = orgAddress || site.address;
   const contactCards = [
-    { title: "Call", value: contactLabel(site.phone, "Phone details are being prepared."), icon: Phone, href: isPlaceholderValue(site.phone) ? undefined : `tel:${site.phone.replace(/\s/g, "")}` },
-    { title: "Email", value: contactLabel(site.email, "Email details are being prepared."), icon: Mail, href: isPlaceholderValue(site.email) ? undefined : `mailto:${site.email}` },
-    { title: "Location", value: contactLabel(site.address, "Location information is being prepared."), icon: MapPin },
+    { title: "Call", value: contactLabel(phone, "Phone details are being prepared."), icon: Phone, href: isPlaceholderValue(phone) ? undefined : `tel:${phone.replace(/\s/g, "")}` },
+    { title: "Email", value: contactLabel(email, "Email details are being prepared."), icon: Mail, href: isPlaceholderValue(email) ? undefined : `mailto:${email}` },
+    { title: "Location", value: contactLabel(address, "Location information is being prepared."), icon: MapPin },
   ];
   return (
     <>

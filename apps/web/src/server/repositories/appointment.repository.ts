@@ -13,7 +13,7 @@ type StaffAppointmentRow = Tables<"appointments"> & {
   services: Related<{id:string;name:string}>;
   clinician: Related<{full_name:string|null;professional_title:string|null}>;
 };
-type PatientAppointmentRow = Pick<Tables<"appointments">,"id"|"status"|"scheduled_start"|"scheduled_end"|"created_at"|"reason"> & {
+type PatientAppointmentRow = Pick<Tables<"appointments">,"id"|"status"|"scheduled_start"|"scheduled_end"|"created_at"|"reason"|"organization_id"> & {
   facilities: Related<{name:string;address_line:string|null;city:string|null;district:string|null}>;
   departments: Related<{name:string}>;
   services: Related<{name:string}>;
@@ -49,11 +49,12 @@ function mapPatientAppointment(row:PatientAppointmentRow):PatientAppointment{
     departmentName:department?.name??null,
     serviceName:service?.name??null,
     clinicianName: clinician?.full_name ?? null,
+    organizationId: row.organization_id,
   };
 }
 
 const staffAppointmentSelect="*,patients!appointments_patient_id_fkey(id,first_name,last_name,patient_number,phone,email,auth_user_id),facilities!appointments_facility_id_fkey(id,name,timezone),departments!appointments_department_id_fkey(id,name,opening_hours),services!appointments_service_id_fkey(id,name),clinician:profiles!appointments_clinician_user_id_fkey(full_name,professional_title)";
-const patientAppointmentSelect="id,status,scheduled_start,scheduled_end,created_at,reason,clinician_user_id,facilities!appointments_facility_id_fkey(name,address_line,city,district),departments!appointments_department_id_fkey(name),services!appointments_service_id_fkey(name),clinician:profiles!appointments_clinician_user_id_fkey(full_name,professional_title)";
+const patientAppointmentSelect="id,status,scheduled_start,scheduled_end,created_at,reason,organization_id,clinician_user_id,facilities!appointments_facility_id_fkey(name,address_line,city,district),departments!appointments_department_id_fkey(name),services!appointments_service_id_fkey(name),clinician:profiles!appointments_clinician_user_id_fkey(full_name,professional_title)";
 
 export async function createAppointment(input:TablesInsert<"appointments">){const supabase=await createClient();const {data,error}=await supabase.from("appointments").insert(input).select("id").single();if(error)throw error;return data;}
 export async function createValidatedAppointmentRequest(input:{patientId:string;facilityId:string;departmentId:string;serviceId:string;clinicianSlug:string;scheduledStart:string;reason:string|null}){const supabase=await createClient();const {data,error}=await supabase.rpc("request_patient_appointment",{p_patient_id:input.patientId,p_facility_id:input.facilityId,p_department_id:input.departmentId,p_service_id:input.serviceId,p_clinician_slug:input.clinicianSlug,p_scheduled_start:input.scheduledStart,p_reason:input.reason||""});if(error)throw error;if(!data)throw new Error("Appointment request was not persisted.");return {id:data};}

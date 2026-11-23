@@ -6,6 +6,7 @@ import { listPublicClinicians } from "@/server/repositories/clinician.repository
 import { findPublicService } from "@/server/repositories/service.repository";
 import { getPublicClinicianSchedule } from "@/server/repositories/scheduling.repository";
 import { generateSlots, type OpeningHours, type Slot } from "@/server/services/scheduling.service";
+import { findOrganizationSettingsAdmin, DEFAULT_ORGANIZATION_SETTINGS } from "@/server/repositories/settings.repository";
 
 export type BookingSlotInput = {
   facilityId: string;
@@ -36,6 +37,9 @@ async function generatedSlotMatches(input: BookingSlotInput): Promise<MatchedSlo
     throw new ValidationError("This service is not configured for online booking yet.");
   }
 
+  const settings = { ...DEFAULT_ORGANIZATION_SETTINGS, ...(await findOrganizationSettingsAdmin(facility.organization_id) ?? {}) };
+  if (!settings.online_booking_enabled) return [];
+
   const eligible = (await listPublicClinicians()).filter((clinician) => (
     clinician.facilityIds.includes(facility.id)
     && clinician.departmentIds.includes(department.id)
@@ -48,6 +52,9 @@ async function generatedSlotMatches(input: BookingSlotInput): Promise<MatchedSlo
     throw new ValidationError("That clinician is no longer available. Choose another doctor.");
   }
 
+  const now = new Date();
+  const earliest = now.getTime() + settings.booking_min_advance_minutes * 60_000;
+  const latest = now.getTime() + settings.booking_max_advance_days * 86_400_000;
   const groups = await Promise.all(selected.map(async (clinician) => {
     const schedule = await getPublicClinicianSchedule({
       slug: clinician.key,
@@ -63,9 +70,14 @@ async function generatedSlotMatches(input: BookingSlotInput): Promise<MatchedSlo
       intervals: schedule.rules,
       exceptions: schedule.exceptions,
       busy: schedule.busy,
-      now: new Date(),
+      now,
       openingHours: department.opening_hours as unknown as OpeningHours,
-    }).map((slot) => ({ ...slot, clinicianSlug: clinician.key }));
+    })
+      .filter((slot) => {
+        const start = new Date(slot.startsAt).getTime();
+        return start >= earliest && start <= latest;
+      })
+      .map((slot) => ({ ...slot, clinicianSlug: clinician.key }));
   }));
   return groups.flat().sort((a, b) => a.startsAt.localeCompare(b.startsAt));
 }

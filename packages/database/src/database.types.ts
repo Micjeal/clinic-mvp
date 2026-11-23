@@ -1596,12 +1596,19 @@ export type Database = {
       }
       organizations: {
         Row: {
+          address_line: string | null
+          city: string | null
+          country_code: string
           created_at: string
           currency_code: string
+          description: string | null
+          district: string | null
           email: string | null
+          emergency_phone: string | null
           id: string
           is_public: boolean
           legal_name: string | null
+          logo_path: string | null
           name: string
           phone: string | null
           slug: string
@@ -1611,12 +1618,19 @@ export type Database = {
           website: string | null
         }
         Insert: {
+          address_line?: string | null
+          city?: string | null
+          country_code?: string
           created_at?: string
           currency_code?: string
+          description?: string | null
+          district?: string | null
           email?: string | null
+          emergency_phone?: string | null
           id?: string
           is_public?: boolean
           legal_name?: string | null
+          logo_path?: string | null
           name: string
           phone?: string | null
           slug: string
@@ -1626,12 +1640,19 @@ export type Database = {
           website?: string | null
         }
         Update: {
+          address_line?: string | null
+          city?: string | null
+          country_code?: string
           created_at?: string
           currency_code?: string
+          description?: string | null
+          district?: string | null
           email?: string | null
+          emergency_phone?: string | null
           id?: string
           is_public?: boolean
           legal_name?: string | null
+          logo_path?: string | null
           name?: string
           phone?: string | null
           slug?: string
@@ -1641,6 +1662,74 @@ export type Database = {
           website?: string | null
         }
         Relationships: []
+      }
+      organization_settings: {
+        Row: {
+          appointment_reminders_enabled: boolean
+          brand_color: string
+          booking_max_advance_days: number
+          booking_min_advance_minutes: number
+          cancellation_cutoff_hours: number
+          created_at: string
+          default_date_format: string
+          default_locale: string
+          default_time_format: string
+          email_notifications_enabled: boolean
+          in_app_notifications_enabled: boolean
+          online_booking_enabled: boolean
+          organization_id: string
+          patient_cancellation_enabled: boolean
+          reminder_hours_before: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          appointment_reminders_enabled?: boolean
+          brand_color?: string
+          booking_max_advance_days?: number
+          booking_min_advance_minutes?: number
+          cancellation_cutoff_hours?: number
+          created_at?: string
+          default_date_format?: string
+          default_locale?: string
+          default_time_format?: string
+          email_notifications_enabled?: boolean
+          in_app_notifications_enabled?: boolean
+          online_booking_enabled?: boolean
+          organization_id: string
+          patient_cancellation_enabled?: boolean
+          reminder_hours_before?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          appointment_reminders_enabled?: boolean
+          brand_color?: string
+          booking_max_advance_days?: number
+          booking_min_advance_minutes?: number
+          cancellation_cutoff_hours?: number
+          created_at?: string
+          default_date_format?: string
+          default_locale?: string
+          default_time_format?: string
+          email_notifications_enabled?: boolean
+          in_app_notifications_enabled?: boolean
+          online_booking_enabled?: boolean
+          organization_id?: string
+          patient_cancellation_enabled?: boolean
+          reminder_hours_before?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       patients: {
         Row: {

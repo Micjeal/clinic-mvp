@@ -1,8 +1,9 @@
 import "server-only";
 import {createAdminClient} from "@/lib/supabase/admin";
+import {findOrganizationSettingsAdmin, DEFAULT_ORGANIZATION_SETTINGS} from "@/server/repositories/settings.repository";
 import type {Json} from "@clinic/database";
 
-export type NotificationType = "appointment_requested" | "appointment_confirmed" | "appointment_cancelled" | "appointment_status_changed" | "appointment_clinician_assigned" | "password_reset";
+export type NotificationType = "appointment_requested" | "appointment_confirmed" | "appointment_cancelled" | "appointment_status_changed" | "appointment_clinician_assigned" | "appointment_reminder" | "password_reset";
 export type NotificationChannel = "in_app" | "email";
 
 export type NotificationInput = {
@@ -25,9 +26,24 @@ export type PortalNotification = {
   readAt: string | null;
 };
 
+async function notificationAllowedForPatient(patientId: string | null | undefined, channel: NotificationChannel) {
+  if (!patientId) return true;
+  try {
+    const supabase = createAdminClient();
+    const { data: patient } = await supabase.from("patients").select("organization_id").eq("id", patientId).maybeSingle();
+    if (!patient?.organization_id) return true;
+    const settings = { ...DEFAULT_ORGANIZATION_SETTINGS, ...(await findOrganizationSettingsAdmin(patient.organization_id) ?? {}) };
+    if (channel === "in_app") return settings.in_app_notifications_enabled;
+    return settings.email_notifications_enabled;
+  } catch {
+    return true;
+  }
+}
+
 export async function sendNotification(input: NotificationInput) {
   const supabase = createAdminClient();
   const channel = input.channel ?? "in_app";
+  if (!(await notificationAllowedForPatient(input.recipientPatientId, channel))) return;
   const now = new Date().toISOString();
   const { error } = await supabase.from("notifications").insert({
     type: input.type,

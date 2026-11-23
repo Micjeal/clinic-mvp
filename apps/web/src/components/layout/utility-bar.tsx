@@ -3,10 +3,13 @@ import Link from "next/link";
 
 import { site } from "@/config/site";
 import { contactLabel } from "@/lib/public-content";
+import { getPublicOrganizationProfile } from "@/server/services/settings.service";
 
-export function UtilityBar() {
-  const phone = contactLabel(site.phone, "Contact details are being prepared");
-  const hasPhone = phone === site.phone;
+export async function UtilityBar() {
+  const organization = await getPublicOrganizationProfile();
+  const phoneValue = organization?.phone || site.phone;
+  const phone = contactLabel(phoneValue, "Contact details are being prepared");
+  const hasPhone = phone === phoneValue;
 
   return (
     <div className="utility-bar">
@@ -18,7 +21,7 @@ export function UtilityBar() {
         </div>
         <nav className="utility-bar__links" aria-label="Utility navigation">
           {hasPhone ? (
-            <a href={`tel:${site.phone.replace(/\s/g, "")}`}>
+            <a href={`tel:${phoneValue.replace(/\s/g, "")}`}>
               <Phone aria-hidden="true" />
               <span>{phone}</span>
             </a>

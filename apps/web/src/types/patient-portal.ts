@@ -14,6 +14,7 @@ export type PatientAppointment = {
   departmentName: string | null;
   serviceName: string | null;
   clinicianName?: string | null;
+  organizationId?: string;
 };
 
 export type PatientAppointmentView = "upcoming" | "past" | "cancelled" | "all";
