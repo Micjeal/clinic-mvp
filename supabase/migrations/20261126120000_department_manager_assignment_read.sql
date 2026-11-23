@@ -9,6 +9,10 @@
 --    (department head) assignment for a department. Mutations still require
 --    staff.manage through the existing RLS policies.
 
+-- Idempotent: drop-then-create so the migration is safe to re-run.
+drop policy if exists staff_department_assignments_department_manager_read
+  on public.staff_department_assignments;
+
 create policy staff_department_assignments_department_manager_read
   on public.staff_department_assignments
   for select to authenticated
@@ -20,6 +24,9 @@ create policy staff_department_assignments_department_manager_read
         and private.has_permission(d.organization_id, 'department.manage')
     )
   );
+
+drop policy if exists staff_memberships_department_assignee_read
+  on public.staff_memberships;
 
 create policy staff_memberships_department_assignee_read
   on public.staff_memberships
