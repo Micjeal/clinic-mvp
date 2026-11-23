@@ -229,16 +229,16 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
         </div>
         <div className="staff-sidebar-scroll">
           <Navigation permissions={context.permissions} />
-          <div className="staff-sidebar-bottom">
-            <AccountSection context={context} />
-            <p className="staff-nav-label staff-nav-divider">Hospital website</p>
-            <div className="staff-sidebar__footer">
-              <Link href="/">
-                <Globe2 aria-hidden="true" />
-                <span>Return to website</span>
-              </Link>
-              <SignOut />
-            </div>
+        </div>
+        <div className="staff-sidebar-bottom">
+          <AccountSection context={context} />
+          <p className="staff-nav-label staff-nav-divider">Hospital website</p>
+          <div className="staff-sidebar__footer">
+            <Link href="/">
+              <Globe2 aria-hidden="true" />
+              <span>Return to website</span>
+            </Link>
+            <SignOut />
           </div>
         </div>
       </aside>
@@ -316,16 +316,16 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
           </div>
           <div className="staff-sidebar-scroll">
             <Navigation close={closeDrawer} permissions={context.permissions} />
-            <div className="staff-sidebar-bottom">
-              <AccountSection context={context} />
-              <p className="staff-nav-label staff-nav-divider">Hospital website</p>
-              <div className="staff-sidebar__footer">
-                <Link href="/" onClick={closeDrawer}>
-                  <Globe2 aria-hidden="true" />
-                  <span>Return to website</span>
-                </Link>
-                <SignOut />
-              </div>
+          </div>
+          <div className="staff-sidebar-bottom">
+            <AccountSection context={context} />
+            <p className="staff-nav-label staff-nav-divider">Hospital website</p>
+            <div className="staff-sidebar__footer">
+              <Link href="/" onClick={closeDrawer}>
+                <Globe2 aria-hidden="true" />
+                <span>Return to website</span>
+              </Link>
+              <SignOut />
             </div>
           </div>
         </aside>
