@@ -2677,6 +2677,13 @@ export type Database = {
         }
         Returns: string
       }
+      set_department_head: {
+        Args: {
+          p_department_id: string
+          p_membership_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

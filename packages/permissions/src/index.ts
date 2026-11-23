@@ -13,6 +13,9 @@ export const Permissions = {
   QUEUE_CLINICAL: "queue.clinical",
   QUEUE_OVERRIDE: "queue.override",
   TRIAGE_WRITE: "triage.write",
+  FACILITY_MANAGE: "facility.manage",
+  DEPARTMENT_MANAGE: "department.manage",
+  SERVICE_MANAGE: "service.manage",
 } as const;
 
 export type Permission = (typeof Permissions)[keyof typeof Permissions];
