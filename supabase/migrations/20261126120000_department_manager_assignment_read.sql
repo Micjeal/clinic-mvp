@@ -8,6 +8,29 @@
 -- 3) set_department_head() atomically designates the single primary
 --    (department head) assignment for a department. Mutations still require
 --    staff.manage through the existing RLS policies.
+--
+-- Recursion note: the staff_memberships policy must NOT query
+-- staff_department_assignments inline — the existing assignment policies
+-- already query staff_memberships inline, which would recurse (42P17).
+-- private.membership_has_department_assignment() is security definer and
+-- bypasses RLS, breaking the cycle.
+
+create or replace function private.membership_has_department_assignment(p_membership_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1
+    from public.staff_department_assignments a
+    where a.membership_id = p_membership_id
+  );
+$$;
+
+revoke all on function private.membership_has_department_assignment(uuid) from public, anon;
+grant execute on function private.membership_has_department_assignment(uuid) to authenticated, service_role;
 
 -- Idempotent: drop-then-create so the migration is safe to re-run.
 drop policy if exists staff_department_assignments_department_manager_read
@@ -33,11 +56,7 @@ create policy staff_memberships_department_assignee_read
   for select to authenticated
   using (
     private.has_permission(organization_id, 'department.manage')
-    and exists (
-      select 1
-      from public.staff_department_assignments a
-      where a.membership_id = staff_memberships.id
-    )
+    and private.membership_has_department_assignment(id)
   );
 
 create or replace function public.set_department_head(p_department_id uuid, p_membership_id uuid)
