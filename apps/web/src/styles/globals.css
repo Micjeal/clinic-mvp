@@ -3266,13 +3266,14 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
   padding: .25rem 0 0;
 }
 
-/* Dense dashboard tables keep a usable minimum width and scroll
-   horizontally inside their wrap instead of crushing columns */
-.staff-dashboard-table .staff-table { min-width: 46rem; }
+/* Dense dashboard tables: cells wrap to their content instead of
+   clipping — the status column keeps enough room for the widest pill */
+.staff-dashboard-table .staff-table { min-width: 40rem; }
 .staff-dashboard-table .staff-table td { white-space: normal; }
 .staff-dashboard-table .staff-table td > strong,
-.staff-dashboard-table .staff-table td > span:not(.status) { white-space: nowrap; }
-.staff-dashboard-table .status, .staff-dashboard-table .staff-table td .status { flex: none; }
+.staff-dashboard-table .staff-table td > span:not(.status) { white-space: normal; }
+.staff-dashboard-table .staff-table td:has(> .status) { min-width: 7rem; }
+.staff-dashboard-table .status { flex: none; }
 
 /* Sticky table headers inside scrollable wraps */
 .staff-panel-table-wrap, .staff-directory-table-wrap {
