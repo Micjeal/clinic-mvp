@@ -22,12 +22,12 @@ import { staffSignOutAction } from "@/server/actions/staff-auth.actions";
 type Context = { name: string; role: string; organization: string; permissions?: string[] };
 
 const navigation = [
-  { href: "/staff", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/staff/reception", label: "Reception", icon: ClipboardCheck, permission: "reception.checkin" },
-  { href: "/staff/queue", label: "Queue", icon: ClipboardList, permission: "queue.read" },
-  { href: "/staff/triage", label: "Triage", icon: Stethoscope, permission: "triage.write" },
-  { href: "/staff/appointments", label: "Appointments", icon: CalendarDays },
-  { href: "/staff/users", label: "Staff", icon: Building2, permission: "staff.manage" },
+  { href: "/staff", label: "Dashboard", icon: LayoutDashboard, group: "Overview" },
+  { href: "/staff/reception", label: "Reception", icon: ClipboardCheck, permission: "reception.checkin", group: "Front office" },
+  { href: "/staff/queue", label: "Queue", icon: ClipboardList, permission: "queue.read", group: "Front office" },
+  { href: "/staff/triage", label: "Triage", icon: Stethoscope, permission: "triage.write", group: "Front office" },
+  { href: "/staff/appointments", label: "Appointments", icon: CalendarDays, group: "Care" },
+  { href: "/staff/users", label: "Staff", icon: Building2, permission: "staff.manage", group: "Administration" },
 ];
 
 function initialsFromName(name: string) {
@@ -42,27 +42,29 @@ function initialsFromName(name: string) {
 
 function Navigation({ close, permissions = [] }: { close?: () => void; permissions?: string[] }) {
   const pathname = usePathname();
+  const items = navigation.filter((item) => !item.permission || permissions.includes(item.permission));
   return (
     <nav aria-label="Staff navigation" className="staff-nav">
-      {navigation
-        .filter((item) => !item.permission || permissions.includes(item.permission))
-        .map((item) => {
-          const Icon = item.icon;
-          const active = item.href === "/staff" ? pathname === item.href : pathname.startsWith(item.href);
-          return (
+      {items.map((item, index) => {
+        const Icon = item.icon;
+        const active = item.href === "/staff" ? pathname === item.href : pathname.startsWith(item.href);
+        const showGroup = index === 0 || items[index - 1].group !== item.group;
+        return (
+          <div className="staff-nav__group" key={item.href}>
+            {showGroup ? <p className="staff-nav-label staff-nav-label--group">{item.group}</p> : null}
             <Link
               aria-current={active ? "page" : undefined}
               className={active ? "is-active" : ""}
               href={item.href}
-              key={item.href}
               onClick={close}
               title={item.label}
             >
               <Icon aria-hidden="true" />
               <span>{item.label}</span>
             </Link>
-          );
-        })}
+          </div>
+        );
+      })}
     </nav>
   );
 }
@@ -214,7 +216,6 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
           </button>
         </div>
         <div className="staff-sidebar-scroll">
-          <p className="staff-nav-label">Operations</p>
           <Navigation permissions={context.permissions} />
           <div className="staff-sidebar-bottom">
             <AccountSection context={context} />
@@ -302,7 +303,6 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
             </button>
           </div>
           <div className="staff-sidebar-scroll">
-            <p className="staff-nav-label">Operations</p>
             <Navigation close={closeDrawer} permissions={context.permissions} />
             <div className="staff-sidebar-bottom">
               <AccountSection context={context} />
