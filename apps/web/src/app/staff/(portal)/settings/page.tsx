@@ -1,18 +1,3 @@
-import {
-  Bell,
-  Building2,
-  CalendarDays,
-  CreditCard,
-  History,
-  Lock,
-  ShieldCheck,
-  Globe,
-  Palette,
-  Plug,
-  SlidersHorizontal,
-  Stethoscope,
-  Users,
-} from "lucide-react";
 import { StaffPageHeader, StaffSection } from "@/features/staff/components/staff-content";
 import { SettingsCategoryGrid, type SettingsCategory } from "@/features/settings/components/settings-category-grid";
 import { getSettingsContext } from "@/server/services/settings.service";
@@ -20,20 +5,20 @@ import { getSettingsContext } from "@/server/services/settings.service";
 export const metadata = { title: "Settings" };
 
 const categories: SettingsCategory[] = [
-  { href: "/staff/settings/organization", title: "Organization profile", description: "Hospital name, contact details, address, emergency contact and currency.", icon: Building2, keywords: "hospital clinic profile contact address currency" },
-  { href: "/staff/settings/general", title: "General preferences", description: "Default date, time and locale formats used across the staff workspace.", icon: SlidersHorizontal, keywords: "date time locale format language" },
-  { href: "/staff/settings/appointments", title: "Booking & appointments", description: "Online booking availability, advance windows and patient cancellation rules.", icon: CalendarDays, keywords: "booking schedule cancellation reschedule window" },
-  { href: "/staff/settings/notifications", title: "Notifications", description: "In-app and email delivery channels plus appointment reminders.", icon: Bell, keywords: "email sms reminders alerts inbox" },
-  { href: "/staff/settings/branding", title: "Branding", description: "Organization logo and accent colour used across the staff portal and website.", icon: Palette, keywords: "logo colour brand appearance" },
-  { href: "/staff/settings/security", title: "Security & access", description: "Authentication, password policy and staff access review information.", icon: Lock, keywords: "password session login access" },
-  { href: "/staff/settings/clinical", title: "Clinical configuration", description: "Links to departments, services and workflows that shape clinical operations.", icon: Stethoscope, keywords: "clinical encounter vitals notes department hours" },
-  { href: "/staff/settings/billing", title: "Billing & payments", description: "Currency, invoice and payment-method configuration status.", icon: CreditCard, keywords: "invoice payment currency tax" },
-  { href: "/staff/settings/integrations", title: "Integrations", description: "Email, SMS and storage provider status — no secrets are ever shown here.", icon: Plug, keywords: "email sms storage provider api" },
-  { href: "/staff/settings/audit", title: "Audit log", description: "Who changed which setting, when, and what the previous value was.", icon: History, keywords: "history changes audit trail" },
-  { href: "/staff/settings/users", title: "Users & staff accounts", description: "Review staff membership, roles and access status.", icon: Users, keywords: "users staff accounts members" },
-  { href: "/staff/settings/roles", title: "Roles & permissions", description: "System roles and the permissions each role grants.", icon: ShieldCheck, keywords: "roles permissions access rbac" },
-  { href: "/staff/settings/facilities", title: "Facilities & locations", description: "Care locations, contact details, timezones and publication status.", icon: Building2, keywords: "facility location timezone hours" },
-  { href: "/staff/settings/localization", title: "Localization & region", description: "Organization timezone and billing currency.", icon: Globe, keywords: "timezone currency region locale" },
+  { href: "/staff/settings/organization", title: "Organization profile", description: "Hospital name, contact details, address, emergency contact and currency.", icon: "building", keywords: "hospital clinic profile contact address currency" },
+  { href: "/staff/settings/general", title: "General preferences", description: "Default date, time and locale formats used across the staff workspace.", icon: "sliders", keywords: "date time locale format language" },
+  { href: "/staff/settings/appointments", title: "Booking & appointments", description: "Online booking availability, advance windows and patient cancellation rules.", icon: "calendar", keywords: "booking schedule cancellation reschedule window" },
+  { href: "/staff/settings/notifications", title: "Notifications", description: "In-app and email delivery channels plus appointment reminders.", icon: "bell", keywords: "email sms reminders alerts inbox" },
+  { href: "/staff/settings/branding", title: "Branding", description: "Organization logo and accent colour used across the staff portal and website.", icon: "palette", keywords: "logo colour brand appearance" },
+  { href: "/staff/settings/security", title: "Security & access", description: "Authentication, password policy and staff access review information.", icon: "lock", keywords: "password session login access" },
+  { href: "/staff/settings/clinical", title: "Clinical configuration", description: "Links to departments, services and workflows that shape clinical operations.", icon: "stethoscope", keywords: "clinical encounter vitals notes department hours" },
+  { href: "/staff/settings/billing", title: "Billing & payments", description: "Currency, invoice and payment-method configuration status.", icon: "card", keywords: "invoice payment currency tax" },
+  { href: "/staff/settings/integrations", title: "Integrations", description: "Email, SMS and storage provider status — no secrets are ever shown here.", icon: "plug", keywords: "email sms storage provider api" },
+  { href: "/staff/settings/audit", title: "Audit log", description: "Who changed which setting, when, and what the previous value was.", icon: "history", keywords: "history changes audit trail" },
+  { href: "/staff/settings/users", title: "Users & staff accounts", description: "Review staff membership, roles and access status.", icon: "users", keywords: "users staff accounts members" },
+  { href: "/staff/settings/roles", title: "Roles & permissions", description: "System roles and the permissions each role grants.", icon: "shield", keywords: "roles permissions access rbac" },
+  { href: "/staff/settings/facilities", title: "Facilities & locations", description: "Care locations, contact details, timezones and publication status.", icon: "building", keywords: "facility location timezone hours" },
+  { href: "/staff/settings/localization", title: "Localization & region", description: "Organization timezone and billing currency.", icon: "globe", keywords: "timezone currency region locale" },
 ];
 
 export default async function SettingsPage() {

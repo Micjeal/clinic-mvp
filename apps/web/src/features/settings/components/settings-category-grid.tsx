@@ -2,13 +2,44 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import type { LucideIcon } from "lucide-react";
+import {
+  Bell,
+  Building2,
+  CalendarDays,
+  CreditCard,
+  Globe,
+  History,
+  Lock,
+  Palette,
+  Plug,
+  ShieldCheck,
+  SlidersHorizontal,
+  Stethoscope,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
+
+const ICONS: Record<string, LucideIcon> = {
+  bell: Bell,
+  building: Building2,
+  calendar: CalendarDays,
+  card: CreditCard,
+  globe: Globe,
+  history: History,
+  lock: Lock,
+  palette: Palette,
+  plug: Plug,
+  shield: ShieldCheck,
+  sliders: SlidersHorizontal,
+  stethoscope: Stethoscope,
+  users: Users,
+};
 
 export type SettingsCategory = {
   href: string;
   title: string;
   description: string;
-  icon: LucideIcon;
+  icon: keyof typeof ICONS;
   keywords?: string;
 };
 
@@ -36,7 +67,7 @@ export function SettingsCategoryGrid({ categories }: { categories: SettingsCateg
       {filtered.length ? (
         <div className="staff-settings-grid">
           {filtered.map((category) => {
-            const Icon = category.icon;
+            const Icon = ICONS[category.icon] ?? SlidersHorizontal;
             return (
               <Link className="staff-settings-card" href={category.href} key={category.href}>
                 <span className="staff-settings-card__icon"><Icon aria-hidden="true" /></span>
