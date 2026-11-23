@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 
 import { updatePatientProfileAction } from "@/server/actions/patient-profile.actions";
@@ -10,8 +10,11 @@ function Submit() {
   return <button className="btn auth-submit" disabled={pending}>{pending ? "Saving…" : "Save changes"}</button>;
 }
 
-export default function PatientProfileForm({ patient }: { patient: any }) {
+export default function PatientProfileForm({ patient, onSaved }: { patient: any; onSaved?: () => void }) {
   const [state, action] = useActionState(updatePatientProfileAction, null);
+  useEffect(() => {
+    if (state?.success) onSaved?.();
+  }, [state, onSaved]);
   return (
     <form action={action} className="auth-form">
       <div className="form-grid">

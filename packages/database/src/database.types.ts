@@ -1542,11 +1542,13 @@ export type Database = {
       }
       notifications: {
         Row: {
+          channel: string
           created_at: string
           error_message: string | null
           id: string
           message: string
           metadata: Json | null
+          read_at: string | null
           recipient_email: string
           recipient_name: string | null
           sent_at: string | null
@@ -1556,11 +1558,13 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          channel?: string
           created_at?: string
           error_message?: string | null
           id?: string
           message: string
           metadata?: Json | null
+          read_at?: string | null
           recipient_email: string
           recipient_name?: string | null
           sent_at?: string | null
@@ -1570,11 +1574,13 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          channel?: string
           created_at?: string
           error_message?: string | null
           id?: string
           message?: string
           metadata?: Json | null
+          read_at?: string | null
           recipient_email?: string
           recipient_name?: string | null
           sent_at?: string | null
