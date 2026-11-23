@@ -3062,3 +3062,64 @@ html:has(.doctor-setup-page) { scroll-behavior: smooth; }
 .department-contact li { display: flex; justify-content: space-between; gap: .75rem; }
 .department-contact li span:first-child { opacity: .75; }
 .department-contact li span:last-child { font-weight: 600; text-align: right; }
+
+/* ==================== staff portal design refinement ==================== */
+
+/* Page header: compact hierarchy, consistent action alignment */
+.staff-page-heading { align-items: flex-start; }
+.staff-page-heading__actions { align-items: center; padding-top: .15rem; }
+.staff-page-heading__actions .btn { min-height: 2.7rem; white-space: nowrap; }
+.staff-page-heading__context, .staff-count { border-left-color: #0f766e; }
+
+/* Unified filter bars: directory filters get the same card treatment as
+   .staff-filters so every module's filter row reads as one component */
+.staff-directory-filters {
+  border: 1px solid #dce6ee;
+  border-radius: 14px;
+  padding: .8rem .9rem;
+  background: #fff;
+  box-shadow: 0 3px 14px rgba(10, 39, 66, .025);
+}
+.staff-directory-filters .btn { min-height: 2.8rem; white-space: nowrap; }
+.staff-directory-filters input, .staff-directory-filters select { transition: border-color .15s ease, box-shadow .15s ease; }
+.staff-directory-filters input:focus, .staff-directory-filters select:focus { border-color: #0f766e; box-shadow: 0 0 0 3px rgba(15, 118, 110, .12); outline: none; }
+
+/* Panels: one padding scale, calm elevation */
+.staff-panel { padding: clamp(1.1rem, 2.2vw, 1.4rem); }
+.staff-panel-heading { margin-bottom: 1rem; }
+.staff-panel-heading h2 { font-size: 1.08rem; letter-spacing: -.015em; }
+.staff-section-description { font-size: .79rem; }
+
+/* Metric cards: subtle lift on hover, tabular figures for scanability */
+.staff-metric { transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+.staff-metric:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 64, .07); transform: translateY(-1px); }
+.staff-metric strong { font-variant-numeric: tabular-nums; }
+
+/* Tables inside panels: keep header row visually anchored */
+.staff-panel-table-wrap { border: 1px solid #e2ebf1; border-radius: 10px; }
+.staff-panel-table-wrap .staff-table th { background: #f8fafc; }
+.staff-panel-table-wrap .staff-table th:first-child, .staff-panel-table-wrap .staff-table td:first-child { padding-left: 1rem; }
+.staff-panel-table-wrap .staff-table th:last-child, .staff-panel-table-wrap .staff-table td:last-child { padding-right: 1rem; }
+
+/* Empty states: consistent footprint */
+.staff-empty { border-radius: 14px; }
+.staff-empty--compact { min-height: 8rem; }
+
+/* Visible keyboard focus across the staff canvas */
+.staff-page a:focus-visible, .staff-page button:focus-visible, .staff-page input:focus-visible, .staff-page select:focus-visible, .staff-page textarea:focus-visible {
+  outline: 2px solid #0f766e;
+  outline-offset: 2px;
+}
+
+/* Queue stage headers read as section titles, not cards */
+.staff-queue-group__header h2 { font-size: 1rem; letter-spacing: -.01em; }
+
+/* Mobile rhythm */
+@media (max-width: 820px) {
+  .staff-page { padding: 1.1rem .85rem 2rem; }
+  .staff-page-heading { margin-bottom: 1.1rem; padding-bottom: 1rem; }
+  .staff-page-heading__actions { width: 100%; }
+  .staff-page-heading__actions .btn { flex: 1 1 auto; }
+  .staff-panel { padding: 1rem .9rem; }
+  .staff-directory-filters { padding: .7rem .75rem; }
+}
