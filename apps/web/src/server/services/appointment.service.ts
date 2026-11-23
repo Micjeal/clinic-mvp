@@ -21,6 +21,10 @@ import { formatAppointmentDateTime } from "@/features/appointments/utils/staff-a
 
 const DEFAULT_TIME_ZONE = "Africa/Kampala";
 
+function sameInstant(a: string, b: string) {
+  return new Date(a).getTime() === new Date(b).getTime();
+}
+
 async function notifyPatient(input: Omit<NotificationInput, "recipientEmail"> & { recipientEmail?: string | null }) {
   if (!input.recipientEmail) return;
   try {
@@ -107,7 +111,7 @@ export async function assignStaffAppointmentClinician(id: string, clinicianUserI
     if (!date) throw new ValidationError("This appointment time is invalid.");
     const [availability, busy] = await Promise.all([listClinicianAvailability(clinician.membershipId, current.facility.id, date, timeZone), listClinicianBusyIntervals(clinician.userId, date, timeZone)]);
     const slots = generateSlots({ date, timeZone, durationMinutes: Math.max(1, Math.round((new Date(current.scheduledEnd ?? current.scheduledStart).getTime() - new Date(current.scheduledStart).getTime()) / 60000)), intervals: availability.rules, exceptions: availability.exceptions, busy: busy.filter((item) => item.startsAt !== current.scheduledStart), openingHours: current.department.openingHours as unknown as OpeningHours });
-    if (!slots.some((slot) => slot.startsAt === current.scheduledStart)) throw new ValidationError("This clinician is not available for this appointment time.");
+    if (!slots.some((slot) => sameInstant(slot.startsAt, current.scheduledStart))) throw new ValidationError("This clinician is not available for this appointment time.");
   }
   await updateAppointmentClinician(id, staff.membership.organization_id, clinicianUserId);
   if (assignedClinicianName) {
@@ -123,5 +127,5 @@ export async function getAssignableCliniciansForAppointment(id: string) {
   if (!current) throw new NotFoundError("Appointment not found");
   const clinicians = await listAssignableClinicians({ organizationId: staff.membership.organization_id, facilityId: current.facility.id, departmentId: current.department.id, serviceId: current.service?.id });
   const durationMinutes = Math.max(1, Math.round((new Date(current.scheduledEnd ?? current.scheduledStart).getTime() - new Date(current.scheduledStart).getTime()) / 60000));
-  return Promise.all(clinicians.map(async (clinician) => { const timeZone = current.facility.timezone ?? "Africa/Kampala"; const date = instantInTimeZone(current.scheduledStart, timeZone)?.date; if (!date) throw new ValidationError("This appointment time is invalid."); const [availability, busy] = await Promise.all([listClinicianAvailability(clinician.membershipId, current.facility.id, date, timeZone), listClinicianBusyIntervals(clinician.userId, date, timeZone)]); const slots = generateSlots({ date, timeZone, durationMinutes, intervals: availability.rules, exceptions: availability.exceptions, busy: busy.filter((item) => item.startsAt !== current.scheduledStart), openingHours: current.department.openingHours as unknown as OpeningHours }); return { ...clinician, available: slots.some((slot) => slot.startsAt === current.scheduledStart) }; }));
+  return Promise.all(clinicians.map(async (clinician) => { const timeZone = current.facility.timezone ?? "Africa/Kampala"; const date = instantInTimeZone(current.scheduledStart, timeZone)?.date; if (!date) throw new ValidationError("This appointment time is invalid."); const [availability, busy] = await Promise.all([listClinicianAvailability(clinician.membershipId, current.facility.id, date, timeZone), listClinicianBusyIntervals(clinician.userId, date, timeZone)]); const slots = generateSlots({ date, timeZone, durationMinutes, intervals: availability.rules, exceptions: availability.exceptions, busy: busy.filter((item) => item.startsAt !== current.scheduledStart), openingHours: current.department.openingHours as unknown as OpeningHours }); return { ...clinician, available: slots.some((slot) => sameInstant(slot.startsAt, current.scheduledStart)) }; }));
 }

@@ -90,11 +90,12 @@ describe("cancelPatientAppointmentById notifications",()=>{
 
 describe("assignStaffAppointmentClinician notifications",()=>{
   it("notifies the patient when a doctor is assigned",async()=>{
-    vi.mocked(findAppointmentForOrganization).mockResolvedValue(staffAppointment as never);
+    // PostgREST returns timestamptz as "+00:00" while generateSlots emits ".000Z" — same instant, different string.
+    vi.mocked(findAppointmentForOrganization).mockResolvedValue({...staffAppointment,scheduledStart:"2026-12-01T11:00:00+02:00"} as never);
     vi.mocked(listAssignableClinicians).mockResolvedValue([{membershipId:"m1",userId:"doc-1",displayName:"Grace Achieng",professionalTitle:"Dr"}] as never);
     vi.mocked(listClinicianAvailability).mockResolvedValue({rules:[],exceptions:[]} as never);
     vi.mocked(listClinicianBusyIntervals).mockResolvedValue([] as never);
-    vi.mocked(generateSlots).mockReturnValue([{startsAt:staffAppointment.scheduledStart} as never]);
+    vi.mocked(generateSlots).mockReturnValue([{startsAt:"2026-12-01T09:00:00.000Z"} as never]);
     await assignStaffAppointmentClinician("apt-1","doc-1");
     expect(sendMock).toHaveBeenCalledWith(expect.objectContaining({type:"appointment_clinician_assigned",recipientEmail:"ada@example.com"}));
     expect(sendMock.mock.calls[0][0].message).toContain("Dr Grace Achieng");
