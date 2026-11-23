@@ -6,6 +6,7 @@ import { AuthorizationError } from "@/server/errors";
 import { getSettingsContext } from "@/server/services/settings.service";
 import { updateBrandingSettingsAction } from "@/server/actions/settings.actions";
 import { createClient } from "@/lib/supabase/server";
+import { SettingsBackLink } from "@/features/settings/components/settings-back-link";
 
 export const metadata = { title: "Branding · Settings" };
 
@@ -27,6 +28,7 @@ export default async function BrandingSettingsPage() {
 
   return (
     <div className="staff-page">
+      <SettingsBackLink />
       <StaffPageHeader
         eyebrow="Settings"
         title="Branding"

@@ -3511,3 +3511,17 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 .staff-roles-group li svg { width: .85rem; height: .85rem; color: var(--teal-600); flex: none; }
 .staff-roles-group code { font-size: .74rem; color: var(--slate-700); }
 .staff-settings-hint { margin: .25rem 0 0; font-size: .85rem; color: var(--slate-600); }
+
+/* Settings: back link, role permission editor */
+.staff-settings-back { display: inline-flex; align-items: center; gap: .4rem; margin-bottom: .9rem; color: var(--teal-600); font-size: .8rem; font-weight: 700; text-decoration: none; }
+.staff-settings-back:hover { text-decoration: underline; }
+.staff-settings-back svg { width: .95rem; height: .95rem; }
+.staff-role-editor { display: grid; gap: 1rem; margin-top: .5rem; }
+.staff-permission-picker { display: grid; gap: 1rem; }
+.staff-permission-group { border: 1px solid #e2ebf1; border-radius: 12px; padding: .8rem 1rem; margin: 0; }
+.staff-permission-group legend { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; padding: 0 .25rem; font-size: .72rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; color: var(--slate-600); }
+.staff-permission-group__toggle { border: 0; background: none; color: var(--teal-600); font-size: .7rem; font-weight: 700; cursor: pointer; padding: 0; }
+.staff-permission-group__items { display: flex; flex-wrap: wrap; gap: .45rem .9rem; margin-top: .55rem; }
+.staff-permission-item { display: inline-flex; align-items: center; gap: .4rem; font-size: .78rem; color: var(--navy-950); cursor: pointer; }
+.staff-permission-item input { accent-color: var(--teal-600); }
+.staff-permission-item code { font-size: .72rem; color: var(--slate-700); }

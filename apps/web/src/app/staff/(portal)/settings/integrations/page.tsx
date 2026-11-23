@@ -3,6 +3,7 @@ import { StaffAccessDenied } from "@/features/staff/components/access-denied";
 import { StaffPageHeader, StaffSection } from "@/features/staff/components/staff-content";
 import { AuthorizationError } from "@/server/errors";
 import { getSettingsContext } from "@/server/services/settings.service";
+import { SettingsBackLink } from "@/features/settings/components/settings-back-link";
 
 export const metadata = { title: "Integrations · Settings" };
 
@@ -26,6 +27,7 @@ export default async function IntegrationsSettingsPage() {
 
   return (
     <div className="staff-page">
+      <SettingsBackLink />
       <StaffPageHeader
         eyebrow="Settings"
         title="Integrations"

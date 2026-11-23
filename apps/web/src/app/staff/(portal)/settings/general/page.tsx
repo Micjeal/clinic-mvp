@@ -4,6 +4,7 @@ import { SettingsForm } from "@/features/settings/components/settings-form";
 import { AuthorizationError } from "@/server/errors";
 import { getSettingsContext } from "@/server/services/settings.service";
 import { updateGeneralSettingsAction } from "@/server/actions/settings.actions";
+import { SettingsBackLink } from "@/features/settings/components/settings-back-link";
 
 export const metadata = { title: "General preferences · Settings" };
 
@@ -26,6 +27,7 @@ export default async function GeneralSettingsPage() {
 
   return (
     <div className="staff-page">
+      <SettingsBackLink />
       <StaffPageHeader
         eyebrow="Settings"
         title="General preferences"

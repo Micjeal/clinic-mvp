@@ -4,6 +4,7 @@ import { SettingsForm } from "@/features/settings/components/settings-form";
 import { AuthorizationError } from "@/server/errors";
 import { getSettingsContext } from "@/server/services/settings.service";
 import { updateAppointmentSettingsAction } from "@/server/actions/settings.actions";
+import { SettingsBackLink } from "@/features/settings/components/settings-back-link";
 
 export const metadata = { title: "Booking & appointments · Settings" };
 
@@ -19,6 +20,7 @@ export default async function AppointmentSettingsPage() {
 
   return (
     <div className="staff-page">
+      <SettingsBackLink />
       <StaffPageHeader
         eyebrow="Settings"
         title="Booking & appointments"

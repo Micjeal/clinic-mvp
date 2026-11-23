@@ -5,6 +5,7 @@ import { AuthorizationError } from "@/server/errors";
 import { Permissions } from "@/server/permissions/permission.constants";
 import { getSettingsContext } from "@/server/services/settings.service";
 import { updateOrganizationProfileAction } from "@/server/actions/settings.actions";
+import { SettingsBackLink } from "@/features/settings/components/settings-back-link";
 
 export const metadata = { title: "Organization profile · Settings" };
 
@@ -21,6 +22,7 @@ export default async function OrganizationSettingsPage() {
 
   return (
     <div className="staff-page">
+      <SettingsBackLink />
       <StaffPageHeader
         eyebrow="Settings"
         title="Organization profile"

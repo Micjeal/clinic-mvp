@@ -11,6 +11,8 @@ import {
   updateGeneralSettings,
   updateLocalizationSettings,
   updateNotificationSettings,
+  createCustomRole,
+  updateCustomRole,
   updateOrganizationProfile,
 } from "@/server/services/settings.service";
 
@@ -170,6 +172,48 @@ export async function updateLocalizationSettingsAction(_prev: unknown, formData:
   } catch (error) {
     logServerError("settings", "localization-update-failed", error);
     return { error: safeServerMessage(error, "We couldn't save the regional settings.") };
+  }
+}
+
+const roleSchema = z.object({
+  name: z.string().trim().min(2).max(80),
+  description: optionalText(300),
+});
+
+const permissionListSchema = z.array(z.string().trim().min(3).max(80)).max(200);
+
+export async function createRoleAction(_prev: unknown, formData: FormData) {
+  try {
+    const input = roleSchema.parse({ name: formData.get("name"), description: formData.get("description") });
+    const permissionKeys = permissionListSchema.parse(formData.getAll("permissions").map(String));
+    await createCustomRole({ name: input.name, description: input.description || null, permissionKeys });
+    revalidateSettings();
+    revalidatePath("/staff/settings/roles");
+    revalidatePath("/staff/users");
+    return { success: true };
+  } catch (error) {
+    logServerError("settings", "role-create-failed", error);
+    return { error: safeServerMessage(error, "We couldn't create the role.") };
+  }
+}
+
+export async function updateRolePermissionsAction(roleId: string, _prev: unknown, formData: FormData) {
+  try {
+    const name = formData.get("name");
+    const description = formData.get("description");
+    const permissionKeys = permissionListSchema.parse(formData.getAll("permissions").map(String));
+    await updateCustomRole(roleId, {
+      ...(typeof name === "string" && name.trim() ? { name } : {}),
+      ...(typeof description === "string" ? { description } : {}),
+      permissionKeys,
+    });
+    revalidateSettings();
+    revalidatePath("/staff/settings/roles");
+    revalidatePath("/staff/users");
+    return { success: true };
+  } catch (error) {
+    logServerError("settings", "role-update-failed", error);
+    return { error: safeServerMessage(error, "We couldn't update the role.") };
   }
 }
 

@@ -4,6 +4,7 @@ import { SettingsForm } from "@/features/settings/components/settings-form";
 import { AuthorizationError } from "@/server/errors";
 import { getSettingsContext } from "@/server/services/settings.service";
 import { updateNotificationSettingsAction } from "@/server/actions/settings.actions";
+import { SettingsBackLink } from "@/features/settings/components/settings-back-link";
 
 export const metadata = { title: "Notifications · Settings" };
 
@@ -21,6 +22,7 @@ export default async function NotificationSettingsPage() {
 
   return (
     <div className="staff-page">
+      <SettingsBackLink />
       <StaffPageHeader
         eyebrow="Settings"
         title="Notifications"

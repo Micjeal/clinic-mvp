@@ -4,6 +4,7 @@ import { StaffAccessDenied } from "@/features/staff/components/access-denied";
 import { StaffPageHeader, StaffSection } from "@/features/staff/components/staff-content";
 import { AuthorizationError } from "@/server/errors";
 import { getSettingsContext } from "@/server/services/settings.service";
+import { SettingsBackLink } from "@/features/settings/components/settings-back-link";
 
 export const metadata = { title: "Security & access · Settings" };
 
@@ -18,6 +19,7 @@ export default async function SecuritySettingsPage() {
 
   return (
     <div className="staff-page">
+      <SettingsBackLink />
       <StaffPageHeader
         eyebrow="Settings"
         title="Security & access"

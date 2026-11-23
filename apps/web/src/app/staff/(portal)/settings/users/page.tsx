@@ -4,6 +4,7 @@ import { StaffPageHeader, StaffSection } from "@/features/staff/components/staff
 import { AuthorizationError } from "@/server/errors";
 import { Permissions } from "@/server/permissions/permission.constants";
 import { getSettingsContext, listSettingsStaff } from "@/server/services/settings.service";
+import { SettingsBackLink } from "@/features/settings/components/settings-back-link";
 
 export const metadata = { title: "Users & roles · Settings" };
 
@@ -20,6 +21,7 @@ export default async function UsersSettingsPage() {
 
   return (
     <div className="staff-page">
+      <SettingsBackLink />
       <StaffPageHeader
         eyebrow="Settings"
         title="Users & staff accounts"

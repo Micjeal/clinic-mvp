@@ -4,6 +4,7 @@ import { StaffAccessDenied } from "@/features/staff/components/access-denied";
 import { StaffPageHeader, StaffSection } from "@/features/staff/components/staff-content";
 import { AuthorizationError } from "@/server/errors";
 import { getSettingsContext, listSettingsFacilities } from "@/server/services/settings.service";
+import { SettingsBackLink } from "@/features/settings/components/settings-back-link";
 
 export const metadata = { title: "Facilities · Settings" };
 
@@ -19,6 +20,7 @@ export default async function FacilitiesSettingsPage() {
 
   return (
     <div className="staff-page">
+      <SettingsBackLink />
       <StaffPageHeader
         eyebrow="Settings"
         title="Facilities & locations"

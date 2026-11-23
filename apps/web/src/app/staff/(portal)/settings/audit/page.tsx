@@ -2,6 +2,7 @@ import { StaffAccessDenied } from "@/features/staff/components/access-denied";
 import { StaffPageHeader, StaffSection } from "@/features/staff/components/staff-content";
 import { AuthorizationError } from "@/server/errors";
 import { getAuditContext } from "@/server/services/settings.service";
+import { SettingsBackLink } from "@/features/settings/components/settings-back-link";
 
 export const metadata = { title: "Audit log · Settings" };
 
@@ -35,6 +36,7 @@ export default async function AuditSettingsPage() {
 
   return (
     <div className="staff-page">
+      <SettingsBackLink />
       <StaffPageHeader
         eyebrow="Settings"
         title="Audit log"

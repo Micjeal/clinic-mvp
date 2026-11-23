@@ -1,13 +1,15 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { Json, Tables, TablesUpdate } from "@clinic/database";
+import type { Json, Tables, TablesInsert, TablesUpdate } from "@clinic/database";
 
 export type OrganizationSettings = Tables<"organization_settings">;
 export type OrganizationSettingsPatch = TablesUpdate<"organization_settings">;
 export type OrganizationProfile = Tables<"organizations">;
 export type OrganizationProfilePatch = TablesUpdate<"organizations">;
 export type AuditLogRow = Tables<"audit_logs">;
+export type RoleRow = Tables<"roles">;
+export type PermissionRow = Pick<Tables<"permissions">, "permission_key" | "description">;
 
 /** Pre-migration deployments must keep working on defaults until the table exists. */
 function isMissingSettingsTable(error: { code?: string } | null) {
@@ -161,4 +163,66 @@ export async function insertAuditLog(input: {
     after_data: input.after == null ? null : (input.after as unknown as Json),
   });
   if (error) throw error;
+}
+
+export async function listAllPermissions() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("permissions").select("permission_key,description").order("permission_key");
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function findRoleForOrganization(roleId: string, organizationId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("roles")
+    .select("id,organization_id,role_key,name,description,is_system")
+    .eq("id", roleId)
+    .eq("organization_id", organizationId)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+export async function createOrgRole(input: { organizationId: string; roleKey: string; name: string; description: string | null }) {
+  const supabase = await createClient();
+  const row: TablesInsert<"roles"> = {
+    organization_id: input.organizationId,
+    role_key: input.roleKey,
+    name: input.name,
+    description: input.description,
+    is_system: false,
+  };
+  const { data, error } = await supabase.from("roles").insert(row).select("id,organization_id,role_key,name,description,is_system").single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateOrgRole(roleId: string, patch: { name?: string; description?: string | null }) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("roles")
+    .update(patch)
+    .eq("id", roleId)
+    .select("id,organization_id,role_key,name,description,is_system")
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function listRolePermissionKeys(roleId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("role_permissions").select("permission_key").eq("role_id", roleId);
+  if (error) throw error;
+  return (data ?? []).map((row) => row.permission_key);
+}
+
+export async function replaceRolePermissions(roleId: string, permissionKeys: string[]) {
+  const supabase = await createClient();
+  const { error: deleteError } = await supabase.from("role_permissions").delete().eq("role_id", roleId);
+  if (deleteError) throw deleteError;
+  if (!permissionKeys.length) return;
+  const rows = permissionKeys.map((permission_key) => ({ role_id: roleId, permission_key }));
+  const { error: insertError } = await supabase.from("role_permissions").insert(rows);
+  if (insertError) throw insertError;
 }

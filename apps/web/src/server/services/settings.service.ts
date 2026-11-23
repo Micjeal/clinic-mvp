@@ -232,7 +232,7 @@ export async function listSettingsRoles() {
   const staff = await requirePermission(Permissions.SETTINGS_MANAGE);
   const supabase = await createClient();
   const [rolesResult, grantsResult, permissionsResult] = await Promise.all([
-    supabase.from("roles").select("id,name,role_key,is_system,organization_id").or(`organization_id.eq.${staff.membership.organization_id},organization_id.is.null`).order("name"),
+    supabase.from("roles").select("id,name,role_key,description,is_system,organization_id").or(`organization_id.eq.${staff.membership.organization_id},organization_id.is.null`).order("name"),
     supabase.from("role_permissions").select("role_id,permission_key"),
     supabase.from("permissions").select("permission_key,description"),
   ]);
@@ -262,6 +262,66 @@ export async function updateLocalizationSettings(patch: { timezone: string; curr
     { timezone: before.timezone, currency_code: before.currency_code },
     { timezone: after.timezone, currency_code: after.currency_code });
   return after;
+}
+
+
+export async function listSettingsPermissions() {
+  await requirePermission(Permissions.SETTINGS_MANAGE);
+  return repo.listAllPermissions();
+}
+
+function roleKeyFromName(name: string) {
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 40) || "role";
+  return `custom_${slug}_${crypto.randomUUID().slice(0, 8)}`;
+}
+
+async function requireOrgRole(roleId: string, organizationId: string) {
+  const role = await repo.findRoleForOrganization(roleId, organizationId);
+  if (!role || role.is_system) throw new NotFoundError("Role not found");
+  return role;
+}
+
+export async function createCustomRole(input: { name: string; description?: string | null; permissionKeys: string[] }) {
+  const staff = await requirePermission(Permissions.SETTINGS_MANAGE);
+  const orgId = staff.membership.organization_id;
+  const name = input.name.trim();
+  if (name.length < 2 || name.length > 80) throw new ValidationError("Role name must be between 2 and 80 characters.");
+  const validKeys = new Set((await repo.listAllPermissions()).map((row) => row.permission_key));
+  const permissionKeys = [...new Set(input.permissionKeys)].filter((key) => validKeys.has(key));
+  const role = await repo.createOrgRole({
+    organizationId: orgId,
+    roleKey: roleKeyFromName(name),
+    name,
+    description: input.description?.trim() || null,
+  });
+  await repo.replaceRolePermissions(role.id, permissionKeys);
+  await audit(staff, "settings.roles.create", "role", role.id, null, { name, role_key: role.role_key, permissions: permissionKeys });
+  return role;
+}
+
+export async function updateCustomRole(roleId: string, input: { name?: string; description?: string | null; permissionKeys?: string[] }) {
+  const staff = await requirePermission(Permissions.SETTINGS_MANAGE);
+  const orgId = staff.membership.organization_id;
+  const role = await requireOrgRole(roleId, orgId);
+  const patch: { name?: string; description?: string | null } = {};
+  if (input.name !== undefined) {
+    const name = input.name.trim();
+    if (name.length < 2 || name.length > 80) throw new ValidationError("Role name must be between 2 and 80 characters.");
+    patch.name = name;
+  }
+  if (input.description !== undefined) patch.description = input.description?.trim() || null;
+  const beforePermissions = await repo.listRolePermissionKeys(roleId);
+  let afterPermissions = beforePermissions;
+  if (input.permissionKeys !== undefined) {
+    const validKeys = new Set((await repo.listAllPermissions()).map((row) => row.permission_key));
+    afterPermissions = [...new Set(input.permissionKeys)].filter((key) => validKeys.has(key)).sort();
+    await repo.replaceRolePermissions(roleId, afterPermissions);
+  }
+  const updated = Object.keys(patch).length ? await repo.updateOrgRole(roleId, patch) : role;
+  await audit(staff, "settings.roles.update", "role", roleId,
+    { name: role.name, description: role.description, permissions: beforePermissions },
+    { name: updated.name, description: updated.description, permissions: afterPermissions });
+  return updated;
 }
 
 export const getPublicOrganizationProfile = cache(fetchPublicOrganizationProfile);
