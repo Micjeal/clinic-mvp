@@ -47,7 +47,7 @@ export default async function ServicesPage({searchParams}: {searchParams: Promis
     </form>
     {result.items.length ? <div className="staff-panel"><div className="staff-panel-table-wrap"><table className="staff-table">
       <caption className="sr-only">Services</caption>
-      <thead><tr><th>Service</th><th>Type</th><th>Department</th><th>Price</th><th>Duration</th><th>Status</th><th><span className="sr-only">Actions</span></th></tr></thead>
+      <thead><tr><th>Service</th><th>Type</th><th>Department</th><th>Price</th><th>Duration</th><th className="staff-col-status">Status</th><th><span className="sr-only">Actions</span></th></tr></thead>
       <tbody>{result.items.map((service) => <tr key={service.id}>
         <td><strong>{service.name}</strong><small className="staff-row-substatus">{service.code}</small></td>
         <td>{service.service_type}</td>

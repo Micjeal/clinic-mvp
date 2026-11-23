@@ -46,7 +46,7 @@ export default async function DepartmentsPage({searchParams}: {searchParams: Pro
     </form>
     {result.items.length ? <div className="staff-panel"><div className="staff-panel-table-wrap"><table className="staff-table">
       <caption className="sr-only">Departments</caption>
-      <thead><tr><th>Department</th><th>Facility</th><th>Order</th><th>Status</th><th><span className="sr-only">Action</span></th></tr></thead>
+      <thead><tr><th>Department</th><th>Facility</th><th>Order</th><th className="staff-col-status">Status</th><th><span className="sr-only">Action</span></th></tr></thead>
       <tbody>{result.items.map((department) => <tr key={department.id}>
         <td><strong>{department.name}</strong><small className="staff-row-substatus">{department.code}</small></td>
         <td>{department.facility_name ?? "—"}</td>

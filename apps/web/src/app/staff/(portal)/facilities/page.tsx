@@ -51,7 +51,7 @@ export default async function FacilitiesPage({searchParams}: {searchParams: Prom
     </form>
     {items.length ? <div className="staff-panel"><div className="staff-panel-table-wrap"><table className="staff-table">
       <caption className="sr-only">Facilities</caption>
-      <thead><tr><th>Facility</th><th>Type</th><th>Location</th><th>Departments</th><th>Status</th><th><span className="sr-only">Actions</span></th></tr></thead>
+      <thead><tr><th>Facility</th><th>Type</th><th>Location</th><th>Departments</th><th className="staff-col-status">Status</th><th><span className="sr-only">Actions</span></th></tr></thead>
       <tbody>{items.map((facility) => <tr key={facility.id}>
         <td><strong>{facility.name}</strong><small className="staff-row-substatus">{facility.code}</small></td>
         <td>{facility.facility_type}</td>
