@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { getTriageQueue } from "@/server/services/reception.service";
 import { StaffPageHeader } from "@/features/staff/components/staff-content";
+import { StaffAccessDenied } from "@/features/staff/components/access-denied";
+import { AuthorizationError } from "@/server/errors";
 
 export const metadata = { title: "Triage" };
 
 export default async function TriagePage() {
-  const entries = await getTriageQueue();
+  let entries;
+  try { entries = await getTriageQueue(); }
+  catch (error) { if (error instanceof AuthorizationError) return <StaffAccessDenied />; throw error; }
   return <div className="staff-page">
     <StaffPageHeader eyebrow="Clinical intake" title="Triage" description="Assess patients before clinician review." />
     {entries.length ? <div className="staff-triage-list">{entries.map((entry) => { const patient = entry.encounters?.patients; return <article className="staff-triage-card" key={entry.id}>

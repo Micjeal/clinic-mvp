@@ -4,12 +4,16 @@ import { getTriageQueueEntry } from "@/server/services/reception.service";
 import { recordTriageAction } from "@/server/actions/reception.actions";
 import { StartTriageButton } from "@/features/staff/components/triage-actions";
 import { StaffPageHeader } from "@/features/staff/components/staff-content";
+import { StaffAccessDenied } from "@/features/staff/components/access-denied";
+import { AuthorizationError } from "@/server/errors";
 
 export const metadata = { title: "Triage detail" };
 
 export default async function TriageDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const entry = await getTriageQueueEntry(id);
+  let entry;
+  try { entry = await getTriageQueueEntry(id); }
+  catch (error) { if (error instanceof AuthorizationError) return <StaffAccessDenied />; throw error; }
   if (!entry?.encounters?.patients) notFound();
   const patient = entry.encounters.patients;
   const currentStage = entry.status === "waiting_triage" ? "Waiting for triage" : "In triage";
