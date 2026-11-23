@@ -3267,13 +3267,19 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 }
 
 /* Dense dashboard tables: cells wrap to their content instead of
-   clipping — the status column keeps enough room for the widest pill */
-.staff-dashboard-table .staff-table { min-width: 40rem; }
+   clipping — tighter padding, status column keeps room for pills */
+.staff-dashboard-table .staff-table { min-width: 34rem; }
+.staff-dashboard-table .staff-table th,
+.staff-dashboard-table .staff-table td { padding: .65rem .7rem; }
+.staff-dashboard-table .staff-table th:first-child,
+.staff-dashboard-table .staff-table td:first-child { padding-left: .9rem; }
+.staff-dashboard-table .staff-table th:last-child,
+.staff-dashboard-table .staff-table td:last-child { padding-right: .9rem; }
 .staff-dashboard-table .staff-table td { white-space: normal; }
 .staff-dashboard-table .staff-table td > strong,
 .staff-dashboard-table .staff-table td > span:not(.status) { white-space: normal; }
-.staff-dashboard-table .staff-table td:has(> .status) { min-width: 7rem; }
-.staff-dashboard-table .status { flex: none; }
+.staff-dashboard-table .staff-table td:has(> .status) { min-width: 6.5rem; }
+.staff-dashboard-table .status { flex: none; padding-left: .7rem; padding-right: .7rem; }
 
 /* Sticky table headers inside scrollable wraps */
 .staff-panel-table-wrap, .staff-directory-table-wrap {
@@ -3344,3 +3350,6 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 
 /* Brand block: slightly more presence */
 .staff-brand-row { padding-bottom: .15rem; }
+
+/* Recent appointments sits full-width below the ops grid */
+.staff-dash-grid + .staff-dash-panel { margin-top: 1.25rem; }

@@ -39,13 +39,12 @@ export function TodaySchedule({ items, timeZone }: { items: StaffAppointment[]; 
     </div>
     {items.length ? <>
       <div className="staff-dashboard-table"><table className="staff-table">
-        <thead><tr><th scope="col">Time</th><th scope="col">Patient</th><th scope="col">Department</th><th scope="col">Clinician</th><th scope="col">Service</th><th scope="col">Status</th><th scope="col"><span className="sr-only">Action</span></th></tr></thead>
+        <thead><tr><th scope="col">Time</th><th scope="col">Patient</th><th scope="col">Department</th><th scope="col">Clinician</th><th scope="col">Status</th><th scope="col"><span className="sr-only">Action</span></th></tr></thead>
         <tbody>{items.map((item) => <tr key={item.id}>
           <td><strong>{formatAppointmentTime(item.scheduledStart, timeZone)}</strong></td>
           <td><div className="staff-cell-stack"><strong>{item.patient.name}</strong><small>{item.patient.number}</small></div></td>
-          <td>{item.department.name}</td>
+          <td><div className="staff-cell-stack"><strong>{item.department.name}</strong><small>{item.service?.name ?? "General consultation"}</small></div></td>
           <td>{item.clinician?.name ?? "Unassigned"}</td>
-          <td>{item.service?.name ?? "General consultation"}</td>
           <td><StatusChip status={item.status} /></td>
           <td><Link className="staff-table-action" href={`/staff/appointments/${item.id}`}>View</Link></td>
         </tr>)}</tbody>

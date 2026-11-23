@@ -52,13 +52,14 @@ export default async function StaffDashboardPage() {
     <div className="staff-dash-grid">
       <div className="staff-dash-main">
         <TodaySchedule items={dashboard.today} timeZone={context.timezone} />
-        <RecentAppointments items={dashboard.recent.slice(0, 8)} timeZone={context.timezone} />
       </div>
       <aside className="staff-dash-side">
         <AttentionPanel items={dashboard.attention} timeZone={context.timezone} />
         {permissions.includes("queue.read") ? <QueueSnapshot entries={queueResult as QueueSnapshotEntry[]} now={now.getTime()} /> : null}
       </aside>
     </div>
+
+    <RecentAppointments items={dashboard.recent.slice(0, 8)} timeZone={context.timezone} />
 
     <StaffQuickActions actions={quickActions} />
   </div>;
