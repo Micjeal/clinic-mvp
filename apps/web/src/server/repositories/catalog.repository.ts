@@ -107,6 +107,16 @@ export async function listDepartmentsForOrganization(organizationId: string, fil
   return { items: ((data ?? []) as unknown as Record<string, unknown>[]).map(mapDepartment), total: count ?? 0, page, pageSize };
 }
 
+export async function countDepartmentsSummary(organizationId: string) {
+  const supabase = await createClient();
+  const base = () => supabase.from("departments").select("id", { count: "exact", head: true }).eq("organization_id", organizationId);
+  const [total, active, visible] = await Promise.all([
+    base(), base().eq("is_active", true), base().eq("is_active", true).eq("is_public", true),
+  ]);
+  for (const result of [total, active, visible]) if (result.error) throw result.error;
+  return { total: total.count ?? 0, active: active.count ?? 0, public: visible.count ?? 0 };
+}
+
 export async function findDepartmentForOrganization(id: string, organizationId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase.from("departments").select(DEPARTMENT_SELECT).eq("id", id).eq("organization_id", organizationId).maybeSingle();
@@ -243,6 +253,16 @@ export async function listServicesForOrganization(organizationId: string, filter
   const { data, error, count } = await query.order("name").range((page - 1) * pageSize, page * pageSize - 1);
   if (error) throw error;
   return { items: ((data ?? []) as unknown as Record<string, unknown>[]).map(mapService), total: count ?? 0, page, pageSize };
+}
+
+export async function countServicesSummary(organizationId: string) {
+  const supabase = await createClient();
+  const base = () => supabase.from("services").select("id", { count: "exact", head: true }).eq("organization_id", organizationId);
+  const [total, active, bookable] = await Promise.all([
+    base(), base().eq("is_active", true), base().eq("is_active", true).eq("is_public", true).not("duration_minutes", "is", null),
+  ]);
+  for (const result of [total, active, bookable]) if (result.error) throw result.error;
+  return { total: total.count ?? 0, active: active.count ?? 0, bookable: bookable.count ?? 0 };
 }
 
 export async function findServiceForOrganization(id: string, organizationId: string) {

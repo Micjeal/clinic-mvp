@@ -14,6 +14,7 @@ import {
   Menu,
   PanelLeftClose,
   PanelLeftOpen,
+  Settings,
   Stethoscope,
   X,
 } from "lucide-react";
@@ -22,18 +23,35 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { staffSignOutAction } from "@/server/actions/staff-auth.actions";
 
-type Context = { name: string; role: string; organization: string; permissions?: string[] };
+type Context = { name: string; role: string; organization: string; permissions?: string[]; brandColor?: string; dateFormat?: string; timeFormat?: string; locale?: string; timezone?: string };
+
+function formatTopbarDate(date: Date, dateFormat: string, timeFormat: string, locale: string, timeZone: string) {
+  const parts = new Intl.DateTimeFormat(locale, {
+    timeZone,
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", hour12: timeFormat === "12h",
+  }).formatToParts(date);
+  const get = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
+  const dayText = new Intl.DateTimeFormat(locale, { month: "short", timeZone }).format(date);
+  const dateText = dateFormat === "yyyy-mm-dd" ? `${get("year")}-${get("month")}-${get("day")}`
+    : dateFormat === "dd/mm/yyyy" ? `${get("day")}/${get("month")}/${get("year")}`
+    : dateFormat === "mm/dd/yyyy" ? `${get("month")}/${get("day")}/${get("year")}`
+    : `${Number(get("day"))} ${dayText} ${get("year")}`;
+  const meridiem = timeFormat === "12h" ? ` ${get("dayPeriod")}` : "";
+  return `${dateText} · ${get("hour")}:${get("minute")}${meridiem}`;
+}
 
 const navigation = [
   { href: "/staff", label: "Dashboard", icon: LayoutDashboard, group: "Overview" },
-  { href: "/staff/reception", label: "Reception", icon: ClipboardCheck, permission: "reception.checkin", group: "Front office" },
-  { href: "/staff/queue", label: "Queue", icon: ClipboardList, permission: "queue.read", group: "Front office" },
-  { href: "/staff/triage", label: "Triage", icon: Stethoscope, permission: "triage.write", group: "Front office" },
-  { href: "/staff/appointments", label: "Appointments", icon: CalendarDays, group: "Care" },
+  { href: "/staff/reception", label: "Reception", icon: ClipboardCheck, permission: "reception.checkin", group: "Daily operations" },
+  { href: "/staff/queue", label: "Queue", icon: ClipboardList, permission: "queue.read", group: "Daily operations" },
+  { href: "/staff/triage", label: "Triage", icon: Stethoscope, permission: "triage.write", group: "Daily operations" },
+  { href: "/staff/appointments", label: "Appointments", icon: CalendarDays, group: "Daily operations" },
   { href: "/staff/users", label: "Staff", icon: Building2, permission: "staff.manage", group: "Administration" },
   { href: "/staff/facilities", label: "Facilities", icon: Hospital, permission: "facility.manage", group: "Administration" },
   { href: "/staff/departments", label: "Departments", icon: Building, permission: "department.manage", group: "Administration" },
   { href: "/staff/services", label: "Services", icon: BriefcaseMedical, permission: "service.manage", group: "Administration" },
+  { href: "/staff/settings", label: "Settings", icon: Settings, permission: "settings.manage", group: "Administration" },
 ];
 
 function initialsFromName(name: string) {
@@ -204,7 +222,10 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
                   : "Dashboard";
 
   return (
-    <div className={`staff-surface staff-shell${collapsed ? " is-collapsed" : ""}`}>
+    <div
+      className={`staff-surface staff-shell${collapsed ? " is-collapsed" : ""}`}
+      style={context.brandColor ? ({ "--brand-accent": context.brandColor } as React.CSSProperties) : undefined}
+    >
       <aside className="staff-sidebar">
         <div className="staff-brand-row">
           <Link aria-label={`${context.organization} staff dashboard`} className="staff-brand" href="/staff">
@@ -229,21 +250,21 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
         </div>
         <div className="staff-sidebar-scroll">
           <Navigation permissions={context.permissions} />
-          <div className="staff-sidebar-bottom">
-            <AccountSection context={context} />
-            <p className="staff-nav-label staff-nav-divider">Hospital website</p>
-            <div className="staff-sidebar__footer">
-              <Link href="/">
-                <Globe2 aria-hidden="true" />
-                <span>Return to website</span>
-              </Link>
-              <SignOut />
-            </div>
+        </div>
+        <div className="staff-sidebar-bottom">
+          <AccountSection context={context} />
+          <p className="staff-nav-label staff-nav-divider">Hospital website</p>
+          <div className="staff-sidebar__footer">
+            <Link href="/">
+              <Globe2 aria-hidden="true" />
+              <span>Return to website</span>
+            </Link>
+            <SignOut />
           </div>
         </div>
       </aside>
       <div className="staff-workspace">
-        <header className="staff-topbar">
+        <header className="staff-topbar" style={{ backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}>
           <button
             aria-controls="staff-mobile-drawer"
             aria-expanded={open}
@@ -260,7 +281,7 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
             <strong>{pageName}</strong>
           </div>
           <div className="staff-topbar__context" ref={accountRef}>
-            <span className="staff-date" suppressHydrationWarning>{new Intl.DateTimeFormat("en-UG", { dateStyle: "medium" }).format(new Date())}</span>
+            <span className="staff-date" suppressHydrationWarning><CalendarDays aria-hidden="true" />{formatTopbarDate(new Date(), context.dateFormat ?? "d mmm yyyy", context.timeFormat ?? "24h", context.locale ?? "en-UG", context.timezone ?? "Africa/Kampala")}</span>
             <button
               aria-expanded={accountOpen}
               className="staff-account-trigger"
@@ -316,16 +337,16 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
           </div>
           <div className="staff-sidebar-scroll">
             <Navigation close={closeDrawer} permissions={context.permissions} />
-            <div className="staff-sidebar-bottom">
-              <AccountSection context={context} />
-              <p className="staff-nav-label staff-nav-divider">Hospital website</p>
-              <div className="staff-sidebar__footer">
-                <Link href="/" onClick={closeDrawer}>
-                  <Globe2 aria-hidden="true" />
-                  <span>Return to website</span>
-                </Link>
-                <SignOut />
-              </div>
+          </div>
+          <div className="staff-sidebar-bottom">
+            <AccountSection context={context} />
+            <p className="staff-nav-label staff-nav-divider">Hospital website</p>
+            <div className="staff-sidebar__footer">
+              <Link href="/" onClick={closeDrawer}>
+                <Globe2 aria-hidden="true" />
+                <span>Return to website</span>
+              </Link>
+              <SignOut />
             </div>
           </div>
         </aside>

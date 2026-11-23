@@ -1,19 +1,19 @@
 import Link from "next/link";
 import {Plus} from "lucide-react";
-import {listDepartments, listServices} from "@/server/services/catalog.service";
+import {getServiceStats, listDepartments, listServices} from "@/server/services/catalog.service";
 import {StaffPageHeader} from "@/features/staff/components/staff-content";
 import {StaffAccessDenied} from "@/features/staff/components/access-denied";
 import {AuthorizationError} from "@/server/errors";
-import {StatusBadge, CatalogPagination, CatalogEmpty} from "@/features/catalog/catalog-ui";
+import {StatusBadge, CatalogPagination, CatalogEmpty, CatalogStats} from "@/features/catalog/catalog-ui";
 import {ActiveToggle} from "@/features/catalog/catalog-forms";
 
 export const metadata = {title: "Services"};
 
 export default async function ServicesPage({searchParams}: {searchParams: Promise<{search?: string; department?: string; status?: string; page?: string}>}) {
   const params = await searchParams;
-  let result, departments;
+  let result, departments, stats;
   try {
-    [result, departments] = await Promise.all([
+    [result, departments, stats] = await Promise.all([
       listServices({
         departmentId: params.department || undefined,
         status: params.status === "active" || params.status === "inactive" ? params.status : "all",
@@ -22,6 +22,7 @@ export default async function ServicesPage({searchParams}: {searchParams: Promis
         pageSize: 25,
       }),
       listDepartments({status: "all", pageSize: 200}),
+      getServiceStats(),
     ]);
   } catch (error) { if (error instanceof AuthorizationError) return <StaffAccessDenied />; throw error; }
 
@@ -32,6 +33,12 @@ export default async function ServicesPage({searchParams}: {searchParams: Promis
       description="Manage the clinical and administrative services patients can book."
       actions={<Link className="btn" href="/staff/services/new"><Plus aria-hidden="true" />Add service</Link>}
     />
+    <CatalogStats items={[
+      {label: "Total services", value: stats.total},
+      {label: "Active", value: stats.active},
+      {label: "Online-bookable", value: stats.bookable, hint: "public, active and timed"},
+      {label: "Departments", value: departments.total},
+    ]} />
     <form className="staff-directory-filters" method="get">
       <label className="staff-directory-search"><span className="sr-only">Search services</span><input name="search" placeholder="Search name or code" type="search" defaultValue={params.search ?? ""} /></label>
       <label><span className="sr-only">Department</span><select name="department" defaultValue={params.department ?? ""}><option value="">All departments</option><option value="none">Organization-wide</option>{departments.items.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}</select></label>
@@ -40,7 +47,7 @@ export default async function ServicesPage({searchParams}: {searchParams: Promis
     </form>
     {result.items.length ? <div className="staff-panel"><div className="staff-panel-table-wrap"><table className="staff-table">
       <caption className="sr-only">Services</caption>
-      <thead><tr><th>Service</th><th>Type</th><th>Department</th><th>Price</th><th>Duration</th><th>Status</th><th><span className="sr-only">Actions</span></th></tr></thead>
+      <thead><tr><th>Service</th><th>Type</th><th>Department</th><th>Price</th><th>Duration</th><th className="staff-col-status">Status</th><th><span className="sr-only">Actions</span></th></tr></thead>
       <tbody>{result.items.map((service) => <tr key={service.id}>
         <td><strong>{service.name}</strong><small className="staff-row-substatus">{service.code}</small></td>
         <td>{service.service_type}</td>

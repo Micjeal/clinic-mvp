@@ -17,6 +17,6 @@ export default async function NewServicePage({searchParams}: {searchParams: Prom
   const preselected = params.department && departmentOptions.some((department) => department.id === params.department) ? params.department : undefined;
   return <div className="staff-page">
     <StaffPageHeader eyebrow="Administration" title="Add service" description="Create a bookable service with pricing, duration and visibility." />
-    <ServiceForm defaultDepartmentId={preselected} departments={departmentOptions} facilities={facilityOptions} />
+    <div className="staff-form-page"><ServiceForm defaultDepartmentId={preselected} departments={departmentOptions} facilities={facilityOptions} /></div>
   </div>;
 }

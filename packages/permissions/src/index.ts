@@ -16,6 +16,9 @@ export const Permissions = {
   FACILITY_MANAGE: "facility.manage",
   DEPARTMENT_MANAGE: "department.manage",
   SERVICE_MANAGE: "service.manage",
+  SETTINGS_MANAGE: "settings.manage",
+  ORGANIZATION_MANAGE: "organization.manage",
+  AUDIT_READ: "audit.read",
 } as const;
 
 export type Permission = (typeof Permissions)[keyof typeof Permissions];

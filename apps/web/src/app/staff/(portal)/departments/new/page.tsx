@@ -13,6 +13,6 @@ export default async function NewDepartmentPage() {
   const active = facilities.filter((facility) => facility.is_active).map((facility) => ({id: facility.id, name: facility.name}));
   return <div className="staff-page">
     <StaffPageHeader eyebrow="Administration" title="Add department" description="Create a clinical department under one of your facilities." />
-    {active.length ? <DepartmentForm facilities={active} /> : <div className="staff-empty staff-directory-empty"><h2>No active facilities</h2><p>Create and activate a facility before adding departments.</p></div>}
+    {active.length ? <div className="staff-form-page"><DepartmentForm facilities={active} /></div> : <div className="staff-empty staff-directory-empty"><h2>No active facilities</h2><p>Create and activate a facility before adding departments.</p></div>}
   </div>;
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Search, UserRound, UserPlus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { staffMembershipPath } from "@/features/staff/utils/staff-route";
+import { CatalogStats } from "@/features/catalog/catalog-ui";
 
 type DirectoryMember = {
   id: string;
@@ -28,6 +29,11 @@ export function StaffDirectory({ members, doctorById }: { members: DirectoryMemb
   const [showFilters, setShowFilters] = useState(false);
 
   const roles = useMemo(() => [...new Set(members.map((member) => member.role_name))].sort(), [members]);
+  const stats = useMemo(() => ({
+    total: members.length,
+    active: members.filter((member) => member.is_active).length,
+    doctors: members.filter((member) => member.role_key === "doctor").length,
+  }), [members]);
   const facilities = useMemo(() => [...new Set(members.map((member) => member.facility_name).filter(Boolean) as string[])].sort(), [members]);
   const filtered = useMemo(() => {
     const query = search.trim().toLocaleLowerCase();
@@ -53,6 +59,12 @@ export function StaffDirectory({ members, doctorById }: { members: DirectoryMemb
       <button aria-expanded={showFilters} className="staff-directory-filter-toggle" onClick={() => setShowFilters((value) => !value)} type="button">{showFilters ? "Hide filters" : "Filters"}</button>
       {(search || role !== "all" || status !== "all" || facility !== "all") ? <button className="staff-directory-clear" onClick={clearFilters} type="button">Clear</button> : null}
     </section>
+    <CatalogStats items={[
+      { label: "Total staff", value: stats.total },
+      { label: "Active", value: stats.active },
+      { label: "Clinicians", value: stats.doctors },
+      { label: "Shown", value: filtered.length, hint: "after filters" },
+    ]} />
     {filtered.length ? <>
       <div className="staff-directory-table-wrap"><table className="staff-table staff-directory-table"><caption className="sr-only">Staff directory</caption><thead><tr><th>Staff member</th><th>Role</th><th>Assignment</th><th>Status</th><th><span className="sr-only">Action</span></th></tr></thead><tbody>{filtered.map((member) => <StaffRow key={member.id} doctorProfile={doctorById[member.id]} initials={initials(member.full_name)} member={member} />)}</tbody></table></div>
       <div className="staff-directory-mobile" aria-label="Staff directory cards">{filtered.map((member) => <StaffMobileCard key={member.id} doctorProfile={doctorById[member.id]} initials={initials(member.full_name)} member={member} />)}</div>

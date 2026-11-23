@@ -25,3 +25,21 @@ export function buildStaffDashboard(appointments:StaffAppointment[],input:{now?:
     recent:[...appointments].sort((a,b)=>new Date(b.createdAt).getTime()-new Date(a.createdAt).getTime()).slice(0,6),
   };
 }
+
+const activeQueueStatuses=new Set(["waiting_triage","in_triage","waiting_clinician","with_clinician"]);
+const waitingQueueStatuses=new Set(["waiting_triage","waiting_clinician"]);
+
+export type OpsQueueEntry={status:string;checked_in_at:string};
+
+export function buildOpsMetrics(appointments:StaffAppointment[],queue:OpsQueueEntry[],input:{now?:Date;timeZone:string}){
+  const now=input.now??new Date(),today=localDateKey(now.toISOString(),input.timeZone);
+  const isToday=(value:string)=>localDateKey(value,input.timeZone)===today;
+  const activeWaits=queue.filter(entry=>activeQueueStatuses.has(entry.status)).map(entry=>Math.max(0,(now.getTime()-new Date(entry.checked_in_at).getTime())/60000));
+  return {
+    totalAppointments:appointments.length,
+    todayAppointments:appointments.filter(item=>isToday(item.scheduledStart)).length,
+    patientsWaiting:queue.filter(entry=>waitingQueueStatuses.has(entry.status)).length,
+    completedToday:appointments.filter(item=>item.status==="completed"&&isToday(item.updatedAt)).length,
+    avgWaitMinutes:activeWaits.length?Math.round(activeWaits.reduce((sum,value)=>sum+value,0)/activeWaits.length):null,
+  };
+}
