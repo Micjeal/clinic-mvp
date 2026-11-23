@@ -32,7 +32,7 @@ import {generateSlots} from "@/server/services/scheduling.service";
 const sendMock=vi.mocked(sendNotification);
 const staffAppointment={
   id:"apt-1",status:"scheduled",scheduledStart:"2026-12-01T09:00:00.000Z",scheduledEnd:"2026-12-01T09:30:00.000Z",
-  patient:{name:"Ada Lovelace",number:"PT-1",phone:null,email:"ada@example.com"},
+  patient:{id:"pat-1",name:"Ada Lovelace",number:"PT-1",phone:null,email:"ada@example.com"},
   facility:{id:"fac-1",name:"Main Facility",timezone:"Africa/Kampala"},
   department:{id:"dep-1",name:"General Medicine"},
   service:{id:"svc-1",name:"Consultation"},
@@ -69,10 +69,10 @@ describe("updateStaffAppointmentStatus notifications",()=>{
     expect(updateAppointmentStatus).toHaveBeenCalled();
   });
 
-  it("skips notification when the patient has no email",async()=>{
+  it("still notifies by patient id when the patient has no email",async()=>{
     vi.mocked(findAppointmentForOrganization).mockResolvedValue({...staffAppointment,patient:{...staffAppointment.patient,email:null}} as never);
     await updateStaffAppointmentStatus("apt-1","confirmed");
-    expect(sendMock).not.toHaveBeenCalled();
+    expect(sendMock).toHaveBeenCalledWith(expect.objectContaining({type:"appointment_status_changed",recipientPatientId:"pat-1",recipientEmail:null}));
   });
 });
 

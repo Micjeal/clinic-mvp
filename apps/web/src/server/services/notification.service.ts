@@ -7,7 +7,8 @@ export type NotificationChannel = "in_app" | "email";
 
 export type NotificationInput = {
   type: NotificationType;
-  recipientEmail: string;
+  recipientPatientId?: string | null;
+  recipientEmail?: string | null;
   recipientName?: string;
   subject: string;
   message: string;
@@ -30,7 +31,8 @@ export async function sendNotification(input: NotificationInput) {
   const now = new Date().toISOString();
   const { error } = await supabase.from("notifications").insert({
     type: input.type,
-    recipient_email: input.recipientEmail,
+    recipient_patient_id: input.recipientPatientId ?? null,
+    recipient_email: input.recipientEmail ?? null,
     recipient_name: input.recipientName || null,
     subject: input.subject,
     message: input.message,
@@ -46,24 +48,12 @@ export async function sendNotification(input: NotificationInput) {
   }
 }
 
-export async function getNotificationsByEmail(email: string) {
-  const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("notifications")
-    .select("*")
-    .eq("recipient_email", email)
-    .order("created_at", { ascending: false })
-    .limit(50);
-  if (error) throw error;
-  return data || [];
-}
-
-export async function listPortalNotifications(email: string, limit = 20): Promise<PortalNotification[]> {
+export async function listPortalNotifications(patientId: string, limit = 20): Promise<PortalNotification[]> {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("notifications")
     .select("id,type,subject,message,created_at,read_at")
-    .eq("recipient_email", email)
+    .eq("recipient_patient_id", patientId)
     .eq("channel", "in_app")
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -78,35 +68,35 @@ export async function listPortalNotifications(email: string, limit = 20): Promis
   }));
 }
 
-export async function countUnreadPortalNotifications(email: string): Promise<number> {
+export async function countUnreadPortalNotifications(patientId: string): Promise<number> {
   const supabase = createAdminClient();
   const { count, error } = await supabase
     .from("notifications")
     .select("id", { count: "exact", head: true })
-    .eq("recipient_email", email)
+    .eq("recipient_patient_id", patientId)
     .eq("channel", "in_app")
     .is("read_at", null);
   if (error) throw error;
   return count ?? 0;
 }
 
-export async function markNotificationRead(id: string, email: string) {
+export async function markNotificationRead(id: string, patientId: string) {
   const supabase = createAdminClient();
   const { error } = await supabase
     .from("notifications")
     .update({ read_at: new Date().toISOString() })
     .eq("id", id)
-    .eq("recipient_email", email)
+    .eq("recipient_patient_id", patientId)
     .is("read_at", null);
   if (error) throw error;
 }
 
-export async function markAllNotificationsRead(email: string) {
+export async function markAllNotificationsRead(patientId: string) {
   const supabase = createAdminClient();
   const { error } = await supabase
     .from("notifications")
     .update({ read_at: new Date().toISOString() })
-    .eq("recipient_email", email)
+    .eq("recipient_patient_id", patientId)
     .eq("channel", "in_app")
     .is("read_at", null);
   if (error) throw error;

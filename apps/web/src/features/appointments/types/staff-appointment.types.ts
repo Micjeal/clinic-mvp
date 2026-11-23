@@ -7,6 +7,7 @@ export type StaffAppointment = {
   updatedAt: string;
   reason: string | null;
   patient: {
+    id: string;
     name: string;
     number: string;
     phone: string | null;

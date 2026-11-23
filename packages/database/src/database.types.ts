@@ -1549,8 +1549,9 @@ export type Database = {
           message: string
           metadata: Json | null
           read_at: string | null
-          recipient_email: string
+          recipient_email: string | null
           recipient_name: string | null
+          recipient_patient_id: string | null
           sent_at: string | null
           status: string
           subject: string
@@ -1565,8 +1566,9 @@ export type Database = {
           message: string
           metadata?: Json | null
           read_at?: string | null
-          recipient_email: string
+          recipient_email?: string | null
           recipient_name?: string | null
+          recipient_patient_id?: string | null
           sent_at?: string | null
           status?: string
           subject: string
@@ -1581,8 +1583,9 @@ export type Database = {
           message?: string
           metadata?: Json | null
           read_at?: string | null
-          recipient_email?: string
+          recipient_email?: string | null
           recipient_name?: string | null
+          recipient_patient_id?: string | null
           sent_at?: string | null
           status?: string
           subject?: string
@@ -2027,6 +2030,11 @@ export type Database = {
       queue_entries: {
         Row: {
           checked_in_at: string
+          completion_override_reason: string | null
+          consult_completed_at: string | null
+          consult_completed_by: string | null
+          consult_started_at: string | null
+          consult_started_by: string | null
           created_at: string
           created_by: string | null
           department_id: string
@@ -2043,6 +2051,11 @@ export type Database = {
         }
         Insert: {
           checked_in_at?: string
+          completion_override_reason?: string | null
+          consult_completed_at?: string | null
+          consult_completed_by?: string | null
+          consult_started_at?: string | null
+          consult_started_by?: string | null
           created_at?: string
           created_by?: string | null
           department_id: string
@@ -2059,6 +2072,11 @@ export type Database = {
         }
         Update: {
           checked_in_at?: string
+          completion_override_reason?: string | null
+          consult_completed_at?: string | null
+          consult_completed_by?: string | null
+          consult_started_at?: string | null
+          consult_started_by?: string | null
           created_at?: string
           created_by?: string | null
           department_id?: string
@@ -2572,6 +2590,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_in_appointment: {
+        Args: {
+          p_appointment_id: string
+        }
+        Returns: Json
+      }
       get_public_clinician_directory: {
         Args: never
         Returns: {

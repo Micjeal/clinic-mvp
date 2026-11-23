@@ -7,7 +7,7 @@ import type {PatientAppointment} from "@/types/patient-portal";
 
 type Related<T> = T | T[] | null;
 type StaffAppointmentRow = Tables<"appointments"> & {
-  patients: Related<{first_name:string;last_name:string;patient_number:string;phone:string|null;email:string|null;auth_user_id:string|null}>;
+  patients: Related<{id:string;first_name:string;last_name:string;patient_number:string;phone:string|null;email:string|null;auth_user_id:string|null}>;
   facilities: Related<{id:string;name:string;timezone:string}>;
   departments: Related<{id:string;name:string;opening_hours:unknown}>;
   services: Related<{id:string;name:string}>;
@@ -26,7 +26,7 @@ function mapStaffAppointment(row:StaffAppointmentRow):StaffAppointment{
   return {
     id:row.id,status:row.status,scheduledStart:row.scheduled_start,scheduledEnd:row.scheduled_end,
     createdAt:row.created_at,updatedAt:row.updated_at,reason:row.reason,
-    patient:{name:patient?[patient.first_name,patient.last_name].filter(Boolean).join(" "):"Patient unavailable",number:patient?.patient_number??"Not available",phone:patient?.phone??null,email:patient?.email??null},
+    patient:{id:patient?.id??"",name:patient?[patient.first_name,patient.last_name].filter(Boolean).join(" "):"Patient unavailable",number:patient?.patient_number??"Not available",phone:patient?.phone??null,email:patient?.email??null},
     facility:{id:facility?.id??row.facility_id,name:facility?.name??"Facility unavailable",timezone:facility?.timezone??"Africa/Kampala"},
     department:{id:department?.id??row.department_id,name:department?.name??"Department unavailable",openingHours:department?.opening_hours??null},
     service:service?{id:service.id,name:service.name}:null,
@@ -52,7 +52,7 @@ function mapPatientAppointment(row:PatientAppointmentRow):PatientAppointment{
   };
 }
 
-const staffAppointmentSelect="*,patients!appointments_patient_id_fkey(first_name,last_name,patient_number,phone,email,auth_user_id),facilities!appointments_facility_id_fkey(id,name,timezone),departments!appointments_department_id_fkey(id,name,opening_hours),services!appointments_service_id_fkey(id,name),clinician:profiles!appointments_clinician_user_id_fkey(full_name,professional_title)";
+const staffAppointmentSelect="*,patients!appointments_patient_id_fkey(id,first_name,last_name,patient_number,phone,email,auth_user_id),facilities!appointments_facility_id_fkey(id,name,timezone),departments!appointments_department_id_fkey(id,name,opening_hours),services!appointments_service_id_fkey(id,name),clinician:profiles!appointments_clinician_user_id_fkey(full_name,professional_title)";
 const patientAppointmentSelect="id,status,scheduled_start,scheduled_end,created_at,reason,clinician_user_id,facilities!appointments_facility_id_fkey(name,address_line,city,district),departments!appointments_department_id_fkey(name),services!appointments_service_id_fkey(name),clinician:profiles!appointments_clinician_user_id_fkey(full_name,professional_title)";
 
 export async function createAppointment(input:TablesInsert<"appointments">){const supabase=await createClient();const {data,error}=await supabase.from("appointments").insert(input).select("id").single();if(error)throw error;return data;}

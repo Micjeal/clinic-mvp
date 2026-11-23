@@ -10,6 +10,8 @@ export const Permissions = {
   RECEPTION_CHECKIN: "reception.checkin",
   QUEUE_READ: "queue.read",
   QUEUE_MANAGE: "queue.manage",
+  QUEUE_CLINICAL: "queue.clinical",
+  QUEUE_OVERRIDE: "queue.override",
   TRIAGE_WRITE: "triage.write",
 } as const;
 

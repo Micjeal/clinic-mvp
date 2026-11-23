@@ -27,9 +27,9 @@ function sameInstant(a: string, b: string) {
 }
 
 async function notifyPatient(input: Omit<NotificationInput, "recipientEmail"> & { recipientEmail?: string | null }) {
-  if (!input.recipientEmail) return;
+  if (!input.recipientPatientId) return;
   try {
-    await sendNotification({ ...input, recipientEmail: input.recipientEmail });
+    await sendNotification({ ...input, recipientEmail: input.recipientEmail ?? null });
   } catch (error) {
     logServerError("notifications", "send-failed", error, { type: input.type });
   }
@@ -82,6 +82,7 @@ export async function requestAppointment(input: AppointmentRequestInput) {
   const when = formatAppointmentDateTime(generatedSlot.startsAt, facility.timezone ?? DEFAULT_TIME_ZONE);
   await notifyPatient({
     type: "appointment_requested",
+    recipientPatientId: patient.id,
     recipientEmail: input.email,
     recipientName,
     subject: "Appointment request received",
@@ -92,10 +93,10 @@ export async function requestAppointment(input: AppointmentRequestInput) {
 }
 export async function getPatientAppointments(){const {patient}=await requirePatient();return listAppointmentsForPatient(patient.id);}
 export async function getPatientAppointment(id:string){const {patient}=await requirePatient();return findPatientAppointmentDetails(id,patient.id);}
-export async function cancelPatientAppointmentById(id:string){const {patient}=await requirePatient();const current=await findAppointmentForPatient(id,patient.id);if(!current||!isPatientCancellationStatus(current.status))throw new ValidationError("This appointment is not eligible for cancellation.");const details=await findPatientAppointmentDetails(id,patient.id);await cancelPatientAppointment(id,patient.id);if(details){const when=formatAppointmentDateTime(details.scheduledStart,DEFAULT_TIME_ZONE);const what=details.serviceName??details.departmentName??"your appointment";await notifyPatient({type:"appointment_cancelled",recipientEmail:patient.email,recipientName:[patient.first_name,patient.last_name].filter(Boolean).join(" ")||undefined,subject:"Appointment cancelled",message:`Your appointment for ${what} on ${when} has been cancelled. You can book a new appointment anytime from your portal.`,metadata:{appointment_id:id}});}}
+export async function cancelPatientAppointmentById(id:string){const {patient}=await requirePatient();const current=await findAppointmentForPatient(id,patient.id);if(!current||!isPatientCancellationStatus(current.status))throw new ValidationError("This appointment is not eligible for cancellation.");const details=await findPatientAppointmentDetails(id,patient.id);await cancelPatientAppointment(id,patient.id);if(details){const when=formatAppointmentDateTime(details.scheduledStart,DEFAULT_TIME_ZONE);const what=details.serviceName??details.departmentName??"your appointment";await notifyPatient({type:"appointment_cancelled",recipientPatientId:patient.id,recipientEmail:patient.email,recipientName:[patient.first_name,patient.last_name].filter(Boolean).join(" ")||undefined,subject:"Appointment cancelled",message:`Your appointment for ${what} on ${when} has been cancelled. You can book a new appointment anytime from your portal.`,metadata:{appointment_id:id}});}}
 export async function getStaffAppointments(){const staff=await requirePermission(Permissions.APPOINTMENT_READ);return listAppointmentsForOrganization(staff.membership.organization_id);}
 export async function getStaffAppointment(id:string){const staff=await requirePermission(Permissions.APPOINTMENT_READ);const appointment=await findAppointmentForOrganization(id,staff.membership.organization_id);if(!appointment)throw new NotFoundError("Appointment not found");return appointment;}
-export async function updateStaffAppointmentStatus(id:string,status:string){const staff=await requirePermission(Permissions.APPOINTMENT_UPDATE);const current=await findAppointmentForOrganization(id,staff.membership.organization_id);if(!current)throw new NotFoundError("Appointment not found");if(!canTransition(current.status,status))throw new ValidationError("This appointment status can no longer be changed that way.");if(status==="checked_in"){await checkInAppointment(id);await updateAppointmentStatus(id,staff.membership.organization_id,"checked_in");}else{await updateAppointmentStatus(id,staff.membership.organization_id,status);}const label=appointmentStatusLabel(status);const when=formatAppointmentDateTime(current.scheduledStart,current.facility.timezone??DEFAULT_TIME_ZONE);const what=current.service?.name??current.department.name;await notifyPatient({type:"appointment_status_changed",recipientEmail:current.patient.email,recipientName:current.patient.name,subject:`Appointment ${label}`,message:`Your appointment for ${what} on ${when} is now ${label.toLowerCase()}.`,metadata:{appointment_id:id,status}});}
+export async function updateStaffAppointmentStatus(id:string,status:string){const staff=await requirePermission(Permissions.APPOINTMENT_UPDATE);const current=await findAppointmentForOrganization(id,staff.membership.organization_id);if(!current)throw new NotFoundError("Appointment not found");if(!canTransition(current.status,status))throw new ValidationError("This appointment status can no longer be changed that way.");if(status==="checked_in"){await checkInAppointment(id);}else{await updateAppointmentStatus(id,staff.membership.organization_id,status);}const label=appointmentStatusLabel(status);const when=formatAppointmentDateTime(current.scheduledStart,current.facility.timezone??DEFAULT_TIME_ZONE);const what=current.service?.name??current.department.name;await notifyPatient({type:"appointment_status_changed",recipientPatientId:current.patient.id,recipientEmail:current.patient.email,recipientName:current.patient.name,subject:`Appointment ${label}`,message:`Your appointment for ${what} on ${when} is now ${label.toLowerCase()}.`,metadata:{appointment_id:id,status}});}
 
 export async function assignStaffAppointmentClinician(id: string, clinicianUserId: string | null) {
   const staff = await requirePermission(Permissions.APPOINTMENT_UPDATE);
@@ -118,7 +119,7 @@ export async function assignStaffAppointmentClinician(id: string, clinicianUserI
   if (assignedClinicianName) {
     const when = formatAppointmentDateTime(current.scheduledStart, current.facility.timezone ?? DEFAULT_TIME_ZONE);
     const what = current.service?.name ?? current.department.name;
-    await notifyPatient({ type: "appointment_clinician_assigned", recipientEmail: current.patient.email, recipientName: current.patient.name, subject: "Doctor assigned to your appointment", message: `${assignedClinicianName} has been assigned to your appointment for ${what} on ${when}.`, metadata: { appointment_id: id } });
+    await notifyPatient({ type: "appointment_clinician_assigned", recipientPatientId: current.patient.id, recipientEmail: current.patient.email, recipientName: current.patient.name, subject: "Doctor assigned to your appointment", message: `${assignedClinicianName} has been assigned to your appointment for ${what} on ${when}.`, metadata: { appointment_id: id } });
   }
 }
 

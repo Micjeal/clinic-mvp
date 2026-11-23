@@ -15,8 +15,8 @@ async function loadPatientContext(){
   }
 }
 
-async function loadPortalNotifications(email:string):Promise<PortalNotification[]>{
-  try{return await listPortalNotifications(email);}
+async function loadPortalNotifications(patientId:string):Promise<PortalNotification[]>{
+  try{return await listPortalNotifications(patientId);}
   catch(error){
     logServerError("notifications","list-portal-failed",error);
     return [];
@@ -25,6 +25,6 @@ async function loadPortalNotifications(email:string):Promise<PortalNotification[
 
 export default async function PatientPortalLayout({children}:{children:React.ReactNode}){
   const context=await loadPatientContext();
-  const notifications=await loadPortalNotifications(context.patient.email);
+  const notifications=await loadPortalNotifications(context.patient.id);
   return <PatientPortalShell {...context} notifications={notifications}>{children}</PatientPortalShell>;
 }

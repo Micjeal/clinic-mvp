@@ -10,6 +10,7 @@ export async function getStaffPortalContext(){
   if(staff.membership.must_change_password)throw new PasswordChangeRequiredError();
   const details=await getStaffDisplayContext({userId:staff.user.id,organizationId:staff.membership.organization_id,roleId:staff.membership.role_id});
   return {
+    userId: staff.user.id,
     name:details.profile?.full_name||staff.user.email||"Staff member",
     role:details.role?.name||staff.membership.job_title||"Staff member",
     roleKey:details.role?.role_key||"staff",
