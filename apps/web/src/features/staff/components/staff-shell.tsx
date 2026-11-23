@@ -102,6 +102,9 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
   const [accountOpen, setAccountOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+  const accountRef = useRef<HTMLDivElement>(null);
+  const accountTriggerRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
 
   const closeDrawer = () => {
@@ -109,15 +112,69 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
     requestAnimationFrame(() => menuButtonRef.current?.focus());
   };
 
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    setOpen(false);
+    setAccountOpen(false);
+  }
+
   useEffect(() => {
     if (!open) return;
     closeButtonRef.current?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeDrawer();
+      if (event.key === "Escape") {
+        closeDrawer();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const drawer = drawerRef.current;
+      if (!drawer) return;
+      const items = Array.from(
+        drawer.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"),
+      ).filter((el) => el.getClientRects().length > 0);
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      const inside = active ? drawer.contains(active) : false;
+      if (event.shiftKey) {
+        if (!inside || active === first) {
+          event.preventDefault();
+          last.focus();
+        }
+      } else if (!inside || active === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
   }, [open]);
+
+  useEffect(() => {
+    if (!accountOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (accountRef.current && !accountRef.current.contains(event.target as Node)) setAccountOpen(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setAccountOpen(false);
+        accountTriggerRef.current?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [accountOpen]);
 
   const initials = initialsFromName(context.name);
   const pageName = pathname.startsWith("/staff/appointments")
@@ -189,12 +246,13 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
             <span>Staff portal</span>
             <strong>{pageName}</strong>
           </div>
-          <div className="staff-topbar__context">
+          <div className="staff-topbar__context" ref={accountRef}>
             <span className="staff-date">{new Intl.DateTimeFormat("en-UG", { dateStyle: "medium" }).format(new Date())}</span>
             <button
               aria-expanded={accountOpen}
               className="staff-account-trigger"
               onClick={() => setAccountOpen((value) => !value)}
+              ref={accountTriggerRef}
               type="button"
             >
               <span aria-hidden="true" className="staff-account-avatar">
@@ -230,9 +288,12 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
         <aside
           aria-hidden={!open}
           aria-label="Mobile staff navigation"
+          aria-modal={open ? true : undefined}
           className="staff-drawer"
           id="staff-mobile-drawer"
           inert={!open}
+          ref={drawerRef}
+          role="dialog"
         >
           <div className="staff-drawer__heading">
             <strong>Staff portal</strong>
