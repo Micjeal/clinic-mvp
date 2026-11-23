@@ -1302,7 +1302,7 @@ body:has(.staff-surface) { background: #f4f7f8; }
 .staff-recent-grid article > a { min-height: 2.75rem; grid-column: 1/-1; display: inline-flex; align-items: center; gap: .35rem; border-top: 1px solid var(--slate-100); padding-top: .6rem; color: var(--teal-600); font-size: .72rem; font-weight: 750; }
 .staff-recent-grid article > a svg { width: .85rem; }
 
-.staff-table-wrap, .staff-dashboard-table { width: 100%; overflow: hidden; }
+.staff-table-wrap, .staff-dashboard-table { width: 100%; overflow-x: auto; }
 .staff-panel-table-wrap { width: 100%; overflow-x: auto; }
 .staff-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
 .staff-table th { border-bottom: 1px solid var(--slate-200); padding: .8rem 1rem; color: var(--slate-600); font-size: .64rem; font-weight: 750; letter-spacing: .06em; text-align: left; text-transform: uppercase; }
@@ -3015,10 +3015,6 @@ html:has(.doctor-setup-page) { scroll-behavior: smooth; }
 .staff-catalog-row-actions .btn { min-height: 2rem; padding: .35rem .8rem; font-size: .72rem; }
 .staff-catalog-toggle { display: inline-flex; align-items: center; gap: .6rem; }
 .staff-catalog-toggle .btn { margin-left: .35rem; }
-.staff-catalog-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: .8rem; margin-bottom: 1.2rem; }
-.staff-catalog-stat { border: 1px solid #d7e3ea; border-radius: 10px; padding: .9rem 1rem; background: var(--white); }
-.staff-catalog-stat span { display: block; color: #6b7f8e; font-size: .68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-.staff-catalog-stat strong { display: block; margin-top: .3rem; color: #092941; font-size: 1.35rem; }
 .staff-catalog-workspace-grid { display: grid; grid-template-columns: minmax(0, 1fr) 20rem; gap: 1.2rem; align-items: start; }
 .staff-catalog-workspace-main { display: grid; gap: 1.2rem; min-width: 0; }
 .staff-catalog-workspace-side { display: grid; gap: 1.2rem; min-width: 0; position: sticky; top: 1rem; }
@@ -3051,7 +3047,7 @@ html:has(.doctor-setup-page) { scroll-behavior: smooth; }
 .staff-catalog-booking-note { margin: 0 0 1rem; border: 1px solid #f0dfae; border-radius: 9px; padding: .75rem .9rem; background: #fdf8ec; color: #7a5b12; font-size: .78rem; }
 .staff-catalog-edit-panel { margin-top: 1.2rem; }
 @media (max-width: 1100px) { .staff-catalog-workspace-grid { grid-template-columns: 1fr; } .staff-catalog-workspace-side { position: static; } }
-@media (max-width: 640px) { .staff-catalog-stats { grid-template-columns: repeat(2, 1fr); } .staff-catalog-staff-list li, .staff-catalog-link-list li { flex-direction: column; align-items: stretch; } .staff-catalog-staff-actions { justify-content: flex-end; } .staff-catalog-assign { flex-direction: column; align-items: stretch; } }
+@media (max-width: 640px) { .staff-catalog-staff-list li, .staff-catalog-link-list li { flex-direction: column; align-items: stretch; } .staff-catalog-staff-actions { justify-content: flex-end; } .staff-catalog-assign { flex-direction: column; align-items: stretch; } }
 
 /* -------------------- public department contact & hours -------------------- */
 .department-contact { margin-top: 1.4rem; border-top: 1px solid rgba(255, 255, 255, .14); padding-top: 1rem; }
@@ -3175,7 +3171,7 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 .staff-panel-link:hover { color: #115e59; }
 
 /* Table cell stacking (name + secondary line) */
-.staff-cell-stack { display: inline-flex; flex-direction: column; gap: .1rem; min-width: 0; }
+.staff-cell-stack { display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
 .staff-cell-stack strong { font-weight: 650; }
 .staff-cell-stack small { font-size: .72rem; color: var(--slate-600); }
 .staff-ref { display: inline-block; padding: .15rem .45rem; border: 1px solid #e2ebf1; border-radius: 6px; background: #f8fafc; font-family: var(--font-mono, ui-monospace, monospace); font-size: .7rem; letter-spacing: .04em; color: var(--slate-700); }
@@ -3244,4 +3240,65 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 @media (max-width: 480px) {
   .staff-kpi-grid { grid-template-columns: 1fr 1fr; }
   .staff-quick-actions__grid { grid-template-columns: 1fr; }
+}
+
+/* ==================== administration surfaces ==================== */
+
+/* Form pages: readable measure, consistent rhythm */
+.staff-form-page { max-width: 62rem; }
+
+/* Editor sections become consistent cards (match .staff-panel) */
+.staff-editor-sections { display: grid; gap: 1rem; }
+.staff-editor-section,
+.staff-editor-section:first-child {
+  border: 1px solid #dce6ee;
+  border-top: 1px solid #dce6ee;
+  border-radius: 14px;
+  padding: 1.25rem 1.4rem;
+  background: #fff;
+  box-shadow: 0 3px 14px rgba(10, 39, 66, .025);
+}
+.staff-editor-section .eyebrow { color: #0f766e; }
+.staff-editor-section h2 { font-size: 1.05rem; }
+.staff-editor-sections > .staff-form-actions,
+.staff-form-page > .staff-form-actions {
+  display: flex; justify-content: flex-end; gap: .6rem;
+  padding: .25rem 0 0;
+}
+
+/* Dense dashboard tables keep a usable minimum width and scroll
+   horizontally inside their wrap instead of crushing columns */
+.staff-dashboard-table .staff-table { min-width: 46rem; }
+.staff-dashboard-table .staff-table td { white-space: normal; }
+.staff-dashboard-table .staff-table td > strong,
+.staff-dashboard-table .staff-table td > span:not(.status) { white-space: nowrap; }
+.staff-dashboard-table .status, .staff-dashboard-table .staff-table td .status { flex: none; }
+
+/* Sticky table headers inside scrollable wraps */
+.staff-panel-table-wrap, .staff-directory-table-wrap {
+  overflow: auto;
+  max-height: 75vh;
+}
+.staff-panel-table-wrap thead th, .staff-directory-table-wrap thead th {
+  position: sticky; top: 0; z-index: 2;
+}
+
+/* Catalog workspace polish: unify borders/radius with panel system */
+.staff-catalog-link-list li { border-color: #dce6ee; border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgba(10,39,66,.02); }
+.staff-catalog-link-list li:hover { border-color: #bcd2e0; }
+.staff-catalog-detail-list div { padding: .45rem 0; border-bottom: 1px solid #eef3f5; }
+.staff-catalog-detail-list div:last-child { border-bottom: 0; }
+.staff-catalog-hours li { border-bottom-color: #eef3f5; }
+.staff-catalog-booking-note {
+  margin: 0 0 1rem; padding: .75rem 1rem;
+  border: 1px solid #fde68a; border-radius: 12px;
+  background: #fffbeb; color: #92400e;
+  font-size: .8rem;
+}
+.staff-catalog-edit-panel { margin-top: 1.25rem; }
+
+/* Stat strip: 2-up on narrow screens */
+@media (max-width: 640px) {
+  .staff-stat-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .staff-form-page { max-width: none; }
 }

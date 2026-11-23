@@ -7,7 +7,8 @@ import {StaffPageHeader, StaffSection} from "@/features/staff/components/staff-c
 import {StaffAccessDenied} from "@/features/staff/components/access-denied";
 import {AuthorizationError, NotFoundError} from "@/server/errors";
 import {DepartmentForm, DepartmentStaffManager, ActiveToggle} from "@/features/catalog/catalog-forms";
-import {StatusBadge, CatalogStat} from "@/features/catalog/catalog-ui";
+import {StatusBadge, CatalogStats} from "@/features/catalog/catalog-ui";
+import {StatusChip} from "@/features/appointments/components/status-chip";
 
 export const metadata = {title: "Department"};
 
@@ -40,12 +41,12 @@ export default async function DepartmentWorkspacePage({params}: {params: Promise
         <ActiveToggle id={department.id} isActive={department.is_active} kind="department" />
       </>}
     />
-    <div className="staff-catalog-stats">
-      <CatalogStat label="Services" value={services.length} />
-      <CatalogStat label="Staff assigned" value={staffMembers.length} />
-      <CatalogStat label="Appointments (30d)" value={stats.last30Days} />
-      <CatalogStat label="Appointments (all)" value={stats.total} />
-    </div>
+    <CatalogStats items={[
+      {label: "Services", value: services.length},
+      {label: "Staff assigned", value: staffMembers.length},
+      {label: "Appointments (30d)", value: stats.last30Days},
+      {label: "Appointments (all)", value: stats.total},
+    ]} />
 
     <div className="staff-catalog-workspace-grid">
       <div className="staff-catalog-workspace-main">
@@ -69,7 +70,7 @@ export default async function DepartmentWorkspacePage({params}: {params: Promise
             <tbody>{appointments.map((appointment) => <tr key={appointment.id}>
               <td><strong>{appointment.patient_name}</strong></td>
               <td>{formatDateTime(appointment.scheduled_start)}</td>
-              <td>{appointment.status.replace(/_/g, " ")}</td>
+              <td><StatusChip status={appointment.status} /></td>
               <td><Link className="staff-table-action" href={`/staff/appointments/${appointment.id}`}>Open</Link></td>
             </tr>)}</tbody>
           </table></div> : <p className="staff-section-description">No appointments have been booked for this department yet.</p>}

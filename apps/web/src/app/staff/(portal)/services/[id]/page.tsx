@@ -6,7 +6,7 @@ import {StaffPageHeader, StaffSection} from "@/features/staff/components/staff-c
 import {StaffAccessDenied} from "@/features/staff/components/access-denied";
 import {AuthorizationError, NotFoundError} from "@/server/errors";
 import {ServiceForm, ActiveToggle} from "@/features/catalog/catalog-forms";
-import {StatusBadge, CatalogStat} from "@/features/catalog/catalog-ui";
+import {StatusBadge, CatalogStats} from "@/features/catalog/catalog-ui";
 
 export const metadata = {title: "Service"};
 
@@ -38,11 +38,12 @@ export default async function ServiceDetailPage({params}: {params: Promise<{id: 
         <ActiveToggle id={service.id} isActive={service.is_active} kind="service" />
       </>}
     />
-    <div className="staff-catalog-stats">
-      <CatalogStat label="Appointments" value={appointmentCount} />
-      <CatalogStat label="Department" value={service.department_name ?? "Organization-wide"} />
-      <CatalogStat label="Facility" value={service.facility_name ?? "All facilities"} />
-    </div>
+    <CatalogStats items={[
+      {label: "Appointments", value: appointmentCount},
+      {label: "Online-bookable", value: bookable ? "Yes" : "No", hint: bookable ? undefined : "needs public + active + duration"},
+      {label: "Duration", value: service.duration_minutes ? `${service.duration_minutes} min` : "—"},
+      {label: "Price", value: service.base_price != null ? `${service.base_price} ${service.currency_code}` : "—"},
+    ]} />
     {!bookable && service.is_public ? <p className="staff-catalog-booking-note" role="note">This service is public but cannot be booked online until a duration in minutes is set.</p> : null}
     <StaffSection title="Service details" description="Pricing, duration and catalogue placement.">
       <ServiceForm

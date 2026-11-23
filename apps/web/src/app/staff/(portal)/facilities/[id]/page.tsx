@@ -5,7 +5,7 @@ import {StaffPageHeader, StaffSection} from "@/features/staff/components/staff-c
 import {StaffAccessDenied} from "@/features/staff/components/access-denied";
 import {AuthorizationError, NotFoundError} from "@/server/errors";
 import {FacilityForm, ActiveToggle} from "@/features/catalog/catalog-forms";
-import {StatusBadge, CatalogStat} from "@/features/catalog/catalog-ui";
+import {StatusBadge, CatalogStats} from "@/features/catalog/catalog-ui";
 
 export const metadata = {title: "Facility"};
 
@@ -32,10 +32,11 @@ export default async function FacilityDetailPage({params}: {params: Promise<{id:
         <ActiveToggle id={facility.id} isActive={facility.is_active} kind="facility" />
       </>}
     />
-    <div className="staff-catalog-stats">
-      <CatalogStat label="Departments" value={departments.total} />
-      <CatalogStat label="Active departments" value={activeDepartments.length} />
-    </div>
+    <CatalogStats items={[
+      {label: "Departments", value: departments.total},
+      {label: "Active departments", value: activeDepartments.length},
+      {label: "Public departments", value: activeDepartments.filter((item) => item.is_public).length, hint: "visible on website"},
+    ]} />
     <StaffSection title="Departments" description="Clinical departments operating at this facility.">
       {departments.items.length ? <div className="staff-panel-table-wrap"><table className="staff-table">
         <caption className="sr-only">Departments at {facility.name}</caption>

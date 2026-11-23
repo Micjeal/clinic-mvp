@@ -22,10 +22,6 @@ export function CatalogPagination({page, pageSize, total, basePath, params}: {pa
   </nav>;
 }
 
-export function CatalogStat({label, value}: {label: string; value: ReactNode}) {
-  return <div className="staff-catalog-stat"><span>{label}</span><strong>{value}</strong></div>;
-}
-
 export function CatalogStats({items}: {items: {label: string; value: ReactNode; hint?: string}[]}) {
   return <dl className="staff-stat-strip" aria-label="Summary statistics">
     {items.map((item) => <div className="staff-stat" key={item.label}>
