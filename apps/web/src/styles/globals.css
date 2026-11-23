@@ -3302,3 +3302,7 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
   .staff-stat-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .staff-form-page { max-width: none; }
 }
+
+/* Walk-in / form field hints */
+.staff-field-hint { color: var(--slate-600); font-size: .72rem; font-weight: 500; }
+.staff-form-grid label small { font-weight: 500; }
