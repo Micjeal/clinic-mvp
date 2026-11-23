@@ -26,10 +26,10 @@ type Context = { name: string; role: string; organization: string; permissions?:
 
 const navigation = [
   { href: "/staff", label: "Dashboard", icon: LayoutDashboard, group: "Overview" },
-  { href: "/staff/reception", label: "Reception", icon: ClipboardCheck, permission: "reception.checkin", group: "Front office" },
-  { href: "/staff/queue", label: "Queue", icon: ClipboardList, permission: "queue.read", group: "Front office" },
-  { href: "/staff/triage", label: "Triage", icon: Stethoscope, permission: "triage.write", group: "Front office" },
-  { href: "/staff/appointments", label: "Appointments", icon: CalendarDays, group: "Care" },
+  { href: "/staff/reception", label: "Reception", icon: ClipboardCheck, permission: "reception.checkin", group: "Daily operations" },
+  { href: "/staff/queue", label: "Queue", icon: ClipboardList, permission: "queue.read", group: "Daily operations" },
+  { href: "/staff/triage", label: "Triage", icon: Stethoscope, permission: "triage.write", group: "Daily operations" },
+  { href: "/staff/appointments", label: "Appointments", icon: CalendarDays, group: "Daily operations" },
   { href: "/staff/users", label: "Staff", icon: Building2, permission: "staff.manage", group: "Administration" },
   { href: "/staff/facilities", label: "Facilities", icon: Hospital, permission: "facility.manage", group: "Administration" },
   { href: "/staff/departments", label: "Departments", icon: Building, permission: "department.manage", group: "Administration" },

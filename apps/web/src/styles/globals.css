@@ -3306,3 +3306,40 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 /* Walk-in / form field hints */
 .staff-field-hint { color: var(--slate-600); font-size: .72rem; font-weight: 500; }
 .staff-form-grid label small { font-weight: 500; }
+
+/* ==================== sidebar refinement ==================== */
+
+/* Active item: clean teal pill, no hard edge bar */
+.staff-nav a.is-active {
+  background: rgba(94, 234, 212, .13);
+  box-shadow: none;
+}
+.staff-nav a.is-active svg { color: #5eead4; }
+
+/* Keyboard focus stays visible on the dark surface */
+.staff-sidebar a:focus-visible,
+.staff-sidebar button:focus-visible {
+  outline-color: #5eead4;
+}
+
+/* Group rhythm: micro-labels with a hairline separator before
+   each subsequent group (labels only render on a group's first item) */
+.staff-nav__group:nth-of-type(n+2) .staff-nav-label--group {
+  border-top: 1px solid rgba(255, 255, 255, .07);
+  padding-top: .85rem;
+  margin-top: .15rem;
+}
+.staff-nav-label--group { color: #8aa5b8; }
+
+/* Collapsed rail: active icon gets a clearly visible teal chip */
+.staff-shell.is-collapsed .staff-nav a.is-active {
+  background: rgba(94, 234, 212, .16);
+  box-shadow: inset 0 0 0 1px rgba(94, 234, 212, .28);
+}
+.staff-shell.is-collapsed .staff-nav a.is-active svg { color: #5eead4; }
+
+/* Footer actions sit quietly below the profile card */
+.staff-sidebar__footer a, .staff-signout { border-radius: 10px; }
+
+/* Brand block: slightly more presence */
+.staff-brand-row { padding-bottom: .15rem; }
