@@ -3612,3 +3612,14 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 .patient-booking-help-details li p { margin: .15rem 0 0; font-size: .76rem; color: var(--slate-600); }
 .patient-booking-help__urgent { display: flex; gap: .45rem; align-items: center; margin: .8rem 0 0; font-size: .78rem; color: #92400e; }
 .portal-booking-actions { padding-bottom: calc(4.5rem + env(safe-area-inset-bottom)); }
+
+
+/* ===== Booking buttons polish ===== */
+.portal-booking-form .portal-booking-actions .btn { border-radius: 12px; font-weight: 700; letter-spacing: .01em; transition: transform .12s ease, box-shadow .12s ease; }
+.portal-booking-form .portal-booking-actions .btn--secondary { border: 1.5px solid var(--slate-300); background: var(--white); color: var(--navy-900); }
+.portal-booking-form .portal-booking-actions .btn--secondary:hover { border-color: var(--teal-600); color: var(--teal-700); }
+.portal-booking-form .portal-booking-actions .btn:not(.btn--secondary) { background: var(--teal-600); border: none; color: var(--white); box-shadow: 0 4px 14px rgba(8,127,131,.3); }
+.portal-booking-form .portal-booking-actions .btn:not(.btn--secondary):hover { background: #0a6e70; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(8,127,131,.35); }
+.portal-booking-form .portal-booking-actions .btn:disabled { opacity: .55; transform: none; box-shadow: none; }
+.portal-booking-form .btn.btn--secondary { border-radius: 10px; }
+.portal-booking-form fieldset > .btn { border-radius: 10px; font-weight: 600; }
