@@ -3,7 +3,7 @@ import {createAdminClient} from "@/lib/supabase/admin";
 import {findOrganizationSettingsAdmin, DEFAULT_ORGANIZATION_SETTINGS} from "@/server/repositories/settings.repository";
 import type {Json} from "@clinic/database";
 
-export type NotificationType = "appointment_requested" | "appointment_confirmed" | "appointment_cancelled" | "appointment_status_changed" | "appointment_clinician_assigned" | "appointment_reminder" | "password_reset";
+export type NotificationType = "appointment_requested" | "appointment_confirmed" | "appointment_cancelled" | "appointment_status_changed" | "appointment_clinician_assigned" | "appointment_reminder" | "password_reset" | "result_ready";
 export type NotificationChannel = "in_app" | "email" | "sms";
 
 export type NotificationInput = {

@@ -1,0 +1,190 @@
+<mxfile host="app.diagrams.net" agent="Devin" version="24.0.0">
+  <diagram name="Hospica System Workflow" id="hospica-workflow">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="HOSPICA — FULL SYSTEM WORKFLOW" style="text;html=1;fontSize=20;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="800" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Patient journey × staff departments × finance — every arrow is a real module in the system" style="text;html=1;fontSize=11;fontColor=#666666;align=center;" vertex="1" parent="1">
+          <mxGeometry x="350" y="50" width="900" height="20" as="geometry" />
+        </mxCell>
+ GET /staff/hr 200 in 2.8s (next.js: 6ms, proxy.ts: 611ms, application-code: 2.2s)
+ GET /staff/wards 200 in 4.6s (next.js: 187ms, proxy.ts: 878ms, application-code: 3.6s)
+{"scope":"ward","event":"ward-create-failed","errorCode":"PGRST204","errorMessage":"Could not find the 'departmentId' column of 'wards' in the schema cache"}
+ POST /staff/wards 200 in 1964ms (next.js: 47ms, proxy.ts: 556ms, application-code: 1360ms)
+  └─ ƒ createWardAction(null, {}) in 1328ms src/server/actions/ward.actions.ts
+ GET /staff/hr 200 in 2.8s (next.js: 64ms, proxy.ts: 429ms, application-code: 2.3s)
+{"scope":"hr","event":"shift-create-failed","errorCode":"PGRST204","errorMessage":"Could not find the 'endTime' column of 'staff_shifts' in the schema cache"}
+ POST /staff/hr 200 in 2.8s (next.js: 6ms, proxy.ts: 516ms, application-code: 2.3s)
+  └─ ƒ createShiftAction(null, {}) in 2282ms src/server/actions/hr.actions.ts
+ GET /staff/inventory 200 in 3.3s (next.js: 254ms, proxy.ts: 601ms, application-code: 2.4s)
+ GET /staff/lab 200 in 1943ms (next.js: 175ms, proxy.ts: 447ms, application-code: 1321ms)
+ GET /staff/lab/orders/new 200 in 2.3s (next.js: 183ms, proxy.ts: 309ms, application-code: 1827ms)
+
+ GET /staff/hr 200 in 2.8s (next.js: 6ms, proxy.ts: 611ms, application-code: 2.2s)
+ GET /staff/wards 200 in 4.6s (next.js: 187ms, proxy.ts: 878ms, application-code: 3.6s)
+{"scope":"ward","event":"ward-create-failed","errorCode":"PGRST204","errorMessage":"Could not find the 'departmentId' column of 'wards' in the schema cache"}
+ POST /staff/wards 200 in 1964ms (next.js: 47ms, proxy.ts: 556ms, application-code: 1360ms)
+  └─ ƒ createWardAction(null, {}) in 1328ms src/server/actions/ward.actions.ts
+ GET /staff/hr 200 in 2.8s (next.js: 64ms, proxy.ts: 429ms, application-code: 2.3s)
+{"scope":"hr","event":"shift-create-failed","errorCode":"PGRST204","errorMessage":"Could not find the 'endTime' column of 'staff_shifts' in the schema cache"}
+ POST /staff/hr 200 in 2.8s (next.js: 6ms, proxy.ts: 516ms, application-code: 2.3s)
+  └─ ƒ createShiftAction(null, {}) in 2282ms src/server/actions/hr.actions.ts
+ GET /staff/inventory 200 in 3.3s (next.js: 254ms, proxy.ts: 601ms, application-code: 2.4s)
+ GET /staff/lab 200 in 1943ms (next.js: 175ms, proxy.ts: 447ms, application-code: 1321ms)
+ GET /staff/lab/orders/new 200 in 2.3s (next.js: 183ms, proxy.ts: 309ms, application-code: 1827ms)
+
+
+        <!-- Actors column -->
+        <mxCell id="actorPatient" value="PATIENT&#10;(public site + portal)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#2E7DC4;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actorFront" value="FRONT DESK&#10;Receptionist" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E69500;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="260" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actorClin" value="CLINICAL TEAM&#10;Doctor / Nurse" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="420" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actorDiag" value="DIAGNOSTICS&#10;Lab Tech / Radiographer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#8E24AA;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="580" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actorPharm" value="PHARMACY&#10;Pharmacist" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F9A825;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="740" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actorFin" value="FINANCE&#10;Cashier / Billing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0F2F1;strokeColor=#00897B;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="900" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actorAdmin" value="MANAGEMENT&#10;Admin / HR / Procurement" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECEFF1;strokeColor=#546E7A;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1060" width="160" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Patient-facing modules -->
+        <mxCell id="mRegister" value="Register / Login&#10;/register · /login · verify email" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2E7DC4;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="260" y="120" width="170" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="mBook" value="Book Appointment&#10;/appointments (public)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2E7DC4;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="260" y="200" width="170" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="mPortal" value="Patient Portal&#10;/portal — appointments, notifications, profile" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2E7DC4;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="260" y="280" width="170" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Reception modules -->
+        <mxCell id="mReception" value="Reception &amp; Check-in&#10;/staff/reception · walk-ins" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#E69500;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="260" width="180" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="mQueue" value="Queue Management&#10;/staff/queue — status, calling, overrides" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#E69500;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="340" width="180" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="mTriage" value="Triage &amp; Vitals&#10;/staff/triage — priority + vitals" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#E69500;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="420" width="180" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Clinical modules -->
+        <mxCell id="mEncounter" value="Encounter Workspace&#10;diagnoses + clinical notes + vitals" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#43A047;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="740" y="420" width="190" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mAdmit" value="Admission / Ward bed&#10;/staff/wards — admit, transfer, discharge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#43A047;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="740" y="510" width="190" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Diagnostics -->
+        <mxCell id="mLab" value="Laboratory&#10;/staff/lab — order → sample → result → approve" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#8E24AA;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="990" y="540" width="190" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mRad" value="Radiology&#10;/staff/radiology — order → exam → report → finalize" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#8E24AA;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="990" y="620" width="190" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Pharmacy -->
+        <mxCell id="mRx" value="Pharmacy&#10;/staff/pharmacy — prescribe → dispense per item" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#F9A825;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="990" y="720" width="190" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Finance -->
+        <mxCell id="mCharges" value="Charge Capture&#10;encounter_charges — auto from lab / imaging / Rx" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#00897B;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="740" y="640" width="190" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mBilling" value="Billing&#10;/staff/billing — unbilled charges → invoice → payment" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#00897B;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="740" y="720" width="190" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mInsurance" value="Insurance &amp; Claims&#10;/staff/insurance — scheme → policy → claim → payout" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#00897B;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="900" width="190" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Inventory/Procurement -->
+        <mxCell id="mInv" value="Inventory&#10;/staff/inventory — stock, movements, reorder alerts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#546E7A;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="990" y="820" width="190" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="mProc" value="Procurement&#10;/staff/procurement — supplier → PO → approve → receive" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#546E7A;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="740" y="820" width="190" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- HR / Reports / Settings -->
+        <mxCell id="mHr" value="Staff Scheduling&#10;/staff/hr — shifts + leave approvals" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#546E7A;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="1020" width="180" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="mReports" value="Reports&#10;/staff/reports — KPIs drill into modules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#546E7A;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="740" y="920" width="190" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="mSettings" value="Settings&#10;/staff/settings — org, booking rules, notifications, roles, branding" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#546E7A;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="740" y="1000" width="190" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="mRecords" value="Patient Records&#10;/staff/patients — unified timeline" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#546E7A;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="990" y="920" width="190" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- ===== FLOWS ===== -->
+        <!-- Patient journey -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="actorPatient" target="mRegister"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" value="book" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mRegister" target="mBook"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" value="confirm / SMS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mBook" target="actorPatient"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" value="arrives" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="actorPatient" target="mReception"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" value="check-in" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mReception" target="mQueue"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" value="triage" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mQueue" target="mTriage"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" value="consult" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mTriage" target="mEncounter"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e8" value="needs admission" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;dashed=1;" edge="1" parent="1" source="mEncounter" target="mAdmit"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Orders fan out -->
+        <mxCell id="e9" value="lab order" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mEncounter" target="mLab"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e10" value="imaging order" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mEncounter" target="mRad"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e11" value="prescribe" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mEncounter" target="mRx"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Results back + charges -->
+        <mxCell id="e12" value="result approved" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;dashed=1;" edge="1" parent="1" source="mLab" target="mEncounter"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e13" value="report final" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;dashed=1;" edge="1" parent="1" source="mRad" target="mEncounter"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e14" value="dispensed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mRx" target="mCharges"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e15" value="charge" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mLab" target="mCharges"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e16" value="charge" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mRad" target="mCharges"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Billing flow -->
+        <mxCell id="e17" value="unbilled → invoice" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mCharges" target="mBilling"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e18" value="claim" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mBilling" target="mInsurance"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e19" value="pay / receipt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;dashed=1;" edge="1" parent="1" source="mBilling" target="actorFin"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Supply chain -->
+        <mxCell id="e20" value="PO → receive" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mProc" target="mInv"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e21" value="dispense stock" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;dashed=1;" edge="1" parent="1" source="mRx" target="mInv"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e22" value="low stock → reorder" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;dashed=1;" edge="1" parent="1" source="mInv" target="mProc"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Cross-cutting -->
+        <mxCell id="e23" value="all modules write audit_logs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;fontSize=9;fontColor=#999999;dashed=1;" edge="1" parent="1" source="mEncounter" target="mSettings"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1240" y="450" /><mxPoint x="1240" y="1027" /></Array></mxGeometry></mxCell>
+        <mxCell id="e24" value="reads everything" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;fontColor=#546E7A;dashed=1;" edge="1" parent="1" source="mReports" target="mBilling"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e25" value="staff records" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=9;" edge="1" parent="1" source="mEncounter" target="mRecords"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e26" value="roles &amp; permissions gate every module" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;fontSize=9;fontColor=#546E7A;dashed=1;" edge="1" parent="1" source="mSettings" target="mEncounter"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="935" y="1027" /><mxPoint x="935" y="480" /></Array></mxGeometry></mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="LEGEND" style="text;html=1;fontSize=12;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="80" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg1" value="solid arrow = data/action flow&#10;dashed arrow = automatic / async&#10;blue = patient-facing&#10;green = clinical&#10;purple = diagnostics&#10;amber = pharmacy&#10;teal = finance&#10;grey = operations" style="text;html=1;fontSize=9;align=left;spacingLeft=4;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="105" width="320" height="90" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

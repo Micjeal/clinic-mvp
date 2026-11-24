@@ -1,6 +1,6 @@
 "use client";
 
-import { 
+import { Wrench,  
   BriefcaseMedical,
   BedDouble,
   Building,
@@ -66,6 +66,7 @@ const navigation = [
   { href: "/staff/wards", label: "Wards", icon: BedDouble, permission: "ward.read", group: "Inpatient" },
   { href: "/staff/patients", label: "Patients", icon: Users, permission: "patient.read", group: "Records" },
   { href: "/staff/hr", label: "Staff scheduling", icon: CalendarDays, permission: "hr.read", group: "People" },
+  { href: "/staff/theatre", label: "Theatre", icon: Stethoscope, permission: "theatre.read", group: "Clinical" },
   { href: "/staff/procurement", label: "Procurement", icon: ShoppingCart, permission: "procurement.read", group: "Operations" },
   { href: "/staff/reports", label: "Reports", icon: ChartColumn, permission: "reports.read", group: "Management" },
   { href: "/staff/appointments", label: "Appointments", icon: CalendarDays, permission: "appointment.read", group: "Daily operations" },
