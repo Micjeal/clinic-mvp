@@ -5,7 +5,6 @@ import { clinicName } from "@/lib/public-content";
 import { getPublicOrganizationProfile } from "@/server/services/settings.service";
 
 import { DesktopNavigation } from "./desktop-navigation";
-import { ThemeToggle } from "./theme-toggle";
 import { MobileNavigation } from "./mobile-navigation";
 import { UtilityBar } from "./utility-bar";
 
@@ -21,7 +20,7 @@ export async function SiteHeader() {
             <span><strong>{organization?.name || clinicName()}</strong><small>Care that keeps you informed</small></span>
           </Link>
           <DesktopNavigation />
-          <div className="main-header__actions"><ThemeToggle />
+          <div className="main-header__actions">
             <Link className="portal-shortcut" href="/portal" aria-label="Patient portal"><UserRound aria-hidden="true" /></Link>
             <Link className="btn header-book-btn" href="/appointments">Book appointment</Link>
             <MobileNavigation />
