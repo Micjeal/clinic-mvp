@@ -3998,5 +3998,8 @@ img { max-width: 100%; }
 
 /* ===== Header frosted glass ===== */
 .main-header { background: rgba(255,255,255,.72); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); border-bottom: 1px solid rgba(255,255,255,.45); box-shadow: 0 8px 32px rgba(10,39,66,.06); }
-.nav-link:hover { background: rgba(255,255,255,.55); }
-.nav-link.is-active, .nav-dropdown summary.is-active { background: rgba(223,245,245,.75); color: var(--teal-600); }
+.nav-link:hover, .nav-dropdown[open] > .nav-link { background: var(--blue-50); color: var(--navy-950); }
+.nav-link.is-active, .nav-dropdown summary.is-active { background: rgba(223,245,245,.85); color: var(--teal-600); }
+
+.main-header__inner .brand { margin-right: 1.5rem; }
+.main-header__actions .btn--compact { min-height: 2.4rem; padding: 0 1.1rem; font-size: .84rem; }
