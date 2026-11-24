@@ -3647,3 +3647,14 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 .patient-table th { background: var(--slate-50); }
 .patient-list-item { border-radius: 12px; transition: box-shadow .15s ease; }
 .patient-list-item:hover { box-shadow: 0 3px 10px rgba(10,39,66,.06); }
+
+/* ===== Portal billing tables & empty states ===== */
+.patient-table td { vertical-align: middle; }
+.patient-table td strong { color: var(--navy-900); }
+.patient-status { display: inline-flex; align-items: center; padding: .28rem .7rem; border-radius: 999px; font-size: .72rem; font-weight: 700; letter-spacing: .02em; text-transform: capitalize; }
+.patient-status--paid, .patient-status--completed, .patient-status--active { background: #dcfce7; color: #166534; }
+.patient-status--issued, .patient-status--partially_paid, .patient-status--pending, .patient-status--requested { background: #fef3c7; color: #92400e; }
+.patient-status--draft { background: var(--slate-100); color: var(--slate-600); }
+.patient-status--void, .patient-status--cancelled, .patient-status--failed { background: #fee2e2; color: #991b1b; }
+.patient-empty { display: flex; align-items: center; gap: .6rem; border: 1.5px dashed var(--slate-300); border-radius: 12px; padding: 1rem 1.15rem; background: var(--slate-50); color: var(--slate-500); font-size: .85rem; margin: 0; }
+.patient-section .patient-table-wrap { margin-top: .5rem; }
