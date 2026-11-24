@@ -1,0 +1,55 @@
+import { StaffPageHeader } from "@/features/staff/components/staff-content";
+import { StaffAccessDenied } from "@/features/staff/components/access-denied";
+import { listBillingInvoices } from "@/server/services/billing.service";
+import { AuthorizationError } from "@/server/errors";
+import Link from "next/link";
+
+export const metadata = { title: "Billing" };
+
+const STATUS_LABELS: Record<string, string> = { draft: "Draft", issued: "Issued", partially_paid: "Part paid", paid: "Paid", void: "Void", refunded: "Refunded" };
+
+export default async function BillingPage() {
+  let invoices;
+  try {
+    invoices = await listBillingInvoices();
+  } catch (error) {
+    if (error instanceof AuthorizationError) return <StaffAccessDenied />;
+    throw error;
+  }
+  const outstanding = invoices.filter((i) => i.balance > 0 && i.status !== "void").reduce((s, i) => s + Number(i.balance), 0);
+  const collected = invoices.filter((i) => i.status === "paid").reduce((s, i) => s + Number(i.total), 0);
+
+  return (
+    <div className="staff-page">
+      <StaffPageHeader eyebrow="Finance" title="Billing" description="Invoices, payments and outstanding balances." actions={<Link className="btn" href="/staff/billing/new">New invoice</Link>} />
+      <div className="staff-kpi-grid">
+        <div className="staff-kpi"><span>Invoices</span><strong>{invoices.length}</strong></div>
+        <div className="staff-kpi"><span>Collected</span><strong>{collected.toLocaleString()} UGX</strong></div>
+        <div className="staff-kpi"><span>Outstanding</span><strong>{outstanding.toLocaleString()} UGX</strong></div>
+      </div>
+      <section className="staff-panel">
+        <div className="staff-table-wrap">
+          <table className="staff-table">
+            <thead><tr><th>Invoice</th><th>Patient</th><th>Status</th><th className="staff-col-amount">Total</th><th className="staff-col-amount">Balance</th><th>Issued</th></tr></thead>
+            <tbody>
+              {invoices.length === 0 ? <tr><td colSpan={6} className="staff-table-empty">No invoices yet. Create the first one to start billing.</td></tr> :
+                invoices.map((invoice) => {
+                  const patient = invoice.patients as { first_name?: string; last_name?: string; patient_number?: string } | null;
+                  return (
+                    <tr key={invoice.id}>
+                      <td><Link className="staff-table-link" href={`/staff/billing/${invoice.id}`}>{invoice.invoice_number}</Link></td>
+                      <td>{patient ? `${patient.first_name} ${patient.last_name}` : "—"}{patient?.patient_number ? <span className="staff-table-sub"> {patient.patient_number}</span> : null}</td>
+                      <td><span className={`staff-status staff-status--${invoice.status}`}>{STATUS_LABELS[invoice.status] ?? invoice.status}</span></td>
+                      <td className="staff-col-amount">{Number(invoice.total).toLocaleString()} {invoice.currency_code}</td>
+                      <td className="staff-col-amount">{Number(invoice.balance).toLocaleString()} {invoice.balance > 0 ? invoice.currency_code : ""}</td>
+                      <td>{invoice.issued_at ? new Date(invoice.issued_at).toLocaleDateString() : "—"}</td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}

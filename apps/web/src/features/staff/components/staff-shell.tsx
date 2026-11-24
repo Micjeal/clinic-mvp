@@ -1,6 +1,6 @@
 "use client";
 
-import {
+import { 
   BriefcaseMedical,
   Building,
   Building2,
@@ -16,6 +16,7 @@ import {
   PanelLeftOpen,
   Settings,
   Stethoscope,
+  Wallet,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -46,6 +47,7 @@ const navigation = [
   { href: "/staff/reception", label: "Reception", icon: ClipboardCheck, permission: "reception.checkin", group: "Daily operations" },
   { href: "/staff/queue", label: "Queue", icon: ClipboardList, permission: "queue.read", group: "Daily operations" },
   { href: "/staff/triage", label: "Triage", icon: Stethoscope, permission: "triage.write", group: "Daily operations" },
+  { href: "/staff/billing", label: "Billing", icon: Wallet, permission: "billing.read", group: "Finance" },
   { href: "/staff/appointments", label: "Appointments", icon: CalendarDays, group: "Daily operations" },
   { href: "/staff/users", label: "Staff", icon: Building2, permission: "staff.manage", group: "Administration" },
   { href: "/staff/facilities", label: "Facilities", icon: Hospital, permission: "facility.manage", group: "Administration" },
