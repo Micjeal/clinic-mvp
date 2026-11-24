@@ -72,7 +72,29 @@ export async function issueBillingInvoice(invoiceId: string) {
   if (!invoice) throw new NotFoundError("Invoice not found");
   if (invoice.status !== "draft") throw new ValidationError("Only draft invoices can be issued.");
   await repo.updateInvoiceStatus(invoiceId, orgId, { status: "issued", issued_at: new Date().toISOString() });
+  await autoCreateInsuranceClaim(invoice, orgId, staff.user.id);
   return invoiceId;
+}
+
+async function autoCreateInsuranceClaim(invoice: { id: string; patient_id: string; facility_id: string | null; total: number; currency_code: string }, orgId: string, actorId: string) {
+  try {
+    const admin = (await import("@/lib/supabase/admin")).createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+    const { data: existing } = await admin.from("insurance_claims").select("id").eq("invoice_id", invoice.id).limit(1);
+    if (existing?.length) return;
+    const { data: policy } = await admin.from("patient_insurance_policies").select("id,insurance_scheme_id,coverage_percent,insurance_schemes(name)").eq("patient_id", invoice.patient_id).eq("organization_id", orgId).eq("status", "active").limit(1).maybeSingle();
+    if (!policy?.insurance_scheme_id || !invoice.facility_id) return;
+    const { count } = await admin.from("insurance_claims").select("id", { count: "exact", head: true }).eq("organization_id", orgId);
+    const claimNumber = `CLM-${new Date().getFullYear()}-${String((count ?? 0) + 1).padStart(5, "0")}`;
+    const scheme = policy.insurance_schemes as { name?: string } | null;
+    const { error } = await admin.from("insurance_claims").insert({
+      organization_id: orgId, facility_id: invoice.facility_id, patient_id: invoice.patient_id,
+      invoice_id: invoice.id, insurance_scheme_id: policy.insurance_scheme_id, policy_id: policy.id,
+      claim_number: claimNumber, claimed_amount: Number(invoice.total), currency_code: invoice.currency_code,
+      diagnosis_summary: null, notes: `Auto-created on invoice issue${scheme?.name ? ` — ${scheme.name}` : ""}`,
+      status: "submitted", submitted_at: new Date().toISOString(), created_by: actorId,
+    });
+    if (error && error.code !== "23505") throw error;
+  } catch { /* auto-claim must never block invoicing */ }
 }
 
 export async function voidBillingInvoice(invoiceId: string) {

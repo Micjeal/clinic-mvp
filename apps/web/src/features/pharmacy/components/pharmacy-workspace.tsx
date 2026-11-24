@@ -27,7 +27,10 @@ export function PrescriptionForm({ encounters, medications }: { encounters: Enco
       formData.set("items_json", JSON.stringify(lines.filter((line) => line.medication_name.trim())));
       const result = await createPrescriptionAction(null, formData);
       if (result.error) { setError(result.error); return; }
-      if (result.prescriptionId) router.push(`/staff/pharmacy/${result.prescriptionId}`);
+      if (result.prescriptionId) {
+        if (result.allergyWarnings?.length) window.alert(`Allergy warning: this patient has recorded allergies matching — ${result.allergyWarnings.join(", ")}`);
+        router.push(`/staff/pharmacy/${result.prescriptionId}`);
+      }
     })} className="staff-editor-sections">
       <section className="staff-editor-section">
         <p className="eyebrow">Prescription</p>
