@@ -4154,3 +4154,17 @@ img { max-width: 100%; }
 [data-theme="dark"] .patient-sidebar-profile strong { color: var(--white); }
 [data-theme="dark"] .patient-sidebar-profile small { color: #91a9b8; }
 [data-theme="dark"] .patient-portal-sidebar__footer { border-color: rgba(255,255,255,.12); }
+
+/* Force-contrast dark overrides (specificity boost) */
+[data-theme="dark"] .patient-portal-shell .patient-sidebar-profile strong,
+[data-theme="dark"] .patient-portal-shell .patient-sidebar-profile small,
+[data-theme="dark"] .patient-portal-shell .patient-account-control strong,
+[data-theme="dark"] .patient-portal-shell .patient-account-control small,
+[data-theme="dark"] .patient-portal-shell .patient-portal-topbar__clinic strong,
+[data-theme="dark"] .patient-portal-shell .patient-portal-topbar__clinic small,
+[data-theme="dark"] .patient-portal-shell .patient-portal-brand strong,
+[data-theme="dark"] .patient-portal-shell .patient-portal-brand small { color: #e8f0f6 !important; }
+[data-theme="dark"] .patient-portal-shell .patient-account-control small,
+[data-theme="dark"] .patient-portal-shell .patient-portal-topbar__clinic small,
+[data-theme="dark"] .patient-portal-shell .patient-portal-brand small,
+[data-theme="dark"] .patient-portal-shell .patient-sidebar-profile small { color: #91a9b8 !important; }
