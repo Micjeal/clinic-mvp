@@ -1026,10 +1026,10 @@ body:has(.patient-portal-shell) { background: #f3f7f9; }
   .patient-help-grid { grid-template-columns: 1fr; }
   .patient-booking-layout { grid-template-columns: 1fr; }
   .patient-booking-help { position: static; }
-  .patient-bottom-nav { position: fixed; right: 0; bottom: 0; left: 0; z-index: 50; min-height: 4.8rem; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); align-items: end; border-top: 1px solid var(--slate-200); padding: .35rem max(.35rem,env(safe-area-inset-right)) max(.35rem,env(safe-area-inset-bottom)) max(.35rem,env(safe-area-inset-left)); background: rgba(255,255,255,.98); box-shadow: 0 -8px 28px rgba(10,39,66,.08); }
+  .patient-bottom-nav { position: fixed; right: 0; bottom: 0; left: 0; z-index: 50; min-height: 4.8rem; display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); align-items: end; border-top: 1px solid var(--slate-200); padding: .35rem max(.35rem,env(safe-area-inset-right)) max(.35rem,env(safe-area-inset-bottom)) max(.35rem,env(safe-area-inset-left)); background: rgba(255,255,255,.98); box-shadow: 0 -8px 28px rgba(10,39,66,.08); }
   .patient-bottom-nav a { min-width: 0; min-height: 3.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .2rem; border-radius: 8px; color: var(--slate-600); }
   .patient-bottom-nav a.is-active { color: var(--teal-600); }
-  .patient-bottom-nav a > span { width: 1.85rem; height: 1.85rem; display: grid; place-items: center; border-radius: 7px; }
+  .patient-bottom-nav a > span { width: 1.6rem; height: 1.6rem; display: grid; place-items: center; border-radius: 7px; }
   .patient-bottom-nav a.is-active > span { background: var(--blue-50); }
   .patient-bottom-nav svg { width: 1.15rem; }
   .patient-bottom-nav small { max-width: 100%; overflow: hidden; font-size: .61rem; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
