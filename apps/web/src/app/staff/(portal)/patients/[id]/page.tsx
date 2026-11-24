@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StaffPageHeader } from "@/features/staff/components/staff-content";
 import { StaffAccessDenied } from "@/features/staff/components/access-denied";
@@ -25,6 +26,7 @@ export default async function PatientRecordPage({ params }: { params: Promise<{ 
         title={`${patient.first_name} ${patient.last_name}`}
         description={`${patient.patient_number}${patient.date_of_birth ? ` • born ${new Date(patient.date_of_birth).toLocaleDateString()}` : ""}${patient.sex ? ` • ${patient.sex}` : ""}`}
         context={<span className="staff-stage-label">{patient.is_active ? "Active" : "Inactive"}</span>}
+        actions={<div style={{ display: "flex", gap: ".5rem" }}><Link className="btn btn--secondary btn--compact" href={`/staff/patients/${patient.id}/print/referral`}>Referral letter</Link><Link className="btn btn--secondary btn--compact" href={`/staff/patients/${patient.id}/print/discharge`}>Discharge summary</Link></div>}
       />
       <div className="staff-detail-grid">
         <section className="staff-panel">
