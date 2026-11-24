@@ -3,6 +3,7 @@ import { StaffPageHeader } from "@/features/staff/components/staff-content";
 import { StaffAccessDenied } from "@/features/staff/components/access-denied";
 import { getPatientRecord } from "@/server/services/patient-records.service";
 import { AuthorizationError, NotFoundError } from "@/server/errors";
+import { AllergyForm } from "@/features/patients/components/allergy-form";
 
 export const metadata = { title: "Patient record" };
 
