@@ -4044,3 +4044,14 @@ img { max-width: 100%; }
 [data-theme="dark"] .patient-card, [data-theme="dark"] .patient-section, [data-theme="dark"] .patient-sidebar-card, [data-theme="dark"] .patient-table-wrap { background: var(--white); border-color: var(--slate-200); }
 [data-theme="dark"] .theme-toggle { border: 1px solid var(--slate-200); background: var(--white); color: var(--navy-900); }
 .theme-toggle { width: 2.2rem; height: 2.2rem; border-radius: 50%; border: 1px solid var(--slate-200); background: var(--white); color: var(--navy-900); display: grid; place-items: center; cursor: pointer; }
+
+/* Dark mode fixes: mobile nav + text contrast */
+[data-theme="dark"] .patient-bottom-nav { background: rgba(15,31,46,.97); border-top-color: var(--slate-200); }
+[data-theme="dark"] .patient-bottom-nav a { color: var(--slate-600); }
+[data-theme="dark"] .patient-bottom-nav a.is-active { color: var(--teal-500); }
+[data-theme="dark"] p, [data-theme="dark"] li, [data-theme="dark"] td, [data-theme="dark"] span, [data-theme="dark"] small, [data-theme="dark"] label { color: var(--slate-700); }
+[data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3, [data-theme="dark"] h4, [data-theme="dark"] strong { color: var(--slate-900); }
+[data-theme="dark"] .patient-table th { background: var(--blue-50); color: var(--slate-700); }
+[data-theme="dark"] .patient-empty, [data-theme="dark"] .empty-state { color: var(--slate-600); }
+[data-theme="dark"] .patient-status { background: var(--blue-100); }
+[data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea { background: var(--white); color: var(--slate-900); border-color: var(--slate-200); }
