@@ -3995,3 +3995,8 @@ img { max-width: 100%; }
 .header-emergency__label { display: flex; align-items: center; gap: .3rem; font-size: .62rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; opacity: .95; }
 .header-emergency__phone { font-size: .92rem; font-weight: 800; letter-spacing: .01em; }
 @media (max-width: 900px) { .header-emergency { display: none; } }
+
+/* ===== Header frosted glass ===== */
+.main-header { background: rgba(255,255,255,.72); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); border-bottom: 1px solid rgba(255,255,255,.45); box-shadow: 0 8px 32px rgba(10,39,66,.06); }
+.nav-link:hover { background: rgba(255,255,255,.55); }
+.nav-link.is-active, .nav-dropdown summary.is-active { background: rgba(223,245,245,.75); color: var(--teal-600); }
