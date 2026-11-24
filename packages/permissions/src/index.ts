@@ -57,7 +57,8 @@ export const Permissions = {
   HR_MANAGE: "hr.manage",
   TRANSPORT_READ: "transport.read",
   TRANSPORT_MANAGE: "transport.manage",
-  EQUIPMENT_READ: "equipment.read",
+  EXPENSES_READ: "expenses.read",
+  EXPENSES_MANAGE: "expenses.manage",  EQUIPMENT_READ: "equipment.read",
   EQUIPMENT_MANAGE: "equipment.manage",
   MORTUARY_READ: "mortuary.read",
 export type Permission = (typeof Permissions)[keyof typeof Permissions];
