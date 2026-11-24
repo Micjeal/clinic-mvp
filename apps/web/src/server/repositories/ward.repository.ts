@@ -39,7 +39,12 @@ export async function nextAdmissionNumber(organizationId: string): Promise<strin
 
 export async function createAdmission(input: { organizationId: string; facilityId: string; patientId: string; wardId: string; bedId: string | null; encounterId: string | null; admittedBy: string; admissionNumber: string; reasonForAdmission: string | null; diagnosisOnAdmission: string | null }) {
   const supabase = await untyped();
-  const { data, error } = await supabase.from("admissions").insert(input).select("id").single();
+  const { data, error } = await supabase.from("admissions").insert({
+    organization_id: input.organizationId, facility_id: input.facilityId, patient_id: input.patientId,
+    ward_id: input.wardId, bed_id: input.bedId, encounter_id: input.encounterId, admitted_by: input.admittedBy,
+    admission_number: input.admissionNumber, reason_for_admission: input.reasonForAdmission,
+    diagnosis_on_admission: input.diagnosisOnAdmission,
+  }).select("id").single();
   if (error) throw error;
   return data.id;
 }
@@ -58,14 +63,19 @@ export async function setBedStatus(bedId: string, organizationId: string, status
 
 export async function createWard(input: { organizationId: string; facilityId: string; name: string; wardType: string; departmentId: string | null }) {
   const supabase = await untyped();
-  const { data, error } = await supabase.from("wards").insert(input).select("id").single();
+  const { data, error } = await supabase.from("wards").insert({
+    organization_id: input.organizationId, facility_id: input.facilityId, name: input.name,
+    ward_type: input.wardType, department_id: input.departmentId,
+  }).select("id").single();
   if (error) throw error;
   return data.id;
 }
 
 export async function createBed(input: { organizationId: string; wardId: string; bedNumber: string }) {
   const supabase = await untyped();
-  const { data, error } = await supabase.from("beds").insert(input).select("id").single();
+  const { data, error } = await supabase.from("beds").insert({
+    organization_id: input.organizationId, ward_id: input.wardId, bed_number: input.bedNumber,
+  }).select("id").single();
   if (error) throw error;
   return data.id;
 }

@@ -97,7 +97,10 @@ export async function insertStockMovement(input: { organizationId: string; facil
 
 export async function createSupplier(input: { organizationId: string; name: string; contactPerson: string | null; phone: string | null; email: string | null; address: string | null; paymentTermsDays: number }) {
   const supabase = await untyped();
-  const { data, error } = await supabase.from("suppliers").insert(input).select("id").single();
+  const { data, error } = await supabase.from("suppliers").insert({
+    organization_id: input.organizationId, name: input.name, contact_person: input.contactPerson,
+    phone: input.phone, email: input.email, address: input.address, payment_terms_days: input.paymentTermsDays,
+  }).select("id").single();
   if (error) throw error;
   return data.id;
 }

@@ -43,7 +43,11 @@ export async function findMembership(membershipId: string, organizationId: strin
 
 export async function createShift(input: { organizationId: string; staffMembershipId: string; facilityId: string | null; shiftDate: string; startTime: string; endTime: string; roleOnDuty: string | null; notes: string | null }) {
   const supabase = await untyped();
-  const { data, error } = await supabase.from("staff_shifts").insert(input).select("id").single();
+  const { data, error } = await supabase.from("staff_shifts").insert({
+    organization_id: input.organizationId, staff_membership_id: input.staffMembershipId, facility_id: input.facilityId,
+    shift_date: input.shiftDate, start_time: input.startTime, end_time: input.endTime,
+    role_on_duty: input.roleOnDuty, notes: input.notes,
+  }).select("id").single();
   if (error) throw error;
   return data.id;
 }
@@ -56,7 +60,10 @@ export async function deleteShift(id: string, organizationId: string) {
 
 export async function createLeaveRequest(input: { organizationId: string; staffMembershipId: string; leaveType: string; startDate: string; endDate: string; reason: string | null }) {
   const supabase = await untyped();
-  const { data, error } = await supabase.from("leave_requests").insert(input).select("id").single();
+  const { data, error } = await supabase.from("leave_requests").insert({
+    organization_id: input.organizationId, staff_membership_id: input.staffMembershipId, leave_type: input.leaveType,
+    start_date: input.startDate, end_date: input.endDate, reason: input.reason,
+  }).select("id").single();
   if (error) throw error;
   return data.id;
 }
