@@ -22,7 +22,7 @@ export async function SiteHeader() {
           <DesktopNavigation />
           <div className="main-header__actions">
             <Link className="portal-shortcut" href="/portal" aria-label="Patient portal"><UserRound aria-hidden="true" /></Link>
-            <Link className="btn btn--compact" href="/appointments">Book appointment</Link>
+            <Link className="btn header-book-btn" href="/appointments">Book appointment</Link>
             <MobileNavigation />
           </div>
         </div>
