@@ -4004,3 +4004,21 @@ img { max-width: 100%; }
 .main-header__inner .brand { margin-right: 1.5rem; }
 .header-book-btn { min-height: 1rem; padding: .5rem 1rem; font-size: .82rem; font-weight: 700; border-radius: var(--radius-sm); white-space: nowrap; background: var(--navy-900); border: 1px solid var(--navy-900); color: var(--white); }
 .header-book-btn:hover { background: var(--blue-700); border-color: var(--blue-700); }
+
+/* ===== Mobile hero + stat card fixes ===== */
+@media (max-width: 720px) {
+  .home-hero--strip { min-height: 0; }
+  .home-hero__overlay { min-height: 0; padding: 4.5rem 0 4rem; justify-content: flex-end; }
+  .home-hero__content .hero-search { max-width: 100%; margin-bottom: .9rem; }
+  .home-hero__title { font-size: clamp(1.3rem,6vw,1.9rem); padding: .7rem 1.4rem .7rem 1.6rem; }
+  .home-hero__sub { font-size: .82rem; }
+  .home-hero__badge { top: .75rem; right: 0; padding: .6rem 1rem .8rem 1.2rem; }
+  .home-hero__badge-name { font-size: .78rem; }
+  .home-hero__photos { opacity: .55; }
+}
+/* Stat cards: translucent, device-responsive */
+.about-stat { background: rgba(255,255,255,.82); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+@media (max-width: 560px) {
+  .about-stat { padding: 1.25rem 1rem; }
+  .about-stat__value { font-size: 1.6rem; }
+}
