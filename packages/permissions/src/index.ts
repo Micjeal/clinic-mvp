@@ -40,6 +40,10 @@ export const Permissions = {
   RADIOLOGY_ORDER: "radiology.order",
   RADIOLOGY_REPORT_WRITE: "radiology.report.write",
   RADIOLOGY_REPORT_APPROVE: "radiology.report.approve",
+  INSURANCE_READ: "insurance.read",
+  INSURANCE_MANAGE: "insurance.manage",
+  INSURANCE_CLAIM_CREATE: "insurance.claim.create",
+  INSURANCE_CLAIM_PROCESS: "insurance.claim.process",
 } as const;
 
 export type Permission = (typeof Permissions)[keyof typeof Permissions];
