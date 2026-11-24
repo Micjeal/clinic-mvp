@@ -3,6 +3,7 @@ import { Permissions } from "@clinic/permissions";
 import { NotFoundError, ValidationError } from "@/server/errors";
 import { requirePermission } from "@/server/permissions/require-permission";
 import * as repo from "@/server/repositories/lab.repository";
+import * as charges from "@/server/repositories/charge.repository";
 
 async function orgContext(permission: import("@clinic/permissions").Permission) {
   const staff = await requirePermission(permission);
@@ -68,6 +69,7 @@ async function maybeCompleteOrder(orderId: string, orgId: string) {
   const items = (order.lab_order_items ?? []) as { status?: string }[];
   if (items.length && items.every((item) => item.status === "completed" || item.status === "cancelled")) {
     await repo.updateLabOrderStatus(orderId, orgId, { status: "completed", completed_at: new Date().toISOString() });
+    await chargeCompletedLabOrder(order);
   } else {
     const anyProcessing = items.some((item) => ["sample_collected", "processing", "completed"].includes(item.status ?? ""));
     if (anyProcessing && order.status === "ordered") await repo.updateLabOrderStatus(orderId, orgId, { status: "processing" });
@@ -85,4 +87,27 @@ export async function createLabTest(input: { code: string; name: string; descrip
   const orgId = staff.membership.organization_id;
   if (!input.code.trim() || !input.name.trim()) throw new ValidationError("Code and name are required.");
   return repo.createLabTest({ ...input, organizationId: orgId });
+}
+
+async function chargeCompletedLabOrder(order: Record<string, unknown> | null) {
+  if (!order) return;
+  const orgId = order.organization_id as string;
+  const encounterId = order.encounter_id as string;
+  const patientId = order.patient_id as string;
+  const facilityId = (order.facility_id as string | null) ?? null;
+  const items = (order.lab_order_items ?? []) as { id?: string; status?: string; lab_tests?: { name?: string; code?: string; price?: number; currency_code?: string } | null }[];
+  for (const item of items) {
+    const test = item.lab_tests;
+    if (!item.id || !test || Number(test.price ?? 0) <= 0) continue;
+    try {
+      await charges.insertCharge({
+        organizationId: orgId, encounterId, patientId, facilityId,
+        chargeType: "laboratory", description: `Lab: ${test.name ?? test.code ?? "test"}`,
+        quantity: 1, unitPrice: Number(test.price), currencyCode: test.currency_code ?? "UGX",
+        sourceType: "lab_order_item", sourceId: item.id,
+      });
+    } catch {
+      // Charge capture must never break the lab workflow.
+    }
+  }
 }

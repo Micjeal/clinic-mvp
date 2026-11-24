@@ -69,3 +69,18 @@ export async function createMedication(input: { organizationId: string; code: st
   if (error) throw error;
   return data.id;
 }
+
+export async function findPrescriptionItem(itemId: string): Promise<any> {
+  const supabase = (await createClient()) as unknown as import("@supabase/supabase-js").SupabaseClient;
+  const { data, error } = await supabase.from("prescription_items").select("id,prescription_id,medication_id,medication_name,quantity").eq("id", itemId).maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+export async function findMedicationSellingPrice(organizationId: string, medicationId: string): Promise<number | null> {
+  const supabase = (await createClient()) as unknown as import("@supabase/supabase-js").SupabaseClient;
+  const { data, error } = await supabase.from("inventory_items").select("selling_price").eq("organization_id", organizationId).eq("medication_id", medicationId).eq("is_active", true).limit(1).maybeSingle();
+  if (error) return null;
+  const price = Number(data?.selling_price ?? 0);
+  return price > 0 ? price : null;
+}

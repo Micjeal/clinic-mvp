@@ -6,6 +6,7 @@ import { safeServerMessage } from "@/server/errors";
 import { logServerError } from "@/server/logging";
 import {
   createBillingInvoice,
+  createInvoiceFromCharges,
   issueBillingInvoice,
   recordBillingPayment,
   voidBillingInvoice,
@@ -97,5 +98,24 @@ export async function recordPaymentAction(_prev: unknown, formData: FormData) {
   } catch (error) {
     logServerError("billing", "payment-record-failed", error);
     return { error: safeServerMessage(error, "We couldn't record the payment.") };
+  }
+}
+
+const chargeIdsSchema = z.object({
+  charge_ids: z.array(z.string().uuid()).min(1).max(300),
+  facility_id: z.string().uuid(),
+});
+
+export async function createInvoiceFromChargesAction(_prev: unknown, formData: FormData) {
+  try {
+    let chargeIds: string[] = [];
+    try { const parsed = JSON.parse(String(formData.get("charge_ids") ?? "[]")); if (Array.isArray(parsed)) chargeIds = parsed.filter((v) => typeof v === "string"); } catch { /* validation */ }
+    const input = chargeIdsSchema.parse({ charge_ids: chargeIds, facility_id: formData.get("facility_id") });
+    const invoiceIds = await createInvoiceFromCharges({ chargeIds: input.charge_ids, facilityId: input.facility_id });
+    revalidatePath("/staff/billing");
+    return { success: true, invoiceIds };
+  } catch (error) {
+    logServerError("billing", "invoice-from-charges-failed", error);
+    return { error: safeServerMessage(error, "We couldn't create the invoice.") };
   }
 }

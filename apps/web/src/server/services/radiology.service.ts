@@ -4,6 +4,7 @@ import { NotFoundError, ValidationError } from "@/server/errors";
 import { requirePermission } from "@/server/permissions/require-permission";
 import * as labRepo from "@/server/repositories/lab.repository";
 import * as repo from "@/server/repositories/radiology.repository";
+import * as charges from "@/server/repositories/charge.repository";
 
 async function orgContext(permission: import("@clinic/permissions").Permission) {
   const staff = await requirePermission(permission);
@@ -53,11 +54,32 @@ export async function saveImagingReport(input: { orderId: string; findings: stri
 
 export async function approveImagingReport(orderId: string) {
   const { orgId, userId } = await orgContext(Permissions.RADIOLOGY_REPORT_APPROVE);
-  const order = await repo.findImagingOrder(orderId, orgId) as { imaging_reports?: unknown } | null;
+  const order = await repo.findImagingOrder(orderId, orgId) as Record<string, any> | null;
   const report = (order?.imaging_reports ?? null) as { id?: string } | { id?: string }[] | null;
   const reportId = Array.isArray(report) ? report[0]?.id : report?.id;
   if (!order || !reportId) throw new NotFoundError("Report not found");
   await repo.finalizeImagingReport(reportId, orgId, userId);
+  try {
+    const test = order.imaging_tests as { name?: string; price?: number; currency_code?: string } | null;
+    if (test && Number(test.price ?? 0) > 0) {
+      await charges.insertCharge({
+        organizationId: orgId,
+        encounterId: order.encounter_id as string,
+        patientId: order.patient_id as string,
+        facilityId: (order.facility_id as string | null) ?? null,
+        chargeType: "imaging",
+        description: `Imaging: ${test.name ?? "study"}`,
+        quantity: 1,
+        unitPrice: Number(test.price),
+        currencyCode: test.currency_code ?? "UGX",
+        sourceType: "imaging_order",
+        sourceId: orderId,
+        createdBy: userId,
+      });
+    }
+  } catch {
+    // Charge capture must never break report approval.
+  }
 }
 
 export async function listImagingTests() {
