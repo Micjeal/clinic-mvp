@@ -28,7 +28,7 @@ export async function getPatientRecord(id: string) {
   if (error) throw error;
   if (!patient) throw new NotFoundError("Patient not found");
 
-  const [appointments, encounters, diagnoses, notes, labResults, imagingReports, invoices, admissions, prescriptions] = await Promise.all([
+  const [appointments, encounters, diagnoses, notes, labResults, imagingReports, invoices, admissions, prescriptions, vitals] = await Promise.all([
     supabase.from("appointments").select("id,scheduled_start,status,reason,departments(name),services(name)").eq("patient_id", id).eq("organization_id", orgId).order("scheduled_start", { ascending: false }).limit(50),
     supabase.from("encounters").select("id,started_at,status,chief_complaint,departments(name)").eq("patient_id", id).eq("organization_id", orgId).order("started_at", { ascending: false }).limit(50),
     supabase.from("diagnoses").select("id,diagnosis_name,diagnosis_code,diagnosis_type,created_at,patient_visible").eq("patient_id", id).eq("organization_id", orgId).order("created_at", { ascending: false }).limit(50),
@@ -38,6 +38,7 @@ export async function getPatientRecord(id: string) {
     supabase.from("invoices").select("id,invoice_number,status,total,balance,currency_code,created_at").eq("patient_id", id).eq("organization_id", orgId).order("created_at", { ascending: false }).limit(50),
     supabase.from("admissions").select("id,admission_number,status,reason_for_admission,diagnosis_on_admission,admitted_at,discharged_at,wards(name)").eq("patient_id", id).eq("organization_id", orgId).order("admitted_at", { ascending: false }).limit(50),
     supabase.from("prescriptions").select("id,status,created_at,prescription_items(medication_name,dose,frequency,duration_days,quantity,status)").eq("patient_id", id).eq("organization_id", orgId).order("created_at", { ascending: false }).limit(50),
+    supabase.from("vitals").select("id,recorded_at,temperature_c,pulse_bpm,respiratory_rate,systolic_bp,diastolic_bp,oxygen_saturation,weight_kg,height_cm").eq("patient_id", id).eq("organization_id", orgId).order("recorded_at", { ascending: false }).limit(100),
   ]);
 
   return {
@@ -52,6 +53,7 @@ export async function getPatientRecord(id: string) {
       invoices: invoices.data ?? [],
       admissions: admissions.data ?? [],
       prescriptions: prescriptions.data ?? [],
+      vitals: vitals.data ?? [],
     },
   };
 }

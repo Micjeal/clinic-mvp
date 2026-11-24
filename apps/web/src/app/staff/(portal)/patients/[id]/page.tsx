@@ -106,6 +106,10 @@ export default async function PatientRecordPage({ params }: { params: Promise<{ 
         </section>
       </div>
       <section className="staff-panel">
+        <div className="staff-panel__header"><h2>Vitals trends</h2><span className="staff-table-sub">{timeline.vitals.length} readings</span></div>
+        {timeline.vitals.length === 0 ? <p className="staff-table-empty">No vitals recorded.</p> : <VitalsTrends vitals={timeline.vitals as never} />}
+      </section>
+      <section className="staff-panel">
         <div className="staff-panel__header"><h2>Appointments & encounters</h2></div>
         <div className="staff-table-wrap"><table className="staff-table">
           <thead><tr><th>When</th><th>Type</th><th>Detail</th><th>Status</th></tr></thead>
@@ -124,5 +128,41 @@ export default async function PatientRecordPage({ params }: { params: Promise<{ 
         </table></div>
       </section>
     </div>
+  );
+}
+
+function Sparkline({ values, color }: { values: number[]; color: string }) {
+  if (values.length < 2) return <span className="staff-table-sub">—</span>;
+  const w = 120, h = 28, pad = 2;
+  const min = Math.min(...values), max = Math.max(...values);
+  const range = max - min || 1;
+  const points = values.slice(-30).map((v, i, arr) => `${pad + (i / (arr.length - 1)) * (w - pad * 2)},${h - pad - ((v - min) / range) * (h - pad * 2)}`).join(" ");
+  return <svg height={h} width={w}><polyline fill="none" points={points} stroke={color} strokeWidth="1.5" /></svg>;
+}
+
+function VitalsTrends({ vitals }: { vitals: { recorded_at: string; temperature_c: number | null; pulse_bpm: number | null; respiratory_rate: number | null; systolic_bp: number | null; diastolic_bp: number | null; oxygen_saturation: number | null; weight_kg: number | null }[] }) {
+  const latest = vitals[0];
+  const series = (key: keyof typeof latest) => vitals.map((v) => v[key] as number | null).filter((v): v is number => v != null).reverse();
+  const rows = [
+    { label: "Pulse", unit: "bpm", latest: latest.pulse_bpm, values: series("pulse_bpm"), color: "#e69500" },
+    { label: "BP", unit: "mmHg", latest: latest.systolic_bp != null ? `${latest.systolic_bp}/${latest.diastolic_bp ?? "—"}` : null, values: series("systolic_bp"), color: "#2e7dc4" },
+    { label: "Temperature", unit: "°C", latest: latest.temperature_c, values: series("temperature_c"), color: "#d32f2f" },
+    { label: "SpO₂", unit: "%", latest: latest.oxygen_saturation, values: series("oxygen_saturation"), color: "#00897b" },
+    { label: "Weight", unit: "kg", latest: latest.weight_kg, values: series("weight_kg"), color: "#8e24aa" },
+  ];
+  return (
+    <div className="staff-table-wrap"><table className="staff-table">
+      <thead><tr><th>Vital</th><th>Latest</th><th>Trend (oldest → newest)</th><th>Last reading</th></tr></thead>
+      <tbody>
+        {rows.map((row) => (
+          <tr key={row.label}>
+            <td>{row.label}</td>
+            <td><strong>{row.latest ?? "—"}</strong> {row.unit}</td>
+            <td><Sparkline color={row.color} values={row.values} /></td>
+            <td>{new Date(latest.recorded_at).toLocaleString()}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table></div>
   );
 }
