@@ -3568,3 +3568,31 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 .patient-sub { color: var(--slate-500); font-size: .78rem; }
 .patient-flag { color: #b45309; font-weight: 600; font-size: .75rem; text-transform: uppercase; }
 .patient-empty { color: var(--slate-500); font-size: .85rem; padding: .5rem 0; }
+
+/* ===== Booking flow redesign ===== */
+.portal-booking-form { position: relative; }
+.portal-booking-stepper { gap: .5rem; margin-bottom: 1.1rem; }
+.portal-booking-stepper li { padding: .7rem .6rem; border-radius: 10px 10px 0 0; border-bottom: 3px solid var(--slate-200); background: var(--slate-50); font-size: .76rem; transition: all .15s ease; }
+.portal-booking-stepper li.is-current { background: var(--white); border-bottom-color: var(--teal-600); box-shadow: 0 -2px 10px rgba(8,127,131,.08); }
+.portal-booking-stepper li.is-complete { background: #f0faf9; }
+.portal-booking-panel { padding: clamp(1.25rem,3vw,2rem); }
+.portal-booking-panel legend { font-size: 1.25rem; margin-bottom: .25rem; }
+.portal-booking-panel fieldset { gap: 1.2rem; }
+.portal-choice-grid { grid-template-columns: repeat(auto-fill,minmax(15rem,1fr)); gap: .8rem; }
+.portal-choice { min-height: 4.4rem; border-radius: 14px; border: 1.5px solid var(--slate-200); padding: 1rem 1.1rem; transition: all .15s ease; box-shadow: 0 1px 3px rgba(10,39,66,.04); }
+.portal-choice:hover { border-color: #9ecfcf; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(10,39,66,.07); }
+.portal-choice.is-selected { border-color: var(--teal-600); background: linear-gradient(135deg,#f0fbfa,#e8f7f5); box-shadow: 0 0 0 1px var(--teal-600), 0 4px 14px rgba(8,127,131,.1); }
+.portal-choice strong { font-size: .92rem; }
+.portal-choice small { font-size: .78rem; }
+.portal-booking-panel input[type="date"] { width: 100%; border: 1.5px solid var(--slate-300); border-radius: 12px; padding: .85rem 1rem; font-size: 1rem; }
+.portal-slot-grid { grid-template-columns: repeat(auto-fill,minmax(6.5rem,1fr)); gap: .7rem; }
+.portal-slot { min-height: 3.2rem; border-radius: 12px; border: 1.5px solid var(--slate-200); font-weight: 600; font-size: .88rem; transition: all .12s ease; }
+.portal-slot:hover { border-color: var(--teal-500); }
+.portal-slot.is-selected { border-color: var(--teal-600); background: var(--teal-600); color: var(--white); box-shadow: 0 4px 12px rgba(8,127,131,.25); }
+.portal-booking-review { display: grid; grid-template-columns: repeat(auto-fit,minmax(12rem,1fr)); gap: .9rem; background: var(--slate-50); border-radius: 12px; padding: 1.1rem 1.25rem; }
+.portal-booking-review div { display: grid; gap: .2rem; }
+.portal-booking-review dt { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--slate-500); font-weight: 700; }
+.portal-booking-review dd { margin: 0; font-weight: 600; color: var(--navy-900); font-size: .92rem; }
+.portal-booking-actions { position: sticky; bottom: 0; display: flex; justify-content: space-between; gap: .8rem; margin-top: 1.5rem; padding: .9rem 0 calc(.9rem + env(safe-area-inset-bottom)); background: linear-gradient(to top, var(--white) 75%, transparent); }
+.portal-booking-actions .btn { min-width: 9rem; }
+.portal-booking-notice { background: var(--blue-50); border-left: 3px solid var(--teal-600); border-radius: 0 10px 10px 0; padding: .75rem 1rem; font-size: .82rem; color: var(--slate-700); }
