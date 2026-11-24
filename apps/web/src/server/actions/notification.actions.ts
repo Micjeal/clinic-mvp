@@ -26,3 +26,9 @@ export async function markAllNotificationsReadAction(){
     return {error:"Unable to update notifications."};
   }
 }
+
+export async function listPortalNotificationsAction(){
+  const {patient}=await requirePatient();
+  const {listPortalNotifications}=await import("@/server/services/notification.service");
+  return listPortalNotifications(patient.id);
+}
