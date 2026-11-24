@@ -27,7 +27,7 @@ import { Wrench,
   ShieldCheck,
   Wallet,
   X,
-} from "lucide-react";
+  Receipt } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -57,6 +57,7 @@ const navigation = [
   { href: "/staff/queue", label: "Queue", icon: ClipboardList, permission: "queue.read", group: "Daily operations" },
   { href: "/staff/triage", label: "Triage", icon: Stethoscope, permission: "triage.write", group: "Daily operations" },
   { href: "/staff/billing", label: "Billing", icon: Wallet, permission: "billing.read", group: "Finance" },
+  { href: "/staff/expenses", label: "Expenses", icon: Receipt, permission: "expenses.read", group: "Finance" },
   { href: "/staff/insurance", label: "Insurance", icon: ShieldCheck, permission: "insurance.read", group: "Finance" },
   { href: "/staff/lab", label: "Laboratory", icon: FlaskConical, permission: "lab.read", group: "Clinical" },
   { href: "/staff/radiology", label: "Radiology", icon: ScanLine, permission: "radiology.read", group: "Clinical" },
