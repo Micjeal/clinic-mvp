@@ -3868,3 +3868,64 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 .home-hero__dots-row span { width: .55rem; height: .55rem; border-radius: 50%; background: rgba(255,255,255,.4); }
 .home-hero__dots-row span.is-active { background: var(--teal-500); }
 .home-hero__dotted { position: absolute; left: 0; right: 0; bottom: 0; height: 1.5rem; z-index: 3; pointer-events: none; background-image: radial-gradient(var(--teal-500) 2px, transparent 2px), radial-gradient(var(--blue-700) 2px, transparent 2px); background-size: 16px 10px; background-position: 0 0, 8px 5px; opacity: .45; }
+
+/* ===== Homepage unified design pass ===== */
+.quick-actions { margin-top: -2.75rem; position: relative; z-index: 4; }
+.quick-actions__grid { border-radius: var(--radius-md); }
+.quick-action { transition: background-color .2s ease; }
+.quick-action:hover { background: var(--blue-50); }
+.quick-action__arrow { color: var(--teal-600); }
+.quick-action:hover .quick-action__arrow { transform: translateX(4px); }
+
+/* Section headings: teal dot + navy accent */
+.section-heading .eyebrow, .section-heading--center .eyebrow { display: inline-flex; align-items: center; gap: .5rem; }
+.section-heading .eyebrow::before, .section-heading--center .eyebrow::before { content: ""; width: .65rem; height: .65rem; border-radius: 50%; background: var(--teal-500); }
+.section-heading h2, .section-heading--center h2 { font-family: var(--font-display); color: var(--navy-950); }
+.section-heading h2::after, .section-heading--center h2::after { content: ""; display: block; width: 4.5rem; height: 4px; border-radius: 999px; background: var(--navy-900); margin-top: .7rem; }
+.section-heading--center h2::after { margin-inline: auto; }
+
+/* Split intro */
+.care-media { border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg); overflow: hidden; position: relative; }
+.care-media::after { content: ""; position: absolute; top: 0; right: 0; width: 2.5rem; height: 2.5rem; background: var(--teal-500); border-radius: 0 0 0 var(--radius-md); }
+.check-list li svg, .check-list svg { color: var(--teal-600); }
+
+/* Department + service cards */
+.department-card { background: var(--white); border: 1px solid var(--slate-200); border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg); box-shadow: var(--shadow-sm); transition: transform .15s ease, box-shadow .15s ease; }
+.department-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.department-card .icon-box { background: var(--cyan-100); color: var(--teal-600); }
+.service-grid { background: var(--blue-50); }
+.service-grid article, .service-grid .service-card { border-top: 3px solid var(--teal-500); }
+
+/* Navy band */
+.section--navy { background: var(--navy-950); color: var(--white); }
+.section--navy .eyebrow, .section--navy h2 { color: #69d4ce; }
+.section--navy .eyebrow::before { background: #69d4ce; }
+.section--navy h2::after { background: #69d4ce; }
+.section--navy article { border-color: rgba(255,255,255,.16); }
+
+/* Journey steps */
+.journey-grid article { border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1.5rem; }
+.journey-grid .eyebrow, .journey-grid span:first-child { color: var(--teal-600); font-weight: 800; }
+
+/* Facility feature */
+.facility-feature__visual { border-radius: 4px var(--radius-lg) var(--radius-lg) 4px; overflow: hidden; }
+.facility-feature__visual img { object-fit: cover; object-position: center top; }
+
+/* Portal CTA */
+.portal-cta { background: var(--navy-800); }
+.portal-cta__icons svg, .portal-cta svg { color: #74ddd7; }
+.portal-cta .btn--light { background: var(--white); color: var(--navy-900); }
+
+/* FAQ */
+.faq details { border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: .9rem 1.1rem; margin-bottom: .7rem; background: var(--white); }
+.faq summary { cursor: pointer; font-weight: 700; color: var(--navy-950); list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.faq summary::after { content: "›"; color: var(--teal-600); font-size: 1.3rem; transition: transform .2s ease; }
+.faq details[open] summary::after { transform: rotate(90deg); }
+
+/* Contact CTA */
+.contact-cta__icon { width: 3rem; height: 3rem; border-radius: 50%; background: var(--cyan-100); color: var(--teal-600); display: grid; place-items: center; }
+.contact-cta__icon svg { width: 1.4rem; height: 1.4rem; }
+
+/* Overflow safety */
+.site-container > *, .section > .site-container > * { min-width: 0; }
+img { max-width: 100%; }
