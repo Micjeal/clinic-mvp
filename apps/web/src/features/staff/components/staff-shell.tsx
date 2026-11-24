@@ -27,7 +27,7 @@ import {
   ShieldCheck,
   Wallet,
   X,
-} from "lucide-react";
+  Droplets } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
