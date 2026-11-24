@@ -36,7 +36,7 @@ function SignOutButton({className="patient-portal-signout"}:{className?:string})
 
 function MobileBottomNavigation(){
   const pathname=usePathname();
-  const items=portalNavigation.slice(0,4);
+  const items=[portalNavigation[0],portalNavigation[1],portalNavigation[3],portalNavigation[4]];
   return <nav aria-label="Patient portal mobile navigation" className="patient-bottom-nav">
     {items.map(item=>{const Icon=item.icon,active=isActiveRoute(pathname,item.href),isBook=item.href==="/portal/appointments/new";return <Link aria-current={active?"page":undefined} className={`${active?"is-active ":""}${isBook?"patient-bottom-nav__book":""}`.trim()} href={item.href} key={item.href}><span><Icon aria-hidden="true" /></span><small>{"mobileLabel" in item?item.mobileLabel:item.label}</small></Link>;})}
   </nav>;
