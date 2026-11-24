@@ -5,7 +5,7 @@ const untyped = async () => (await createClient()) as unknown as import("@supaba
 
 export async function listMemberships(organizationId: string): Promise<any[]> {
   const supabase = await untyped();
-  const { data, error } = await supabase.from("staff_memberships").select("id,user_id,is_active,profiles!staff_memberships_user_id_fkey(full_name,email),roles!staff_memberships_role_id_fkey(name)").eq("organization_id", organizationId).eq("is_active", true).order("created_at");
+  const { data, error } = await supabase.from("staff_memberships").select("id,user_id,is_active,profiles!staff_memberships_user_id_fkey(full_name),roles!staff_memberships_role_id_fkey(name)").eq("organization_id", organizationId).eq("is_active", true).order("created_at");
   if (error) throw error;
   return data ?? [];
 }
