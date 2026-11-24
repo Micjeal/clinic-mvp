@@ -8,6 +8,7 @@ import {useEffect,useRef,useState} from "react";
 import {patientSignOutAction} from "@/server/actions/auth.actions";
 import {listPortalNotificationsAction,markAllNotificationsReadAction,markNotificationReadAction} from "@/server/actions/notification.actions";
 import type {PortalNotification} from "@/server/services/notification.service";
+import {ThemeToggle} from "@/components/layout/theme-toggle";
 
 const portalNavigation=[
   {href:"/portal",label:"Overview",icon:LayoutDashboard},
@@ -135,7 +136,7 @@ export function PatientPortalShell({children,clinic,patient,notifications=[]}:{c
     <div className="patient-portal-workspace">
       <header className="patient-portal-topbar">
         <Link className="patient-portal-topbar__clinic" href="/portal"><span><Cross aria-hidden="true" /></span><span><strong>{clinic}</strong><small>Patient portal</small></span></Link>
-        <div className="patient-topbar-actions"><NotificationBell notifications={notifications}/><button aria-controls="patient-account-drawer" aria-expanded={accountOpen} className="patient-account-control" onClick={()=>setAccountOpen(true)} ref={accountButtonRef} type="button"><span className="patient-avatar" aria-hidden="true">{patient.initials}</span><span><strong>{patient.name}</strong><small>Patient account</small></span><Menu aria-hidden="true" /></button></div>
+        <div className="patient-topbar-actions"><ThemeToggle /><NotificationBell notifications={notifications}/><button aria-controls="patient-account-drawer" aria-expanded={accountOpen} className="patient-account-control" onClick={()=>setAccountOpen(true)} ref={accountButtonRef} type="button"><span className="patient-avatar" aria-hidden="true">{patient.initials}</span><span><strong>{patient.name}</strong><small>Patient account</small></span><Menu aria-hidden="true" /></button></div>
       </header>
       <main className="patient-portal-main" id="portal-main-content">{children}</main>
     </div>

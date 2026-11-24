@@ -4036,3 +4036,11 @@ img { max-width: 100%; }
 /* Quick actions: glass transparent */
 .quick-actions__grid { background: rgba(255,255,255,.78); backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%); border-color: rgba(255,255,255,.5); }
 .quick-action:hover { background: rgba(223,245,245,.5); }
+
+/* ===== Dark theme (patient portal + site) ===== */
+[data-theme="dark"] { --white: #0f1f2e; --off-white: #0a1826; --blue-50: #13293d; --blue-100: #16334d; --cyan-100: #123a3d; --slate-100: #1c3145; --slate-200: #24405a; --slate-300: #3a546e; --slate-600: #9db4c6; --slate-700: #c3d4e0; --slate-900: #e8f0f6; --navy-950: #eaf2f8; --navy-900: #dcebf5; --navy-800: #c8dcee; --shadow-sm: 0 8px 24px rgba(0,0,0,.3); --shadow-md: 0 20px 48px rgba(0,0,0,.4); }
+[data-theme="dark"] body { background: var(--off-white); color: var(--slate-900); }
+[data-theme="dark"] .patient-portal-shell, [data-theme="dark"] .patient-portal-sidebar, [data-theme="dark"] .patient-portal-topbar, [data-theme="dark"] .patient-portal-main { background: var(--off-white); color: var(--slate-900); }
+[data-theme="dark"] .patient-card, [data-theme="dark"] .patient-section, [data-theme="dark"] .patient-sidebar-card, [data-theme="dark"] .patient-table-wrap { background: var(--white); border-color: var(--slate-200); }
+[data-theme="dark"] .theme-toggle { border: 1px solid var(--slate-200); background: var(--white); color: var(--navy-900); }
+.theme-toggle { width: 2.2rem; height: 2.2rem; border-radius: 50%; border: 1px solid var(--slate-200); background: var(--white); color: var(--navy-900); display: grid; place-items: center; cursor: pointer; }
