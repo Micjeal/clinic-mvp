@@ -19,6 +19,7 @@ import {
   FlaskConical,
   Package,
   Pill,
+  ScanLine,
   Wallet,
   X,
 } from "lucide-react";
@@ -52,6 +53,7 @@ const navigation = [
   { href: "/staff/triage", label: "Triage", icon: Stethoscope, permission: "triage.write", group: "Daily operations" },
   { href: "/staff/billing", label: "Billing", icon: Wallet, permission: "billing.read", group: "Finance" },
   { href: "/staff/lab", label: "Laboratory", icon: FlaskConical, permission: "lab.read", group: "Clinical" },
+  { href: "/staff/radiology", label: "Radiology", icon: ScanLine, permission: "radiology.read", group: "Clinical" },
   { href: "/staff/pharmacy", label: "Pharmacy", icon: Pill, permission: "prescription.read", group: "Clinical" },
   { href: "/staff/inventory", label: "Inventory", icon: Package, permission: "inventory.read", group: "Operations" },
   { href: "/staff/appointments", label: "Appointments", icon: CalendarDays, permission: "appointment.read", group: "Daily operations" },
