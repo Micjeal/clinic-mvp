@@ -44,6 +44,9 @@ export const Permissions = {
   INSURANCE_MANAGE: "insurance.manage",
   INSURANCE_CLAIM_CREATE: "insurance.claim.create",
   INSURANCE_CLAIM_PROCESS: "insurance.claim.process",
+  WARD_READ: "ward.read",
+  WARD_MANAGE: "ward.manage",
+  ADMISSION_MANAGE: "admission.manage",
 } as const;
 
 export type Permission = (typeof Permissions)[keyof typeof Permissions];
