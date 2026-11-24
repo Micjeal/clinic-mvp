@@ -21,10 +21,8 @@ create table public.mortuary_register (
 alter table public.mortuary_register enable row level security;
 create policy mortuary_read on public.mortuary_register for select to authenticated using (private.has_permission(organization_id,'mortuary.read'));
 create policy mortuary_write on public.mortuary_register for all to authenticated using (private.has_permission(organization_id,'mortuary.manage')) with check (private.has_permission(organization_id,'mortuary.manage'));
-insert into public.permissions(key,domain,label,description) values
- ('mortuary.read','operations','View mortuary register','View deceased register'),
- ('mortuary.manage','operations','Manage mortuary','Register deceased and release remains')
-on conflict do nothing;
+insert into public.permissions(permission_key,description) values ('mortuary.read','View deceased register') on conflict do nothing;
+insert into public.permissions(permission_key,description) values ('mortuary.manage','Register deceased and release remains') on conflict do nothing;
 insert into public.role_permissions(role_id,permission_key)
 select r.id,'mortuary.read' from public.roles r where r.role_key in ('organization_admin','doctor','nurse','receptionist') on conflict do nothing;
 insert into public.role_permissions(role_id,permission_key)
