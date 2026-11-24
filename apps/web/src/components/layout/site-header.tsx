@@ -1,4 +1,4 @@
-import { Cross, UserRound } from "lucide-react";
+import { Cross, Phone, UserRound } from "lucide-react";
 import Link from "next/link";
 
 import { clinicName } from "@/lib/public-content";
@@ -21,8 +21,11 @@ export async function SiteHeader() {
           </Link>
           <DesktopNavigation />
           <div className="main-header__actions">
+            <Link className="header-emergency" href="tel:+256772200400" aria-label="Call an ambulance">
+              <span className="header-emergency__label"><Phone aria-hidden="true" size={11} /> Call an ambulance</span>
+              <span className="header-emergency__phone">+256 772 200 400</span>
+            </Link>
             <Link className="portal-shortcut" href="/portal" aria-label="Patient portal"><UserRound aria-hidden="true" /></Link>
-            <Link className="btn btn--compact" href="/appointments">Book appointment</Link>
             <MobileNavigation />
           </div>
         </div>

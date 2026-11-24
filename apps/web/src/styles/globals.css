@@ -3986,3 +3986,12 @@ img { max-width: 100%; }
 .faq-list details[open] summary svg { transform: rotate(180deg); }
 .faq-list details p { margin: .8rem 0 0; font-size: .88rem; line-height: 1.65; color: var(--slate-600); }
 .faq-layout .section-heading { max-width: 26rem; }
+
+/* ===== Header: emergency block ===== */
+.main-header__inner { min-height: 4.5rem; }
+.main-header__actions { margin-left: auto; align-self: stretch; display: flex; align-items: stretch; gap: .5rem; }
+.header-emergency { display: flex; flex-direction: column; justify-content: center; gap: .1rem; padding: .65rem 1.4rem; background: #c8102e; color: var(--white); text-decoration: none; border-radius: 0 0 0 var(--radius-md); transition: background .15s ease; }
+.header-emergency:hover { background: #a50d26; }
+.header-emergency__label { display: flex; align-items: center; gap: .3rem; font-size: .62rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; opacity: .95; }
+.header-emergency__phone { font-size: .92rem; font-weight: 800; letter-spacing: .01em; }
+@media (max-width: 900px) { .header-emergency { display: none; } }
