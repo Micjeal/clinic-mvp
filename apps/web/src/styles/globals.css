@@ -3546,3 +3546,8 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 .staff-editor-section__header .eyebrow { margin-bottom: .3rem; }
 .staff-editor-section__header h2 { margin: 0; }
 .staff-editor-section__header .staff-section-description { margin-top: .3rem; }
+
+/* Staff password reset */
+.staff-reset-password { display: grid; gap: .5rem; justify-items: end; }
+.staff-reset-password__value { display: flex; align-items: center; gap: .5rem; }
+.staff-reset-password__value code { padding: .4rem .7rem; border: 1px dashed #b9cfdb; border-radius: 8px; background: #f4fafb; font-size: .85rem; letter-spacing: .02em; }

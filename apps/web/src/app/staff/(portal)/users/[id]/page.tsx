@@ -12,6 +12,7 @@ import { getPublicDepartments } from "@/server/services/department.service";
 import { getPublicFacilities } from "@/server/services/facility.service";
 import { findPublicClinicianProfile } from "@/server/services/public-clinician.service";
 import { getPublicServices } from "@/server/services/service.service";
+import { ResetStaffPassword } from "@/features/staff/components/reset-staff-password";
 
 export const metadata = { title: "Staff member" };
 
@@ -124,6 +125,7 @@ export default async function StaffMemberPage({
         </div>
 
         <div className="staff-page-heading__actions">
+          <ResetStaffPassword memberName={member.full_name} membershipId={member.id} />
           {member.role_key === "doctor" && configuration.profile?.slug ? (
             <Link
               className="btn btn--secondary btn--compact"
