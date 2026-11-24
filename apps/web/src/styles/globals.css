@@ -3966,3 +3966,23 @@ img { max-width: 100%; }
   .section { padding: 3rem 0; }
   .section::before { height: 2rem; }
 }
+
+/* ===== Doctors preview: navy band ===== */
+.doctors-preview { background: var(--navy-950); }
+.doctors-preview .section-heading .eyebrow { color: #69d4ce; }
+.doctors-preview .section-heading .eyebrow::before { background: #69d4ce; }
+.doctors-preview .section-heading h2 { color: var(--white); }
+.doctors-preview .section-heading h2::after { background: #69d4ce; }
+.doctors-preview .text-link { color: #74ddd7; }
+.doctors-preview__grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1.5rem; margin-top: 2rem; }
+.doctors-preview .doctor-tile { background: var(--white); border: 1px solid rgba(255,255,255,.14); border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg); padding: 1rem; box-shadow: var(--shadow-md); transition: transform .18s ease, box-shadow .18s ease; }
+.doctors-preview .doctor-tile:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(0,0,0,.3); }
+.doctors-preview .doctor-tile__photo { aspect-ratio: 4/4.4; }
+.doctors-preview .doctor-tile__monogram { font-size: 2rem; }
+@media (max-width: 900px) { .doctors-preview__grid { grid-template-columns: 1fr; max-width: 26rem; margin-inline: auto; } }
+
+/* ===== FAQ polish ===== */
+.faq-list details summary svg { color: var(--teal-600); transition: transform .2s ease; flex: 0 0 auto; }
+.faq-list details[open] summary svg { transform: rotate(180deg); }
+.faq-list details p { margin: .8rem 0 0; font-size: .88rem; line-height: 1.65; color: var(--slate-600); }
+.faq-layout .section-heading { max-width: 26rem; }
