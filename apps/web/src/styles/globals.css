@@ -3761,3 +3761,6 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 .facility-card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(10,39,66,.1); }
 .facility-card .card-link { color: var(--teal-600); font-weight: 700; font-size: .85rem; white-space: nowrap; }
 .facility-card .card-link:hover { color: var(--teal-700); }
+
+.facility-list { grid-template-columns: repeat(2,minmax(0,1fr)); }
+@media (max-width: 720px) { .facility-list { grid-template-columns: 1fr; } }
