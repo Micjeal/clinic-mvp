@@ -146,6 +146,16 @@ export function FloatingQuickLinks() {
     setOpen((value) => !value);
   }
 
+  // Close on tap/click outside the dock.
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (dockRef.current && !dockRef.current.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [open]);
+
   // Close on Escape and return focus to the toggle.
   useEffect(() => {
     if (!open) return;
