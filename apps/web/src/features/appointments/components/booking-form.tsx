@@ -164,14 +164,12 @@ export function BookingForm({
 
   return (
     <form action={action} className="portal-booking-form">
-      <ol aria-label="Appointment request progress" className="portal-booking-stepper">
-        {portalBookingSteps.map((label, index) => (
-          <li className={step === index + 1 ? "is-current" : step > index + 1 ? "is-complete" : ""} key={label}>
-            <span>{index + 1}</span><strong>{label}</strong>
-          </li>
-        ))}
-      </ol>
-      <p className="portal-booking-mobile-step">Step {step} of {portalBookingSteps.length}<strong>{portalBookingSteps[step - 1]}</strong></p>
+      <div className="portal-booking-progress" aria-live="polite">
+        <p className="portal-booking-progress__label">Step {step} of {portalBookingSteps.length} — {portalBookingSteps[step - 1]}</p>
+        <div className="portal-booking-progress__bar" role="progressbar" aria-valuemin={1} aria-valuemax={portalBookingSteps.length} aria-valuenow={step}>
+          <span style={{ width: `${(step / portalBookingSteps.length) * 100}%` }} />
+        </div>
+      </div>
       <div className="portal-booking-panel">
         <h2 className="sr-only" ref={headingRef} tabIndex={-1}>{portalBookingSteps[step - 1]}</h2>
 
