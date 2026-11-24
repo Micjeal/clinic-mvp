@@ -16,7 +16,7 @@ function SigningInOverlay() {
   if (!pending) return null;
   return (
     <div className="portal-loader portal-loader--overlay" role="status" aria-label="Signing in">
-      <div className="portal-loader__cross"><span /><span /></div>
+      <div className="portal-loader__cross"><i /><i /></div>
       <p className="portal-loader__text">Signing you in…</p>
     </div>
   );
