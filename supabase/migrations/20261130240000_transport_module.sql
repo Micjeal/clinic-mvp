@@ -19,10 +19,8 @@ create table public.transport_requests (
 alter table public.transport_requests enable row level security;
 create policy transport_read on public.transport_requests for select to authenticated using (private.has_permission(organization_id,'transport.read'));
 create policy transport_write on public.transport_requests for all to authenticated using (private.has_permission(organization_id,'transport.manage')) with check (private.has_permission(organization_id,'transport.manage'));
-insert into public.permissions(key,domain,label,description) values
- ('transport.read','operations','View transport requests','View ambulance/transport dispatch'),
- ('transport.manage','operations','Manage transport','Create and dispatch transport requests')
-on conflict do nothing;
+insert into public.permissions(permission_key,description) values ('transport.read','View ambulance/transport dispatch') on conflict do nothing;
+insert into public.permissions(permission_key,description) values ('transport.manage','Create and dispatch transport requests') on conflict do nothing;
 insert into public.role_permissions(role_id,permission_key)
 select r.id,'transport.read' from public.roles r where r.role_key in ('organization_admin','receptionist','nurse') on conflict do nothing;
 insert into public.role_permissions(role_id,permission_key)
