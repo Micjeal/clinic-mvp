@@ -62,6 +62,7 @@ const navigation = [
   { href: "/staff/pharmacy", label: "Pharmacy", icon: Pill, permission: "prescription.read", group: "Clinical" },
   { href: "/staff/inventory", label: "Inventory", icon: Package, permission: "inventory.read", group: "Operations" },
   { href: "/staff/wards", label: "Wards", icon: BedDouble, permission: "ward.read", group: "Inpatient" },
+  { href: "/staff/hr", label: "Staff scheduling", icon: CalendarDays, permission: "hr.read", group: "People" },
   { href: "/staff/procurement", label: "Procurement", icon: ShoppingCart, permission: "procurement.read", group: "Operations" },
   { href: "/staff/reports", label: "Reports", icon: ChartColumn, permission: "reports.read", group: "Management" },
   { href: "/staff/appointments", label: "Appointments", icon: CalendarDays, permission: "appointment.read", group: "Daily operations" },
