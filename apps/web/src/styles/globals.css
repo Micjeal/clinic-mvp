@@ -3929,3 +3929,40 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 /* Overflow safety */
 .site-container > *, .section > .site-container > * { min-width: 0; }
 img { max-width: 100%; }
+
+/* ===== Homepage flowing section rhythm ===== */
+.section { position: relative; padding: clamp(3.5rem,7vw,6.5rem) 0; }
+.section--soft { background: var(--blue-50); }
+.section + .section--soft, .section--soft + .section { border-top: 1px solid rgba(10,39,66,.05); }
+/* Angled flow dividers between major bands */
+.section:not(.section--navy):not(.section--soft)::before,
+.section--soft::before {
+  content: ""; position: absolute; top: -1px; left: 0; right: 0; height: 3.5rem;
+  background: linear-gradient(105deg, transparent 0%, rgba(8,127,131,.06) 50%, transparent 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 2.2rem, 0 3.5rem);
+  pointer-events: none;
+}
+.section--navy { padding: clamp(4rem,8vw,7rem) 0; }
+.section--navy + .section, .section + .section--navy { border-top: none; }
+/* Card grids share the asymmetric language */
+.department-grid .department-card, .card-grid .doctor-card {
+  border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
+  border: 1px solid var(--slate-200); box-shadow: var(--shadow-sm);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.department-grid .department-card:hover, .card-grid .doctor-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.card-grid .doctor-card__avatar { border-radius: var(--radius-md); background: var(--cyan-100); color: var(--teal-600); }
+/* Journey + feature panels */
+.journey-grid article, .feature-row article, .approach-panel article {
+  border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
+}
+/* Portal CTA + contact strip get matching rounded shells */
+.portal-cta, .contact-cta { border-radius: 0; }
+/* FAQ inside rounded shell */
+.faq-section { background: var(--off-white); }
+.faq-list { background: var(--white); border: 1px solid var(--slate-200); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm); }
+/* Responsive safety */
+@media (max-width: 720px) {
+  .section { padding: 3rem 0; }
+  .section::before { height: 2rem; }
+}
