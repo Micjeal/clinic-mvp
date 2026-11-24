@@ -36,6 +36,10 @@ export const Permissions = {
   PHARMACY_MANAGE: "pharmacy.manage",
   INVENTORY_READ: "inventory.read",
   INVENTORY_ADJUST: "inventory.adjust",
+  RADIOLOGY_READ: "radiology.read",
+  RADIOLOGY_ORDER: "radiology.order",
+  RADIOLOGY_REPORT_WRITE: "radiology.report.write",
+  RADIOLOGY_REPORT_APPROVE: "radiology.report.approve",
 } as const;
 
 export type Permission = (typeof Permissions)[keyof typeof Permissions];
