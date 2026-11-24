@@ -16,10 +16,8 @@ create table public.expenses (
 alter table public.expenses enable row level security;
 create policy expenses_read on public.expenses for select to authenticated using (private.has_permission(organization_id,'expenses.read'));
 create policy expenses_write on public.expenses for all to authenticated using (private.has_permission(organization_id,'expenses.manage')) with check (private.has_permission(organization_id,'expenses.manage'));
-insert into public.permissions(key,domain,label,description) values
- ('expenses.read','finance','View expenses','View facility expenses'),
- ('expenses.manage','finance','Manage expenses','Record and approve expenses')
-on conflict do nothing;
+insert into public.permissions(permission_key,description) values ('expenses.read','View facility expenses') on conflict do nothing;
+insert into public.permissions(permission_key,description) values ('expenses.manage','Record and approve expenses') on conflict do nothing;
 insert into public.role_permissions(role_id,permission_key)
 select r.id,'expenses.read' from public.roles r where r.role_key in ('organization_admin','cashier','inventory_manager') on conflict do nothing;
 insert into public.role_permissions(role_id,permission_key)
