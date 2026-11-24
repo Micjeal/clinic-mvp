@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="ChatGPT" version="24.7.17" type="device">
+  <diagram name="01 - Patient Journey" id="journey">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1250">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="HOSPICA — RECOMMENDED INTEGRATED HOSPITAL WORKFLOW" style="text;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FFFFFF;fontColor=#172B4D;fontSize=22;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="20" width="1300" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="sub" value="Target-state workflow • Connected departments • Phased implementation" style="text;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FFFFFF;fontColor=#172B4D;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="350" y="65" width="1100" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="patient" value="PATIENT&lt;br&gt;Public site / portal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F2FF;strokeColor=#2878C7;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="50" y="140" width="180" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="reg" value="1. Registration &amp;amp; identity&lt;br&gt;Profile • Duplicate check • Consent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5FAFF;strokeColor=#2878C7;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="280" y="140" width="230" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="book" value="2. Appointment booking&lt;br&gt;Service • Department • Clinician • Slot" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5FAFF;strokeColor=#2878C7;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="560" y="140" width="240" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrive" value="3. Arrival / walk-in&lt;br&gt;Appointment lookup or new visit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF5E5;strokeColor=#D58A16;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="850" y="140" width="230" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="recept" value="4. Reception check-in&lt;br&gt;Verify patient • Confirm visit • Encounter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF5E5;strokeColor=#D58A16;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="140" width="250" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="queue" value="5. Queue management&lt;br&gt;Waiting • Called • In consultation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF5E5;strokeColor=#D58A16;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="140" width="250" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="triage" value="6. TRIAGE &amp;amp; VITALS&lt;br&gt;Nurse • Priority • Observations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF7ED;strokeColor=#399455;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="285" width="250" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="enc" value="7. CLINICAL ENCOUNTER — PHASE 1&lt;br&gt;&lt;b&gt;History • Examination • Notes • Diagnoses&lt;br&gt;Treatment plan • Orders • Follow-up&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3E3;strokeColor=#238443;fontColor=#172B4D;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="275" width="290" height="105" as="geometry"/>
+        </mxCell>
+        <mxCell id="decision" value="Further care&lt;br&gt;required?" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8D9;strokeColor=#C59A18;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="880" y="290" width="130" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="a1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="patient" target="reg">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="reg" target="book">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a3" value="Confirmation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="book" target="arrive">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="arrive" target="recept">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="recept" target="queue">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="queue" target="triage">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="triage" target="enc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="enc" target="decision">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="walkin" value="Walk-in / arrival" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#2878C7;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="patient" target="arrive">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="phase1" value="IMMEDIATE PRIORITY: Clinical notes, diagnoses, encounter lifecycle, signing, amendments and audit trail" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3E3;strokeColor=#238443;fontColor=#172B4D;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="230" width="650" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="lab" value="8A. LABORATORY&lt;br&gt;Order → sample → process → verify result" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E9FA;strokeColor=#8952A6;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="520" y="470" width="250" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="rad" value="8B. RADIOLOGY&lt;br&gt;Order → schedule → image → finalize report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E9FA;strokeColor=#8952A6;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="820" y="470" width="250" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="pharm" value="8C. PHARMACY&lt;br&gt;Prescription → validate → dispense" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF6D9;strokeColor=#C79A18;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="470" width="250" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="ward" value="8D. INPATIENT&lt;br&gt;Admit → bed → ward care → discharge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4F4;strokeColor=#268A83;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1420" y="470" width="250" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="review" value="9. CLINICAL REVIEW&lt;br&gt;Review approved results • Reassess • Update plan" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF7ED;strokeColor=#399455;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="830" y="650" width="350" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="charges" value="10. CHARGE CAPTURE&lt;br&gt;Lab • Imaging • Dispensed items • Inpatient services" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E5F5F2;strokeColor=#25877B;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="350" y="835" width="300" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="billing" value="11. BILLING&lt;br&gt;Unbilled charges • Invoice • Deposits • Adjustments" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E5F5F2;strokeColor=#25877B;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="710" y="835" width="280" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="insurance" value="12. INSURANCE &amp;amp; CLAIMS&lt;br&gt;Eligibility • Pre-auth • Claims • Reconciliation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E5F5F2;strokeColor=#25877B;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="835" width="290" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="payment" value="13. PAYMENT&lt;br&gt;Patient payment • Co-pay • Insurer remittance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E5F5F2;strokeColor=#25877B;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="835" width="290" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="close" value="14. COMPLETION &amp;amp; FOLLOW-UP&lt;br&gt;Clinical sign-off • Discharge summary • Follow-up plan" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3E3;strokeColor=#238443;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="700" y="1010" width="390" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="record" value="UNIFIED PATIENT RECORD&lt;br&gt;Timeline • Notes • Diagnoses • Vitals • Results • Prescriptions • Documents" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F2FF;strokeColor=#2878C7;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="1010" width="470" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="b1" value="Investigation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8952A6;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="decision" target="lab">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="b2" value="Imaging" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8952A6;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="decision" target="rad">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="b3" value="Medication" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#C79A18;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="decision" target="pharm">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="b4" value="Admission" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#268A83;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="decision" target="ward">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ret1" value="Verified result" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="lab" target="review">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ret2" value="Final report" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="rad" target="review">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ret3" value="Dispense status" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="pharm" target="review">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ret4" value="Ward / discharge update" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="ward" target="review">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ret5" value="Return to clinician / reassess" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#399455;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="review" target="enc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ch1" value="Billable services" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="review" target="charges">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ch2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="charges" target="billing">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ch3" value="Covered services" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="billing" target="insurance">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ch4" value="Self-pay / co-pay" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="billing" target="payment">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ch5" value="Remittance" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#25877B;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="insurance" target="payment">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="cl1" value="Clinical completion" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="review" target="close">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="cl2" value="Financial clearance / approved exception" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#25877B;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="payment" target="close">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="cl3" value="Persist patient timeline" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="close" target="record">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="foundation" value="CROSS-CUTTING: Organization &amp;amp; facility scope • Authentication • Roles / permissions • RLS • Audit logs • Secure documents • Reporting" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECEFF3;strokeColor=#526579;fontColor=#172B4D;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="150" y="1150" width="1500" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend" value="Solid arrows = primary flow   |   Dashed arrows = optional, asynchronous or return flow   |   Branches are conditional" style="text;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FFFFFF;fontColor=#172B4D;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="350" y="1205" width="1100" height="25" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="02 - Phased Implementation Roadmap" id="roadmap">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="rt" value="HOSPICA — PHASED IMPLEMENTATION ROADMAP" style="text;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FFFFFF;fontColor=#172B4D;fontSize=22;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="25" width="1000" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="rs" value="Deliver and verify one phase at a time. A visible page is not a completed workflow." style="text;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FFFFFF;fontColor=#172B4D;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="300" y="75" width="1000" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="P1" value="&lt;b&gt;P1 — CLINICAL NOTES &amp; DIAGNOSES&lt;/b&gt;&lt;br&gt;Encounter workspace • Clinical history • Vitals • Notes • Diagnoses • Draft / sign / amend • Close encounter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3E3;strokeColor=#238443;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="160" y="130" width="1080" height="76" as="geometry"/>
+        </mxCell>
+        <mxCell id="P1s" value="IMMEDIATE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3E3;strokeColor=#238443;fontColor=#172B4D;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="147" width="160" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="seqP1" value="Acceptance tests pass" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8292A6;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="P1" target="P2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="P2" value="&lt;b&gt;P2 — RADIOLOGY&lt;/b&gt;&lt;br&gt;Orders • X-ray / CT / MRI / ultrasound • Scheduling • Examination • Reporting • Clinician review • PACS-ready design" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E9FA;strokeColor=#8952A6;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="160" y="221" width="1080" height="76" as="geometry"/>
+        </mxCell>
+        <mxCell id="P2s" value="NEXT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E9FA;strokeColor=#8952A6;fontColor=#172B4D;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="238" width="160" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="seqP2" value="Acceptance tests pass" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8292A6;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="P2" target="P3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="P3" value="&lt;b&gt;P3 — INSURANCE &amp; CLAIMS&lt;/b&gt;&lt;br&gt;Schemes • Policies • Eligibility • Pre-authorisation • Claims • Rejections • Remittance • Reconciliation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E5F5F2;strokeColor=#25877B;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="160" y="312" width="1080" height="76" as="geometry"/>
+        </mxCell>
+        <mxCell id="P3s" value="NEXT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E5F5F2;strokeColor=#25877B;fontColor=#172B4D;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="329" width="160" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="seqP3" value="Acceptance tests pass" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8292A6;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="P3" target="P4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="P4" value="&lt;b&gt;P4 — INPATIENT &amp; WARDS&lt;/b&gt;&lt;br&gt;Wards • Beds • Admission • Transfers • Observations • Allocation safeguards • Discharge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4F4;strokeColor=#268A83;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="160" y="403" width="1080" height="76" as="geometry"/>
+        </mxCell>
+        <mxCell id="P4s" value="NEXT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4F4;strokeColor=#268A83;fontColor=#172B4D;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="420" width="160" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="seqP4" value="Acceptance tests pass" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8292A6;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="P4" target="P5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="P5" value="&lt;b&gt;P5 — REPORTING &amp; ANALYTICS&lt;/b&gt;&lt;br&gt;Operational • Clinical • Financial • Occupancy • Debtors • Department KPIs • Drill-down" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F2FF;strokeColor=#2878C7;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="160" y="494" width="1080" height="76" as="geometry"/>
+        </mxCell>
+        <mxCell id="P5s" value="NEXT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F2FF;strokeColor=#2878C7;fontColor=#172B4D;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="511" width="160" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="seqP5" value="Acceptance tests pass" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8292A6;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="P5" target="P6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="P6" value="&lt;b&gt;P6 — THEATRE &amp; SURGERY&lt;/b&gt;&lt;br&gt;Theatre rooms • Bookings • Pre-op • Team • Anaesthesia • Operative notes • Recovery" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF5E5;strokeColor=#D58A16;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="160" y="585" width="1080" height="76" as="geometry"/>
+        </mxCell>
+        <mxCell id="P6s" value="LATER" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF5E5;strokeColor=#D58A16;fontColor=#172B4D;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="602" width="160" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="seqP6" value="Acceptance tests pass" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8292A6;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="P6" target="P7">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="P7" value="&lt;b&gt;P7 — PROCUREMENT &amp; SUPPLIERS&lt;/b&gt;&lt;br&gt;Suppliers • Requisitions • Purchase orders • Approvals • Goods received • Returns • Reconciliation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#526579;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="160" y="676" width="1080" height="76" as="geometry"/>
+        </mxCell>
+        <mxCell id="P7s" value="LATER" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#526579;fontColor=#172B4D;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="693" width="160" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="seqP7" value="Acceptance tests pass" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8292A6;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="P7" target="P8">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="P8" value="&lt;b&gt;P8 — HR &amp; STAFF SCHEDULING&lt;/b&gt;&lt;br&gt;Staff records • Shifts • Leave • Attendance • Shift swaps • Availability" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#526579;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="160" y="767" width="1080" height="76" as="geometry"/>
+        </mxCell>
+        <mxCell id="P8s" value="LATER" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#526579;fontColor=#172B4D;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="784" width="160" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="seqP8" value="Acceptance tests pass" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8292A6;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="P8" target="P9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="P9" value="&lt;b&gt;P9 — MEDICAL RECORDS &amp; DOCUMENTS&lt;/b&gt;&lt;br&gt;Scans • Referrals • Consent • Reports • Secure storage • Version history • Patient timeline" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F2FF;strokeColor=#2878C7;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="160" y="858" width="1080" height="76" as="geometry"/>
+        </mxCell>
+        <mxCell id="P9s" value="LATER" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F2FF;strokeColor=#2878C7;fontColor=#172B4D;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="875" width="160" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="seqP9" value="Acceptance tests pass" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8292A6;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="P9" target="P10">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="P10" value="&lt;b&gt;P10 — MORTUARY&lt;/b&gt;&lt;br&gt;Admission • Identification • Storage location • Release authorization • Next of kin • Audit history" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#526579;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="160" y="949" width="1080" height="76" as="geometry"/>
+        </mxCell>
+        <mxCell id="P10s" value="LATER" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#526579;fontColor=#172B4D;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="966" width="160" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="gate" value="&lt;b&gt;PHASE EXIT GATE&lt;/b&gt;&lt;br&gt;Functional workflow • Server authorization &amp;amp; RLS • Migration reviewed • Automated tests • End-to-end tests • Responsive visual QA • Pull request ready for review" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8D9;strokeColor=#C59A18;fontColor=#172B4D;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="160" y="1065" width="1280" height="90" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="03 - Cross-Module Integration" id="integrations">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="it" value="HOSPICA — CROSS-MODULE INTEGRATION MAP" style="text;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FFFFFF;fontColor=#172B4D;fontSize=22;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="25" width="1000" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="is" value="Department workflows exchange controlled, traceable information through shared patient and encounter context." style="text;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FFFFFF;fontColor=#172B4D;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="250" y="75" width="1100" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="clinical" value="CLINICAL ENCOUNTER&lt;br&gt;Notes • Diagnoses • Orders • Treatment plan" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3E3;strokeColor=#238443;fontColor=#172B4D;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="590" y="145" width="380" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ilab" value="LABORATORY&lt;br&gt;Orders • Samples • Verified results" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E9FA;strokeColor=#8952A6;fontColor=#172B4D;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="350" width="270" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="irad" value="RADIOLOGY&lt;br&gt;Orders • Modality • Exam • Final report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E9FA;strokeColor=#8952A6;fontColor=#172B4D;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="350" width="270" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="ipharm" value="PHARMACY&lt;br&gt;Prescription • Dispensing • Substitution" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF6D9;strokeColor=#C79A18;fontColor=#172B4D;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="720" y="350" width="270" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="iward" value="INPATIENT&lt;br&gt;Admission • Bed • Transfer • Discharge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4F4;strokeColor=#268A83;fontColor=#172B4D;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="350" width="270" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="req0" value="Investigation request" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8952A6;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="clinical" target="ilab">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="req1" value="Imaging request" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8952A6;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="clinical" target="irad">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="req2" value="Prescription" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#C79A18;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="clinical" target="ipharm">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="req3" value="Admission decision" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#268A83;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="clinical" target="iward">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="back0" value="Verified result" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8952A6;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="ilab" target="clinical">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="back1" value="Final report" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#8952A6;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="irad" target="clinical">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="back2" value="Dispense status" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#C79A18;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="ipharm" target="clinical">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="back3" value="Ward updates" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#268A83;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="iward" target="clinical">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="capture" value="CHARGE CAPTURE&lt;br&gt;Encounter-linked billable events" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E5F5F2;strokeColor=#25877B;fontColor=#172B4D;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="180" y="610" width="310" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="bill" value="BILLING &amp;amp; INSURANCE&lt;br&gt;Invoice • Coverage • Claims • Payments" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E5F5F2;strokeColor=#25877B;fontColor=#172B4D;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="630" y="610" width="350" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="stock" value="INVENTORY &amp;amp; PROCUREMENT&lt;br&gt;Stock movements • Purchase orders • Goods received" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4F6F8;strokeColor=#526579;fontColor=#172B4D;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="610" width="360" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="charge0" value="Lab charge" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="ilab" target="capture">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="charge1" value="Imaging charge" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="irad" target="capture">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="charge2" value="Dispensed items" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="ipharm" target="capture">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="charge3" value="Inpatient charges" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="iward" target="capture">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="capbill" value="Unbilled charges" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="capture" target="bill">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="phstock" value="Dispensing reduces stock" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;" edge="1" parent="1" source="ipharm" target="stock">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="stockph" value="Available stock" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#526579;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="stock" target="ipharm">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="records" value="UNIFIED PATIENT RECORD&lt;br&gt;Timeline • Notes • Results • Prescriptions • Admissions • Documents" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F2FF;strokeColor=#2878C7;fontColor=#172B4D;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="130" y="825" width="390" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="analytics" value="REPORTING &amp;amp; ANALYTICS&lt;br&gt;Clinical • Operational • Financial • Occupancy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F2FF;strokeColor=#2878C7;fontColor=#172B4D;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="825" width="370" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="governance" value="GOVERNANCE FOUNDATION&lt;br&gt;Organization scope • RBAC • RLS • Audit • Settings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECEFF3;strokeColor=#526579;fontColor=#172B4D;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="825" width="390" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="rec0" value="Record event" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#2878C7;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="clinical" target="records">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rec1" value="Record event" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#2878C7;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="ilab" target="records">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rec2" value="Record event" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#2878C7;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="irad" target="records">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rec3" value="Record event" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#2878C7;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="iward" target="records">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rep1" value="Financial data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#2878C7;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="bill" target="analytics">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rep2" value="Clinical data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#2878C7;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="clinical" target="analytics">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rep3" value="Stock data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#2878C7;fontColor=#344563;fontSize=10;dashed=1;dashPattern=6 4;" edge="1" parent="1" source="stock" target="analytics">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
