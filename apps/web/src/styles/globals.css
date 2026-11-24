@@ -4131,3 +4131,21 @@ img { max-width: 100%; }
 [data-theme="dark"] .patient-portal-shell .eyebrow { color: var(--teal-500); }
 [data-theme="dark"] .patient-portal-shell .btn--secondary { background: var(--white); color: var(--navy-900); }
 [data-theme="dark"] .patient-portal-shell .card-link, [data-theme="dark"] .patient-portal-shell .text-link { color: var(--teal-500); }
+
+/* Dark mode: portal sidebar stays navy, mobile nav readable */
+[data-theme="dark"] .patient-portal-sidebar { background: #0a1f33; border-color: rgba(255,255,255,.1); color: var(--white); }
+[data-theme="dark"] .patient-portal-sidebar .patient-portal-brand small,
+[data-theme="dark"] .patient-portal-sidebar .patient-sidebar-profile small,
+[data-theme="dark"] .patient-portal-sidebar .patient-portal-sidebar__footer a { color: #91a9b8; }
+[data-theme="dark"] .patient-portal-sidebar .patient-portal-brand strong,
+[data-theme="dark"] .patient-portal-sidebar .patient-sidebar-profile strong { color: var(--white); }
+[data-theme="dark"] .patient-portal-sidebar nav a, [data-theme="dark"] .patient-portal-sidebar .portal-nav a { color: #c3d4e0; }
+[data-theme="dark"] .patient-portal-sidebar nav a.is-active, [data-theme="dark"] .patient-portal-sidebar .portal-nav a.is-active { background: rgba(13,150,144,.2); color: #74ddd7; }
+[data-theme="dark"] .patient-portal-topbar { background: rgba(15,31,46,.9); border-color: var(--slate-200); }
+[data-theme="dark"] .patient-portal-topbar__clinic strong { color: var(--slate-900); }
+[data-theme="dark"] .patient-account-control { background: var(--white); color: var(--navy-900); }
+[data-theme="dark"] .patient-account-drawer, [data-theme="dark"] .patient-account-layer .patient-account-drawer { background: var(--white); }
+[data-theme="dark"] .patient-bottom-nav { background: rgba(10,31,51,.97); }
+[data-theme="dark"] .patient-bottom-nav a { color: #9db4c6; }
+[data-theme="dark"] .patient-bottom-nav a.is-active { color: #74ddd7; }
+[data-theme="dark"] .patient-bottom-nav__book { background: var(--teal-600); color: var(--white); }
