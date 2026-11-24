@@ -34,10 +34,8 @@ create policy blood_units_read on public.blood_units for select to authenticated
 create policy blood_units_write on public.blood_units for all to authenticated using (private.has_permission(organization_id,'bloodbank.manage')) with check (private.has_permission(organization_id,'bloodbank.manage'));
 create policy transfusions_read on public.blood_transfusions for select to authenticated using (private.has_permission(organization_id,'bloodbank.read'));
 create policy transfusions_write on public.blood_transfusions for all to authenticated using (private.has_permission(organization_id,'bloodbank.manage')) with check (private.has_permission(organization_id,'bloodbank.manage'));
-insert into public.permissions(key,domain,label,description) values
- ('bloodbank.read','clinical','View blood bank','View blood units and transfusion records'),
- ('bloodbank.manage','clinical','Manage blood bank','Register units, reserve, issue and record transfusions')
-on conflict do nothing;
+insert into public.permissions(permission_key,description) values ('bloodbank.read','View blood units and transfusion records') on conflict do nothing;
+insert into public.permissions(permission_key,description) values ('bloodbank.manage','Register units, reserve, issue and record transfusions') on conflict do nothing;
 insert into public.role_permissions(role_id,permission_key)
 select r.id,'bloodbank.read' from public.roles r where r.role_key in ('organization_admin','doctor','nurse','lab_technician') on conflict do nothing;
 insert into public.role_permissions(role_id,permission_key)
