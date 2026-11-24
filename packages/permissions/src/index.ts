@@ -22,6 +22,17 @@ export const Permissions = {
   BILLING_READ: "billing.read",
   BILLING_INVOICE_CREATE: "billing.invoice.create",
   BILLING_PAYMENT_CREATE: "billing.payment.create",
+  LAB_READ: "lab.read",
+  LAB_ORDER: "lab.order",
+  LAB_RESULT_WRITE: "lab.result.write",
+  LAB_RESULT_APPROVE: "lab.result.approve",
+  PRESCRIPTION_READ: "prescription.read",
+  PRESCRIPTION_WRITE: "prescription.write",
+  PHARMACY_READ: "pharmacy.read",
+  PHARMACY_DISPENSE: "pharmacy.dispense",
+  PHARMACY_MANAGE: "pharmacy.manage",
+  INVENTORY_READ: "inventory.read",
+  INVENTORY_ADJUST: "inventory.adjust",
 } as const;
 
 export type Permission = (typeof Permissions)[keyof typeof Permissions];

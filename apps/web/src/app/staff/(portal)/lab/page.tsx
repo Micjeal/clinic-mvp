@@ -1,0 +1,57 @@
+import { StaffPageHeader } from "@/features/staff/components/staff-content";
+import { StaffAccessDenied } from "@/features/staff/components/access-denied";
+import { listLabOrders } from "@/server/services/lab.service";
+import { AuthorizationError } from "@/server/errors";
+import Link from "next/link";
+
+export const metadata = { title: "Laboratory" };
+
+const STATUS_LABELS: Record<string, string> = { ordered: "Ordered", sample_collected: "Sample collected", processing: "Processing", completed: "Completed", cancelled: "Cancelled" };
+const PRIORITY_LABELS: Record<string, string> = { routine: "Routine", urgent: "Urgent", stat: "STAT" };
+
+export default async function LabPage() {
+  let orders;
+  try {
+    orders = await listLabOrders();
+  } catch (error) {
+    if (error instanceof AuthorizationError) return <StaffAccessDenied />;
+    throw error;
+  }
+  const active = orders.filter((o) => o.status !== "completed" && o.status !== "cancelled");
+  const stat = orders.filter((o) => o.priority === "stat" && o.status !== "completed" && o.status !== "cancelled");
+
+  return (
+    <div className="staff-page">
+      <StaffPageHeader eyebrow="Clinical" title="Laboratory" description="Lab orders, samples and results." actions={<div style={{ display: "flex", gap: ".5rem" }}><Link className="btn btn--secondary" href="/staff/lab/tests">Test catalog</Link><Link className="btn" href="/staff/lab/orders/new">New order</Link></div>} />
+      <div className="staff-kpi-grid">
+        <div className="staff-kpi"><span>Active orders</span><strong>{active.length}</strong></div>
+        <div className="staff-kpi"><span>STAT pending</span><strong>{stat.length}</strong></div>
+        <div className="staff-kpi"><span>Total orders</span><strong>{orders.length}</strong></div>
+      </div>
+      <section className="staff-panel">
+        <div className="staff-table-wrap">
+          <table className="staff-table">
+            <thead><tr><th>Order</th><th>Patient</th><th>Priority</th><th>Tests</th><th>Status</th><th>Ordered</th></tr></thead>
+            <tbody>
+              {orders.length === 0 ? <tr><td colSpan={6} className="staff-table-empty">No lab orders yet.</td></tr> :
+                orders.map((order) => {
+                  const patient = order.patients as { first_name?: string; last_name?: string; patient_number?: string } | null;
+                  const items = (order.lab_order_items ?? []) as { id: string }[];
+                  return (
+                    <tr key={order.id}>
+                      <td><Link className="staff-table-link" href={`/staff/lab/orders/${order.id}`}>{new Date(order.ordered_at).toLocaleDateString()}</Link></td>
+                      <td>{patient ? `${patient.first_name} ${patient.last_name}` : "—"}</td>
+                      <td>{PRIORITY_LABELS[order.priority] ?? order.priority}</td>
+                      <td>{items.length}</td>
+                      <td><span className="staff-status staff-status--issued">{STATUS_LABELS[order.status] ?? order.status}</span></td>
+                      <td>{new Date(order.ordered_at).toLocaleString()}</td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}
