@@ -4077,3 +4077,29 @@ img { max-width: 100%; }
 @keyframes site-bar { 0% { transform: translateX(-110%); } 100% { transform: translateX(280%); } }
 .portal-loader--overlay { position: fixed; inset: 0; z-index: 200; background: rgba(255,255,255,.92); backdrop-filter: blur(6px); display: grid; place-items: center; align-content: center; gap: 1.4rem; }
 @media (prefers-reduced-motion: reduce) { .site-loader__orbit, .site-loader__pulse, .site-loader__cross i, .site-loader__bar i { animation: none; } }
+
+/* ===== Dark theme: full site coverage ===== */
+[data-theme="dark"] .site-header, [data-theme="dark"] .main-header { background: rgba(10,24,38,.78); border-bottom-color: rgba(255,255,255,.12); }
+[data-theme="dark"] .brand strong, [data-theme="dark"] .brand small { color: var(--slate-900); }
+[data-theme="dark"] .nav-link { color: var(--slate-600); }
+[data-theme="dark"] .nav-link:hover, [data-theme="dark"] .nav-dropdown[open] > .nav-link { background: rgba(255,255,255,.08); color: var(--slate-900); }
+[data-theme="dark"] .nav-link.is-active, [data-theme="dark"] .nav-dropdown summary.is-active { background: rgba(13,150,144,.22); color: #74ddd7; }
+[data-theme="dark"] .section, [data-theme="dark"] .site-footer, [data-theme="dark"] footer { background: var(--off-white); }
+[data-theme="dark"] .section--soft { background: #0d2033; }
+[data-theme="dark"] .section--navy { background: #061521; }
+[data-theme="dark"] .home-hero--strip { background: #061521; }
+[data-theme="dark"] .section-heading h2, [data-theme="dark"] .section h2, [data-theme="dark"] .section h3 { color: var(--slate-900); }
+[data-theme="dark"] .section p, [data-theme="dark"] .section li, [data-theme="dark"] .section small { color: var(--slate-700); }
+[data-theme="dark"] .quick-actions__grid, [data-theme="dark"] .department-card, [data-theme="dark"] .doctor-card, [data-theme="dark"] .about-stat, [data-theme="dark"] .faq-list, [data-theme="dark"] details, [data-theme="dark"] .facility-card, [data-theme="dark"] .approach-panel article, [data-theme="dark"] .journey-grid article, [data-theme="dark"] .feature-row article { background: var(--white); border-color: var(--slate-200); }
+[data-theme="dark"] .icon-box { background: var(--cyan-100); color: var(--teal-500); }
+[data-theme="dark"] .card-link, [data-theme="dark"] .text-link, [data-theme="dark"] .quick-action__arrow { color: var(--teal-500); }
+[data-theme="dark"] .quick-action:hover { background: rgba(13,150,144,.12); }
+[data-theme="dark"] .doctors-search, [data-theme="dark"] .hero-search__pill { background: rgba(255,255,255,.08); border-color: var(--slate-200); }
+[data-theme="dark"] .hero-search__pill input, [data-theme="dark"] .doctors-search input { color: var(--slate-900); }
+[data-theme="dark"] .staff-shell, [data-theme="dark"] .staff-sidebar, [data-theme="dark"] .staff-topbar, [data-theme="dark"] .staff-main, [data-theme="dark"] .staff-content { background: var(--off-white); color: var(--slate-900); }
+[data-theme="dark"] .staff-card, [data-theme="dark"] .staff-table-wrap, [data-theme="dark"] .staff-panel, [data-theme="dark"] .staff-metric { background: var(--white); border-color: var(--slate-200); }
+[data-theme="dark"] .staff-topbar { background: rgba(10,24,38,.85); }
+[data-theme="dark"] .auth-card, [data-theme="dark"] .auth-layout { background: var(--white); }
+[data-theme="dark"] .cookie-modal, [data-theme="dark"] .cookie-backdrop { background: var(--white); }
+[data-theme="dark"] .cookie-category, [data-theme="dark"] .cookie-category__head { background: var(--white); }
+[data-theme="dark"] .cookie-modal__footer { background: var(--blue-50); }

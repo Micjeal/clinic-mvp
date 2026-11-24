@@ -34,6 +34,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { staffSignOutAction } from "@/server/actions/staff-auth.actions";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 type Context = { name: string; role: string; organization: string; permissions?: string[]; brandColor?: string; dateFormat?: string; timeFormat?: string; locale?: string; timezone?: string };
 
@@ -309,7 +310,7 @@ export function StaffShell({ children, context }: { children: React.ReactNode; c
             <span>Staff portal</span>
             <strong>{pageName}</strong>
           </div>
-          <div className="staff-topbar__context" ref={accountRef}>
+          <ThemeToggle /><div className="staff-topbar__context" ref={accountRef}>
             <span className="staff-date" suppressHydrationWarning><CalendarDays aria-hidden="true" />{formatTopbarDate(new Date(), context.dateFormat ?? "d mmm yyyy", context.timeFormat ?? "24h", context.locale ?? "en-UG", context.timezone ?? "Africa/Kampala")}</span>
             <button
               aria-expanded={accountOpen}
