@@ -47,6 +47,8 @@ export const Permissions = {
   WARD_READ: "ward.read",
   WARD_MANAGE: "ward.manage",
   ADMISSION_MANAGE: "admission.manage",
+  THEATRE_READ: "theatre.read",
+  THEATRE_MANAGE: "theatre.manage",
   REPORTS_READ: "reports.read",
   PROCUREMENT_READ: "procurement.read",
   PROCUREMENT_MANAGE: "procurement.manage",
@@ -55,6 +57,7 @@ export const Permissions = {
   HR_MANAGE: "hr.manage",
   BLOODBANK_READ: "bloodbank.read",
   BLOODBANK_MANAGE: "bloodbank.manage",
-} as const;
-
+  EQUIPMENT_READ: "equipment.read",
+  EQUIPMENT_MANAGE: "equipment.manage",
+  MORTUARY_READ: "mortuary.read",
 export type Permission = (typeof Permissions)[keyof typeof Permissions];
