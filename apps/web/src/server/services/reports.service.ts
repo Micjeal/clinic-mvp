@@ -30,7 +30,7 @@ export async function getOperationalReports() {
   const [
     appointmentsToday, appointmentsWeek, encountersTotal, encountersToday,
     invoicesPaid, invoicesOutstanding, claimsOpen, labPending, imagingPending,
-    admissionsActive, patientsTotal, queueActive,
+    admissionsActive, patientsTotal, queueActive, agingRows,
   ] = await Promise.all([
     count("appointments", orgId, (q) => q.gte("scheduled_start", today.toISOString())),
     count("appointments", orgId, (q) => q.gte("scheduled_start", weekAgo.toISOString())),
@@ -52,6 +52,7 @@ export async function getOperationalReports() {
     count("admissions", orgId, (q) => q.in("status", ["admitted", "on_leave"])),
     count("patients", orgId),
     count("queue_entries", orgId, (q) => q.not("status", "in", "(completed,cancelled)")),
+    debtorAging(orgId),
   ]);
 
   return {
@@ -59,5 +60,22 @@ export async function getOperationalReports() {
     revenueCollected: invoicesPaid, revenueOutstanding: invoicesOutstanding,
     openClaims: claimsOpen, labPending, imagingPending,
     admissionsActive, patientsTotal, queueActive,
+    debtorAging: agingRows[0] ?? { current: 0, days30: 0, days60: 0, days90: 0 },
   };
+}
+
+async function debtorAging(orgId: string) {
+  const supabase = await untyped();
+  const { data } = await supabase.from("invoices").select("balance,issued_at,created_at").eq("organization_id", orgId).in("status", ["issued", "partially_paid"]).gt("balance", 0);
+  const now = Date.now();
+  const buckets = { current: 0, days30: 0, days60: 0, days90: 0 };
+  for (const inv of data ?? []) {
+    const ageDays = (now - new Date((inv.issued_at ?? inv.created_at) as string).getTime()) / 86400000;
+    const amt = Number(inv.balance);
+    if (ageDays <= 30) buckets.current += amt;
+    else if (ageDays <= 60) buckets.days30 += amt;
+    else if (ageDays <= 90) buckets.days60 += amt;
+    else buckets.days90 += amt;
+  }
+  return [buckets];
 }
