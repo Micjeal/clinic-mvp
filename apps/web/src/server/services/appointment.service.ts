@@ -34,6 +34,11 @@ async function notifyPatient(input: Omit<NotificationInput, "recipientEmail"> & 
   } catch (error) {
     logServerError("notifications", "send-failed", error, { type: input.type });
   }
+  try {
+    await sendNotification({ ...input, recipientEmail: null, channel: "sms" });
+  } catch (error) {
+    logServerError("notifications", "sms-send-failed", error, { type: input.type });
+  }
 }
 
 export async function requestAppointment(input: AppointmentRequestInput) {

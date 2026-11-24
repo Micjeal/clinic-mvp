@@ -40,6 +40,7 @@ const appointmentSchema = z.object({
 const notificationSchema = z.object({
   in_app_notifications_enabled: boolField,
   email_notifications_enabled: boolField,
+  sms_notifications_enabled: boolField,
   appointment_reminders_enabled: boolField,
   reminder_hours_before: z.coerce.number().int().min(1).max(168),
 });

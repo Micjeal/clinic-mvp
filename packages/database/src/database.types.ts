@@ -1549,7 +1549,8 @@ export type Database = {
           message: string
           metadata: Json | null
           read_at: string | null
-          recipient_email: string | null
+          recipient_email: string
+          recipient_phone: string | null
           recipient_name: string | null
           recipient_patient_id: string | null
           sent_at: string | null
@@ -1567,6 +1568,7 @@ export type Database = {
           metadata?: Json | null
           read_at?: string | null
           recipient_email?: string | null
+          recipient_phone?: string | null
           recipient_name?: string | null
           recipient_patient_id?: string | null
           sent_at?: string | null
@@ -1584,6 +1586,7 @@ export type Database = {
           metadata?: Json | null
           read_at?: string | null
           recipient_email?: string | null
+          recipient_phone?: string | null
           recipient_name?: string | null
           recipient_patient_id?: string | null
           sent_at?: string | null
@@ -1675,6 +1678,7 @@ export type Database = {
           default_locale: string
           default_time_format: string
           email_notifications_enabled: boolean
+          sms_notifications_enabled: boolean
           in_app_notifications_enabled: boolean
           online_booking_enabled: boolean
           organization_id: string
@@ -1694,6 +1698,7 @@ export type Database = {
           default_locale?: string
           default_time_format?: string
           email_notifications_enabled?: boolean
+          sms_notifications_enabled?: boolean
           in_app_notifications_enabled?: boolean
           online_booking_enabled?: boolean
           organization_id: string
@@ -1713,6 +1718,7 @@ export type Database = {
           default_locale?: string
           default_time_format?: string
           email_notifications_enabled?: boolean
+          sms_notifications_enabled?: boolean
           in_app_notifications_enabled?: boolean
           online_booking_enabled?: boolean
           organization_id?: string
