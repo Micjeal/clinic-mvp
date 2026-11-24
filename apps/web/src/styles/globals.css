@@ -4117,3 +4117,17 @@ img { max-width: 100%; }
 [data-theme="dark"] .lead { color: var(--slate-700); }
 [data-theme="dark"] .btn--secondary { background: var(--white); color: var(--navy-900); border-color: var(--slate-200); }
 [data-theme="dark"] .portal-cta, [data-theme="dark"] .portal-cta__inner { color: var(--slate-900); }
+
+/* Dark mode: scoped navy remap inside patient portal so all text/cards flip light */
+[data-theme="dark"] .patient-portal-shell {
+  --navy-950: #eaf2f8;
+  --navy-900: #d5e6f2;
+  --navy-800: #b8cede;
+  --blue-700: #7db8d4;
+  --teal-600: #4ec4bc;
+  --teal-500: #5ed0c8;
+  --slate-900: #e8f0f6;
+}
+[data-theme="dark"] .patient-portal-shell .eyebrow { color: var(--teal-500); }
+[data-theme="dark"] .patient-portal-shell .btn--secondary { background: var(--white); color: var(--navy-900); }
+[data-theme="dark"] .patient-portal-shell .card-link, [data-theme="dark"] .patient-portal-shell .text-link { color: var(--teal-500); }
