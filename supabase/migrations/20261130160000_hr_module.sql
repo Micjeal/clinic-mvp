@@ -67,3 +67,8 @@ where r.role_key = 'organization_admin' on conflict do nothing;
 insert into public.role_permissions(role_id, permission_key)
 select r.id, 'hr.read' from public.roles r
 where r.role_key in ('receptionist','doctor','nurse') on conflict do nothing;
+
+-- every staff member can view the roster and request their own leave
+insert into public.role_permissions(role_id, permission_key)
+select r.id, 'hr.read' from public.roles r
+where r.role_key in ('cashier','lab_technician','pharmacist','inventory_manager') on conflict do nothing;

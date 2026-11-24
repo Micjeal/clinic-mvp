@@ -55,7 +55,12 @@ export async function nextClaimNumber(organizationId: string): Promise<string> {
 
 export async function createClaim(input: { organizationId: string; facilityId: string; patientId: string; invoiceId: string | null; insuranceSchemeId: string; policyId: string | null; claimNumber: string; claimedAmount: number; currencyCode: string; diagnosisSummary: string | null; notes: string | null; createdBy: string }) {
   const supabase = await untyped();
-  const { data, error } = await supabase.from("insurance_claims").insert(input).select("id").single();
+  const { data, error } = await supabase.from("insurance_claims").insert({
+    organization_id: input.organizationId, facility_id: input.facilityId, patient_id: input.patientId,
+    invoice_id: input.invoiceId, insurance_scheme_id: input.insuranceSchemeId, policy_id: input.policyId,
+    claim_number: input.claimNumber, claimed_amount: input.claimedAmount, currency_code: input.currencyCode,
+    diagnosis_summary: input.diagnosisSummary, notes: input.notes, created_by: input.createdBy,
+  }).select("id").single();
   if (error) throw error;
   return data.id;
 }
@@ -68,14 +73,22 @@ export async function updateClaim(id: string, organizationId: string, patch: Rec
 
 export async function createScheme(input: { organizationId: string; name: string; schemeType: string; contactPhone: string | null; contactEmail: string | null; preauthRequired: boolean; coveragePercent: number }) {
   const supabase = await untyped();
-  const { data, error } = await supabase.from("insurance_schemes").insert(input).select("id").single();
+  const { data, error } = await supabase.from("insurance_schemes").insert({
+    organization_id: input.organizationId, name: input.name, scheme_type: input.schemeType,
+    contact_phone: input.contactPhone, contact_email: input.contactEmail,
+    preauth_required: input.preauthRequired, coverage_percent: input.coveragePercent,
+  }).select("id").single();
   if (error) throw error;
   return data.id;
 }
 
 export async function createPolicy(input: { organizationId: string; patientId: string; insuranceSchemeId: string; policyNumber: string; memberNumber: string | null; groupNumber: string | null; coveragePercent: number | null; validFrom: string | null; validTo: string | null }) {
   const supabase = await untyped();
-  const { data, error } = await supabase.from("patient_insurance_policies").insert(input).select("id").single();
+  const { data, error } = await supabase.from("patient_insurance_policies").insert({
+    organization_id: input.organizationId, patient_id: input.patientId, insurance_scheme_id: input.insuranceSchemeId,
+    policy_number: input.policyNumber, member_number: input.memberNumber, group_number: input.groupNumber,
+    coverage_percent: input.coveragePercent, valid_from: input.validFrom, valid_to: input.validTo,
+  }).select("id").single();
   if (error) throw error;
   return data.id;
 }

@@ -53,6 +53,7 @@ export function AdmitForm({ wards, patients, facilities }: { wards: Ward[]; pati
 }
 
 export function DischargeForm({ admissionId }: { admissionId: string }) {
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState("");
   return (
@@ -60,7 +61,7 @@ export function DischargeForm({ admissionId }: { admissionId: string }) {
       if (!window.confirm("Discharge this patient? The bed will be freed.")) return;
       const result = await dischargeAdmissionAction(null, formData);
       setMessage(result.error ?? "Discharged — refresh to see updates.");
-      if (!result.error) window.location.href = "/staff/wards";
+      if (!result.error) router.push("/staff/wards");
     })} className="staff-form-grid">
       <input name="admission_id" type="hidden" value={admissionId} />
       <label className="staff-form-grid__wide">Discharge summary<textarea name="discharge_summary" placeholder="Condition on discharge, medications, follow-up…" rows={4} /></label>

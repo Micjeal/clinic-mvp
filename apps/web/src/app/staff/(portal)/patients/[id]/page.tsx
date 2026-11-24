@@ -17,14 +17,13 @@ export default async function PatientRecordPage({ params }: { params: Promise<{ 
     throw error;
   }
   const { patient, timeline } = record;
-  const age = patient.date_of_birth ? Math.floor((Date.now() - new Date(patient.date_of_birth).getTime()) / 31557600000) : null;
 
   return (
     <div className="staff-page">
       <StaffPageHeader
         eyebrow="Medical record"
         title={`${patient.first_name} ${patient.last_name}`}
-        description={`${patient.patient_number}${age != null ? ` • ${age} yrs` : ""}${patient.sex ? ` • ${patient.sex}` : ""}`}
+        description={`${patient.patient_number}${patient.date_of_birth ? ` • born ${new Date(patient.date_of_birth).toLocaleDateString()}` : ""}${patient.sex ? ` • ${patient.sex}` : ""}`}
         context={<span className="staff-stage-label">{patient.is_active ? "Active" : "Inactive"}</span>}
       />
       <div className="staff-detail-grid">

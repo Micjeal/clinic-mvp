@@ -37,7 +37,7 @@ export async function getPatientRecord(id: string) {
     supabase.from("imaging_reports").select("id,findings,impression,status,approved_at,patient_visible,imaging_orders!inner(imaging_tests(name,modality))").eq("patient_id", id).eq("organization_id", orgId).order("approved_at", { ascending: false }).limit(50),
     supabase.from("invoices").select("id,invoice_number,status,total,balance,currency_code,created_at").eq("patient_id", id).eq("organization_id", orgId).order("created_at", { ascending: false }).limit(50),
     supabase.from("admissions").select("id,admission_number,status,reason_for_admission,diagnosis_on_admission,admitted_at,discharged_at,wards(name)").eq("patient_id", id).eq("organization_id", orgId).order("admitted_at", { ascending: false }).limit(50),
-    supabase.from("prescriptions").select("id,status,created_at,prescription_items(medication_name,dose,frequency,duration,quantity,status)").eq("patient_id", id).eq("organization_id", orgId).order("created_at", { ascending: false }).limit(50),
+    supabase.from("prescriptions").select("id,status,created_at,prescription_items(medication_name,dose,frequency,duration_days,quantity,status)").eq("patient_id", id).eq("organization_id", orgId).order("created_at", { ascending: false }).limit(50),
   ]);
 
   return {
