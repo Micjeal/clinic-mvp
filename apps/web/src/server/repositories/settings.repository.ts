@@ -28,6 +28,7 @@ export const DEFAULT_ORGANIZATION_SETTINGS: Omit<OrganizationSettings, "organiza
   cancellation_cutoff_hours: 0,
   in_app_notifications_enabled: true,
   email_notifications_enabled: true,
+  sms_notifications_enabled: true,
   appointment_reminders_enabled: false,
   reminder_hours_before: 24,
   brand_color: "#0d9488",

@@ -4,12 +4,13 @@ import {findOrganizationSettingsAdmin, DEFAULT_ORGANIZATION_SETTINGS} from "@/se
 import type {Json} from "@clinic/database";
 
 export type NotificationType = "appointment_requested" | "appointment_confirmed" | "appointment_cancelled" | "appointment_status_changed" | "appointment_clinician_assigned" | "appointment_reminder" | "password_reset";
-export type NotificationChannel = "in_app" | "email";
+export type NotificationChannel = "in_app" | "email" | "sms";
 
 export type NotificationInput = {
   type: NotificationType;
   recipientPatientId?: string | null;
   recipientEmail?: string | null;
+  recipientPhone?: string | null;
   recipientName?: string;
   subject: string;
   message: string;
@@ -30,20 +31,92 @@ async function notificationAllowedForPatient(patientId: string | null | undefine
   if (!patientId) return true;
   try {
     const supabase = createAdminClient();
-    const { data: patient } = await supabase.from("patients").select("organization_id").eq("id", patientId).maybeSingle();
+    const { data: patient } = await supabase.from("patients").select("organization_id,phone").eq("id", patientId).maybeSingle();
     if (!patient?.organization_id) return true;
     const settings = { ...DEFAULT_ORGANIZATION_SETTINGS, ...(await findOrganizationSettingsAdmin(patient.organization_id) ?? {}) };
     if (channel === "in_app") return settings.in_app_notifications_enabled;
+    if (channel === "sms") return settings.sms_notifications_enabled;
     return settings.email_notifications_enabled;
   } catch {
     return true;
   }
 }
 
+function smsProviderConfigured() {
+  const provider = process.env.SMS_PROVIDER?.trim().toLowerCase();
+  if (provider === "africastalking") return Boolean(process.env.SMS_API_KEY && process.env.SMS_USERNAME);
+  if (provider === "twilio") return Boolean(process.env.SMS_ACCOUNT_SID && process.env.SMS_AUTH_TOKEN && process.env.SMS_SENDER_ID);
+  return false;
+}
+
+async function sendSms(phone: string, message: string): Promise<void> {
+  const provider = process.env.SMS_PROVIDER?.trim().toLowerCase();
+  if (provider === "africastalking") {
+    const body = new URLSearchParams({ username: process.env.SMS_USERNAME!, to: phone, message });
+    const sender = process.env.SMS_SENDER_ID?.trim();
+    if (sender) body.set("from", sender);
+    const response = await fetch("https://api.africastalking.com/version1/messaging", {
+      method: "POST",
+      headers: { apiKey: process.env.SMS_API_KEY!, "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
+      body,
+    });
+    if (!response.ok) throw new Error(`Africa's Talking SMS failed: ${response.status}`);
+    return;
+  }
+  if (provider === "twilio") {
+    const sid = process.env.SMS_ACCOUNT_SID!;
+    const auth = Buffer.from(`${sid}:${process.env.SMS_AUTH_TOKEN}`).toString("base64");
+    const body = new URLSearchParams({ To: phone, From: process.env.SMS_SENDER_ID!, Body: message });
+    const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
+      method: "POST",
+      headers: { Authorization: `Basic ${auth}`, "Content-Type": "application/x-www-form-urlencoded" },
+      body,
+    });
+    if (!response.ok) throw new Error(`Twilio SMS failed: ${response.status}`);
+    return;
+  }
+  throw new Error("No SMS provider configured");
+}
+
+async function resolveRecipientPhone(input: NotificationInput): Promise<string | null> {
+  if (input.recipientPhone) return input.recipientPhone;
+  if (!input.recipientPatientId) return null;
+  const supabase = createAdminClient();
+  const { data } = await supabase.from("patients").select("phone").eq("id", input.recipientPatientId).maybeSingle();
+  return (data?.phone as string | null) ?? null;
+}
+
 export async function sendNotification(input: NotificationInput) {
   const supabase = createAdminClient();
   const channel = input.channel ?? "in_app";
   if (!(await notificationAllowedForPatient(input.recipientPatientId, channel))) return;
+  if (channel === "sms") {
+    if (!smsProviderConfigured()) return;
+    const phone = await resolveRecipientPhone(input);
+    if (!phone) return;
+    const now = new Date().toISOString();
+    const { data: row, error } = await supabase.from("notifications").insert({
+      type: input.type,
+      recipient_patient_id: input.recipientPatientId ?? null,
+      recipient_email: input.recipientEmail ?? null,
+      recipient_phone: phone,
+      recipient_name: input.recipientName || null,
+      subject: input.subject,
+      message: input.message,
+      channel,
+      metadata: (input.metadata || {}) as Json,
+      status: "pending",
+      created_at: now,
+    }).select("id").single();
+    if (error) { console.error("Failed to create SMS notification:", error); throw error; }
+    try {
+      await sendSms(phone, `${input.subject}: ${input.message}`.slice(0, 1600));
+      await markNotificationSent(row.id);
+    } catch (smsError) {
+      await markNotificationFailed(row.id, smsError instanceof Error ? smsError.message : "SMS send failed");
+    }
+    return;
+  }
   const now = new Date().toISOString();
   const { error } = await supabase.from("notifications").insert({
     type: input.type,

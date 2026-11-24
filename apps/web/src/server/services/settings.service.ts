@@ -103,7 +103,7 @@ export async function updateAppointmentSettings(patch: Pick<OrganizationSettings
 }
 
 export async function updateNotificationSettings(patch: Pick<OrganizationSettingsPatch,
-  "in_app_notifications_enabled" | "email_notifications_enabled" |
+  "in_app_notifications_enabled" | "email_notifications_enabled" | "sms_notifications_enabled" |
   "appointment_reminders_enabled" | "reminder_hours_before">) {
   const staff = await requirePermission(Permissions.SETTINGS_MANAGE);
   const before = await repo.findOrganizationSettings(staff.membership.organization_id);
@@ -112,12 +112,14 @@ export async function updateNotificationSettings(patch: Pick<OrganizationSetting
     before ? {
       in_app_notifications_enabled: before.in_app_notifications_enabled,
       email_notifications_enabled: before.email_notifications_enabled,
+      sms_notifications_enabled: before.sms_notifications_enabled,
       appointment_reminders_enabled: before.appointment_reminders_enabled,
       reminder_hours_before: before.reminder_hours_before,
     } : null,
     {
       in_app_notifications_enabled: after.in_app_notifications_enabled,
       email_notifications_enabled: after.email_notifications_enabled,
+      sms_notifications_enabled: after.sms_notifications_enabled,
       appointment_reminders_enabled: after.appointment_reminders_enabled,
       reminder_hours_before: after.reminder_hours_before,
     });

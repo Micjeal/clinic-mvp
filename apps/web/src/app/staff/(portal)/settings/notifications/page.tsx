@@ -46,6 +46,7 @@ export default async function NotificationSettingsPage() {
               fields: [
                 { name: "in_app_notifications_enabled", label: "In-app notifications", type: "checkbox", defaultValue: s.in_app_notifications_enabled, hint: "Patient portal inbox messages for appointment events." },
                 { name: "email_notifications_enabled", label: "Email notifications", type: "checkbox", defaultValue: s.email_notifications_enabled, hint: "Queues email delivery. Requires a configured email provider to actually send." },
+                { name: "sms_notifications_enabled", label: "SMS notifications", type: "checkbox", defaultValue: s.sms_notifications_enabled, hint: "Text messages for appointment events. Requires SMS_PROVIDER credentials in the environment." },
               ],
             },
             {

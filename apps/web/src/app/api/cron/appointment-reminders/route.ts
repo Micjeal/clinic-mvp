@@ -75,6 +75,15 @@ export async function GET(request: Request) {
           channel: "in_app",
           metadata: { appointment_id: appointment.id, reminder_hours_before: settings.reminder_hours_before },
         });
+        await sendNotification({
+          type: "appointment_reminder",
+          recipientPatientId: appointment.patient_id,
+          recipientName: patientName,
+          subject: "Appointment reminder",
+          message: `Reminder: your appointment for ${what}${facility ? ` at ${facility.name}` : ""} is on ${when}.`,
+          channel: "sms",
+          metadata: { appointment_id: appointment.id, reminder_hours_before: settings.reminder_hours_before },
+        });
         sent.add(key);
         created += 1;
       } catch {
