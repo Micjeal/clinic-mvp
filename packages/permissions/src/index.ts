@@ -48,6 +48,9 @@ export const Permissions = {
   WARD_MANAGE: "ward.manage",
   ADMISSION_MANAGE: "admission.manage",
   REPORTS_READ: "reports.read",
+  PROCUREMENT_READ: "procurement.read",
+  PROCUREMENT_MANAGE: "procurement.manage",
+  PROCUREMENT_APPROVE: "procurement.approve",
 } as const;
 
 export type Permission = (typeof Permissions)[keyof typeof Permissions];
