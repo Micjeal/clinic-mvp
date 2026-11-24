@@ -1026,7 +1026,7 @@ body:has(.patient-portal-shell) { background: #f3f7f9; }
   .patient-help-grid { grid-template-columns: 1fr; }
   .patient-booking-layout { grid-template-columns: 1fr; }
   .patient-booking-help { position: static; }
-  .patient-bottom-nav { position: fixed; right: 0; bottom: 0; left: 0; z-index: 50; min-height: 4.8rem; display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); align-items: end; border-top: 1px solid var(--slate-200); padding: .35rem max(.35rem,env(safe-area-inset-right)) max(.35rem,env(safe-area-inset-bottom)) max(.35rem,env(safe-area-inset-left)); background: rgba(255,255,255,.98); box-shadow: 0 -8px 28px rgba(10,39,66,.08); }
+  .patient-bottom-nav { position: fixed; right: 0; bottom: 0; left: 0; z-index: 50; min-height: 4.8rem; display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); align-items: end; border-top: 1px solid var(--slate-200); padding: .35rem max(.35rem,env(safe-area-inset-right)) max(.35rem,env(safe-area-inset-bottom)) max(.35rem,env(safe-area-inset-left)); background: rgba(255,255,255,.98); box-shadow: 0 -8px 28px rgba(10,39,66,.08); }
   .patient-bottom-nav a { min-width: 0; min-height: 3.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .2rem; border-radius: 8px; color: var(--slate-600); }
   .patient-bottom-nav a.is-active { color: var(--teal-600); }
   .patient-bottom-nav a > span { width: 1.6rem; height: 1.6rem; display: grid; place-items: center; border-radius: 7px; }
@@ -1150,7 +1150,7 @@ body:has(.patient-portal-shell) { background: #f3f7f9; }
 .patient-booking-help-link { display: inline-flex; align-items: center; gap: .4rem; min-height: 2.75rem; color: var(--teal-600); font-size: .8rem; font-weight: 750; }
 .patient-booking-help-link svg { width: 1rem; }
 .portal-booking-form { min-width: 0; }
-.portal-booking-stepper { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: .35rem; margin: 0 0 .75rem; padding: 0; list-style: none; }
+.portal-booking-stepper { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: .35rem; margin: 0 0 .75rem; padding: 0; list-style: none; }
 .portal-booking-stepper li { display: flex; align-items: center; gap: .45rem; min-width: 0; padding: .55rem .4rem; border-bottom: 2px solid var(--slate-200); color: var(--slate-500); font-size: .72rem; }
 .portal-booking-stepper li span { display: grid; width: 1.5rem; height: 1.5rem; flex: 0 0 auto; place-items: center; border: 1px solid var(--slate-300); border-radius: 50%; font-size: .68rem; font-weight: 800; }
 .portal-booking-stepper li strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -1450,7 +1450,7 @@ body:has(.staff-surface) { background: #f4f7f8; }
 .staff-quick-filters a { min-height: 2.3rem; display: inline-flex; align-items: center; border: 1px solid var(--slate-200); border-radius: 7px; padding: .35rem .65rem; color: var(--slate-700); font-size: .7rem; font-weight: 700; }
 .staff-quick-filters a:hover, .staff-quick-filters a.is-active { border-color: #8bc7c5; background: #effafa; color: var(--teal-700); }
 .staff-status-timeline { margin-bottom: 1rem; }
-.staff-status-timeline ol { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 0; margin: 0; padding: 0; list-style: none; }
+.staff-status-timeline ol { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 0; margin: 0; padding: 0; list-style: none; }
 .staff-status-timeline li { position: relative; display: grid; justify-items: center; gap: .45rem; min-width: 0; padding: .25rem .25rem; text-align: center; }
 .staff-status-timeline li:not(:last-child)::after { position: absolute; top: .85rem; left: 62%; width: 76%; height: 1px; background: var(--slate-200); content: ""; }
 .staff-status-timeline li.is-complete:not(:last-child)::after { background: #84c7c5; }
