@@ -32,7 +32,7 @@ function PortalNavigation({close}:{close?:()=>void}){
 }
 
 function SignOutButton({className="patient-portal-signout"}:{className?:string}){
-  return <form action={patientSignOutAction}><button className={className} type="submit"><LogOut aria-hidden="true" />Sign Out</button></form>;
+  return <form action={patientSignOutAction} onSubmit={()=>{document.documentElement.removeAttribute("data-theme");try{window.localStorage.removeItem("hospica.theme");}catch{/* ignore */}}}><button className={className} type="submit"><LogOut aria-hidden="true" />Sign Out</button></form>;
 }
 
 function MobileBottomNavigation(){
