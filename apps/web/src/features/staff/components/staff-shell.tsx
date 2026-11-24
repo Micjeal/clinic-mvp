@@ -28,6 +28,7 @@ import { Wrench,
   Wallet,
   X,
   Ambulance,
+  Droplets,
   Receipt } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
