@@ -2,6 +2,7 @@
 
 import { 
   BriefcaseMedical,
+  BedDouble,
   Building,
   Building2,
   CalendarDays,
@@ -58,6 +59,7 @@ const navigation = [
   { href: "/staff/radiology", label: "Radiology", icon: ScanLine, permission: "radiology.read", group: "Clinical" },
   { href: "/staff/pharmacy", label: "Pharmacy", icon: Pill, permission: "prescription.read", group: "Clinical" },
   { href: "/staff/inventory", label: "Inventory", icon: Package, permission: "inventory.read", group: "Operations" },
+  { href: "/staff/wards", label: "Wards", icon: BedDouble, permission: "ward.read", group: "Inpatient" },
   { href: "/staff/appointments", label: "Appointments", icon: CalendarDays, permission: "appointment.read", group: "Daily operations" },
   { href: "/staff/users", label: "Staff", icon: Building2, permission: "staff.manage", group: "Administration" },
   { href: "/staff/facilities", label: "Facilities", icon: Hospital, permission: "facility.manage", group: "Administration" },
