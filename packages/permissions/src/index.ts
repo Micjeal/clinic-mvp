@@ -53,6 +53,8 @@ export const Permissions = {
   PROCUREMENT_APPROVE: "procurement.approve",
   HR_READ: "hr.read",
   HR_MANAGE: "hr.manage",
+  EXPENSES_READ: "expenses.read",
+  EXPENSES_MANAGE: "expenses.manage",
 } as const;
 
 export type Permission = (typeof Permissions)[keyof typeof Permissions];
