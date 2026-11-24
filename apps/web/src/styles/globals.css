@@ -4002,7 +4002,7 @@ img { max-width: 100%; }
 .nav-link.is-active, .nav-dropdown summary.is-active { background: rgba(223,245,245,.85); color: var(--teal-600); }
 
 .main-header__inner .brand { margin-right: 1.5rem; }
-.header-book-btn { min-height: 2rem !important; padding: .35rem .85rem !important; font-size: .78rem !important; font-weight: 700; border-radius: var(--radius-sm); white-space: nowrap; background: var(--navy-900); border: 1px solid var(--navy-900); color: var(--white); }
+.header-book-btn { min-height: 1.9rem !important; padding: .3rem .8rem !important; font-size: .76rem !important; font-weight: 700; border-radius: 999px; white-space: nowrap; background: var(--navy-900); border: 1px solid var(--navy-900); color: var(--white); }
 .header-book-btn:hover { background: var(--blue-700); border-color: var(--blue-700); }
 
 /* ===== Mobile hero + stat card fixes ===== */
