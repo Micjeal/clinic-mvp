@@ -1,0 +1,75 @@
+import "server-only";
+import { Permissions } from "@clinic/permissions";
+import { NotFoundError, ValidationError } from "@/server/errors";
+import { requirePermission } from "@/server/permissions/require-permission";
+import * as labRepo from "@/server/repositories/lab.repository";
+import * as repo from "@/server/repositories/pharmacy.repository";
+
+async function orgContext(permission: import("@clinic/permissions").Permission) {
+  const staff = await requirePermission(permission);
+  return { orgId: staff.membership.organization_id, userId: staff.user.id };
+}
+
+export async function listPrescriptions() {
+  const { orgId } = await orgContext(Permissions.PRESCRIPTION_READ);
+  return repo.listPrescriptions(orgId);
+}
+
+export async function getPrescription(id: string) {
+  const { orgId } = await orgContext(Permissions.PRESCRIPTION_READ);
+  const rx = await repo.findPrescription(id, orgId);
+  if (!rx) throw new NotFoundError("Prescription not found");
+  return rx;
+}
+
+export async function getPrescriptionForm() {
+  const { orgId } = await orgContext(Permissions.PRESCRIPTION_WRITE);
+  const [encounters, medications] = await Promise.all([labRepo.listOrderableEncounters(orgId), repo.listMedications(orgId)]);
+  return { encounters, medications };
+}
+
+export async function createPrescription(input: {
+  encounterId: string; notes: string | null;
+  items: { medicationId: string | null; medicationName: string; dose: string | null; route: string | null; frequency: string | null; durationDays: number | null; quantity: number | null; instructions: string | null }[];
+}) {
+  const { orgId, userId } = await orgContext(Permissions.PRESCRIPTION_WRITE);
+  if (!input.items.length) throw new ValidationError("Add at least one medication.");
+  const encounter = (await labRepo.listOrderableEncounters(orgId)).find((item) => item.id === input.encounterId);
+  if (!encounter) throw new NotFoundError("Encounter not found");
+  if (!encounter.facility_id || !encounter.department_id) throw new ValidationError("This encounter is missing facility or department context.");
+  return repo.createPrescription({
+    organizationId: orgId, facilityId: encounter.facility_id, departmentId: encounter.department_id,
+    encounterId: input.encounterId, patientId: encounter.patient_id, prescriberUserId: userId,
+    notes: input.notes, items: input.items,
+  });
+}
+
+export async function dispensePrescriptionItem(itemId: string, prescriptionId: string, organizationId: string) {
+  await repo.updatePrescriptionItemStatus(itemId, "dispensed");
+  const rx = await repo.findPrescription(prescriptionId, organizationId);
+  if (!rx) return;
+  const items = (rx.prescription_items ?? []) as { status?: string }[];
+  const allDispensed = items.every((item) => item.status === "dispensed" || item.status === "cancelled");
+  const anyDispensed = items.some((item) => item.status === "dispensed" || item.status === "partially_dispensed");
+  await repo.updatePrescriptionStatus(prescriptionId, organizationId, allDispensed ? "dispensed" : anyDispensed ? "partially_dispensed" : rx.status);
+}
+
+export async function cancelPrescriptionItem(itemId: string, prescriptionId: string, organizationId: string) {
+  await repo.updatePrescriptionItemStatus(itemId, "cancelled");
+  const rx = await repo.findPrescription(prescriptionId, organizationId);
+  if (!rx) return;
+  const items = (rx.prescription_items ?? []) as { status?: string }[];
+  const allCancelled = items.every((item) => item.status === "cancelled");
+  if (allCancelled) await repo.updatePrescriptionStatus(prescriptionId, organizationId, "cancelled");
+}
+
+export async function listMedications() {
+  const { orgId } = await orgContext(Permissions.PHARMACY_READ);
+  return repo.listMedications(orgId);
+}
+
+export async function createMedication(input: { code: string; genericName: string; brandName: string | null; dosageForm: string | null; strength: string | null; unit: string | null }) {
+  const { orgId } = await orgContext(Permissions.PHARMACY_MANAGE);
+  if (!input.code.trim() || !input.genericName.trim()) throw new ValidationError("Code and generic name are required.");
+  return repo.createMedication({ ...input, organizationId: orgId });
+}

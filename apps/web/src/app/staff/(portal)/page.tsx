@@ -13,7 +13,7 @@ export const metadata = { title: "Staff dashboard" };
 export default async function StaffDashboardPage() {
   const context = await getStaffPortalContext();
   const [appointments, queueResult] = await Promise.all([
-    getStaffAppointments(),
+    getStaffAppointments().catch((error) => { if (error instanceof AuthorizationError) return []; throw error; }),
     getQueue().catch((error) => { if (error instanceof AuthorizationError) return []; throw error; }),
   ]);
   const dashboard = buildStaffDashboard(appointments, { timeZone: context.timezone });

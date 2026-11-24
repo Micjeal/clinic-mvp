@@ -1,13 +1,12 @@
 import "server-only";
-import {Permissions} from "@clinic/permissions";
-import {requirePermission} from "@/server/permissions/require-permission";
+import {requireStaffPortalAccess} from "@/server/permissions/require-permission";
 import {requireStaff} from "@/server/auth/require-staff";
 import {getStaffDisplayContext} from "@/server/repositories/staff.repository";
 import {findOrganizationSettings, DEFAULT_ORGANIZATION_SETTINGS} from "@/server/repositories/settings.repository";
 import {PasswordChangeRequiredError} from "@/server/errors";
 
 export async function getStaffPortalContext(){
-  const staff=await requirePermission(Permissions.APPOINTMENT_READ);
+  const staff=await requireStaffPortalAccess();
   if(staff.membership.must_change_password)throw new PasswordChangeRequiredError();
   const [details,settings]=await Promise.all([
     getStaffDisplayContext({userId:staff.user.id,organizationId:staff.membership.organization_id,roleId:staff.membership.role_id}),
