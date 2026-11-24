@@ -48,6 +48,7 @@ export default async function WardsPage() {
             <div style={{ display: "flex", flexWrap: "wrap", gap: ".5rem" }}>
               {beds.length === 0 ? <p className="staff-table-empty">No beds configured.</p> : beds.map((bed) => <span className={`staff-status ${BED_TONE[bed.status] ?? ""}`} key={bed.id}>{bed.bed_number} — {bed.status}</span>)}
             </div>
+            {canManageWards ? <div style={{ marginTop: ".9rem", maxWidth: "22rem" }}><BedForm wards={[{ id: ward.id, name: ward.name, ward_type: ward.ward_type, beds } as never]} /></div> : null}
           </section>
         );
       })}
