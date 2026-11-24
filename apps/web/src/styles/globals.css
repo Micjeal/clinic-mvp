@@ -3551,3 +3551,20 @@ a.staff-kpi:hover { border-color: #bcd2e0; box-shadow: 0 10px 22px rgba(12, 39, 
 .staff-reset-password { display: grid; gap: .5rem; justify-items: end; }
 .staff-reset-password__value { display: flex; align-items: center; gap: .5rem; }
 .staff-reset-password__value code { padding: .4rem .7rem; border: 1px dashed #b9cfdb; border-radius: 8px; background: #f4fafb; font-size: .85rem; letter-spacing: .02em; }
+
+/* Patient portal billing & results */
+.patient-table-wrap { overflow-x: auto; border: 1px solid var(--slate-200); border-radius: 12px; }
+.patient-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.patient-table th { text-align: left; padding: .7rem .9rem; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--slate-500); border-bottom: 1px solid var(--slate-200); background: var(--blue-50); }
+.patient-table td { padding: .7rem .9rem; border-bottom: 1px solid var(--slate-100); }
+.patient-table tr:last-child td { border-bottom: none; }
+.patient-col-amount { text-align: right; white-space: nowrap; }
+.patient-status { display: inline-block; padding: .15rem .55rem; border-radius: 999px; font-size: .72rem; font-weight: 600; background: var(--blue-50); color: var(--slate-700); text-transform: capitalize; }
+.patient-status--paid, .patient-status--completed { background: #dcfce7; color: #166534; }
+.patient-status--issued, .patient-status--partially_paid { background: #fef9c3; color: #854d0e; }
+.patient-status--void { background: #fee2e2; color: #991b1b; }
+.patient-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
+.patient-list-item { padding: .8rem 1rem; border: 1px solid var(--slate-200); border-radius: 10px; background: var(--white); font-size: .88rem; }
+.patient-sub { color: var(--slate-500); font-size: .78rem; }
+.patient-flag { color: #b45309; font-weight: 600; font-size: .75rem; text-transform: uppercase; }
+.patient-empty { color: var(--slate-500); font-size: .85rem; padding: .5rem 0; }
