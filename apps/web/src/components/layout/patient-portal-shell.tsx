@@ -6,7 +6,7 @@ import {usePathname,useRouter} from "next/navigation";
 import {useEffect,useRef,useState} from "react";
 
 import {patientSignOutAction} from "@/server/actions/auth.actions";
-import {markAllNotificationsReadAction,markNotificationReadAction} from "@/server/actions/notification.actions";
+import {listPortalNotificationsAction,markAllNotificationsReadAction,markNotificationReadAction} from "@/server/actions/notification.actions";
 import type {PortalNotification} from "@/server/services/notification.service";
 
 const portalNavigation=[
@@ -55,6 +55,7 @@ function NotificationBell({notifications}:{notifications:PortalNotification[]}){
   const panelRef=useRef<HTMLDivElement>(null);
   if(prevNotifications!==notifications){setPrevNotifications(notifications);setItems(notifications);}
   const unreadCount=items.filter(item=>!item.readAt).length;
+  useEffect(()=>{let alive=true;void listPortalNotificationsAction().then(list=>{if(alive)setItems(list);}).catch(()=>{});return()=>{alive=false};},[]);
 
   useEffect(()=>{
     if(!open)return;

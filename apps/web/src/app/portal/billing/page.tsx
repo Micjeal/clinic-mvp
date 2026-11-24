@@ -21,6 +21,13 @@ export default async function PortalBillingPage() {
     <div className="patient-portal-page">
       <PatientPageHeader eyebrow="Billing" title="Billing & Results" description="Your invoices and released test results." />
 
+      <div className="billing-summary">
+        <div className="billing-summary__card"><span>Invoices</span><strong>{invoices.length}</strong></div>
+        <div className="billing-summary__card"><span>Outstanding</span><strong>{invoices.reduce((sum, i) => sum + Number(i.balance), 0).toLocaleString()} UGX</strong></div>
+        <div className="billing-summary__card"><span>Lab results</span><strong>{labResults.length}</strong></div>
+        <div className="billing-summary__card"><span>Imaging reports</span><strong>{imagingReports.length}</strong></div>
+      </div>
+
       <section className="patient-section">
         <div className="patient-section-heading"><div><p className="eyebrow">Payments</p><h2>Invoices</h2></div></div>
         {invoices.length === 0 ? <div className="patient-empty-state"><Wallet aria-hidden="true" /><div><h3>No invoices yet</h3><p>Charges for your visits will appear here once billed.</p></div></div> : (

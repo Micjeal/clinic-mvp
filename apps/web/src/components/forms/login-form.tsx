@@ -11,6 +11,17 @@ function Submit() {
   return <button className="btn auth-submit" disabled={pending}>{pending ? "Signing in…" : "Sign in"}</button>;
 }
 
+function SigningInOverlay() {
+  const { pending } = useFormStatus();
+  if (!pending) return null;
+  return (
+    <div className="portal-loader portal-loader--overlay" role="status" aria-label="Signing in">
+      <div className="portal-loader__cross"><span /><span /></div>
+      <p className="portal-loader__text">Signing you in…</p>
+    </div>
+  );
+}
+
 export default function LoginForm({ next }: { next: string }) {
   const [state, action] = useActionState(signInAction, null);
   return (
@@ -20,6 +31,7 @@ export default function LoginForm({ next }: { next: string }) {
       <label>Password<PasswordInput autoComplete="current-password" name="password" minLength={8} required /></label>
       {state?.error ? <p className="error" role="alert">{state.error}</p> : null}
       <Submit />
+      <SigningInOverlay />
     </form>
   );
 }

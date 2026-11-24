@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 import { clinicDescription, clinicName } from "@/lib/public-content";
 import { getPublicOrganizationProfile } from "@/server/services/settings.service";
@@ -15,6 +15,10 @@ export async function generateMetadata(): Promise<Metadata> {
     description: organization?.description || clinicDescription(),
   };
 }
+
+export const viewport: Viewport = {
+  themeColor: "#0a6e70",
+};
 
 export default function Layout({
   children,

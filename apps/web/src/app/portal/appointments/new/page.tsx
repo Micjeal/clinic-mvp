@@ -1,4 +1,4 @@
-import { CircleHelp, Clock3, LockKeyhole, MessageSquareText } from "lucide-react";
+import { CircleHelp, Clock3 } from "lucide-react";
 import Link from "next/link";
 import { BookingForm } from "@/features/appointments/components/booking-form";
 import { clinicianIsCompatible } from "@/features/appointments/utils/portal-booking";
@@ -73,69 +73,56 @@ export default async function NewPortalAppointmentPage({
       <Link className="patient-back-link" href="/portal/appointments">
         <span aria-hidden="true">←</span>Back to appointments
       </Link>
-      <header className="patient-page-heading">
+      <header className="patient-page-heading patient-page-heading--compact">
         <div>
           <p className="eyebrow">Book appointment</p>
-          <h1>New appointment</h1>
-          <p>Request a preferred consultation date and time. The clinic will review and confirm your request.</p>
+          <h1>Book an appointment</h1>
+          <p>Choose your preferred consultation details. The clinic will review your request.</p>
         </div>
         <Link className="patient-booking-help-link" href="/portal/help">
           <CircleHelp aria-hidden="true" />Need help?
         </Link>
       </header>
-      <div className="patient-booking-layout">
-        <div>
-          <div className="request-alert" role="note">
-            <Clock3 aria-hidden="true" />
-            <p><strong>Appointment requests are reviewed by the clinic.</strong> Your preferred time is not confirmed until the clinic responds.</p>
-          </div>
-          {facilities.length && departments.length ? (
-            <BookingForm
-              clinicians={clinicians}
-              departments={departments}
-              facilities={facilities}
-              initialClinician={initialClinician?.key}
-              initialError={initialError}
-              initialSelection={{
-                facility: params.facility,
-                department: params.department,
-                service: params.service,
-                date: params.date,
-                scheduledStart: params.scheduled_start,
-              }}
-              initialSlots={initialSlots}
-              patient={{
-                name: patientName,
-                patientNumber: patient.patient_number || "",
-                phone: patient.phone || "",
-                email: patient.email || user.email || "",
-              }}
-              services={services}
-              variant="portal"
-            />
-          ) : (
-            <div className="empty-state">Online appointment requests are currently unavailable. Please contact the clinic for help.</div>
-          )}
-        </div>
-        <aside className="patient-booking-help" aria-labelledby="portal-booking-help-title">
-          <p className="eyebrow">Simple and secure</p>
-          <h2 id="portal-booking-help-title">How appointment requests work</h2>
-          <ol>
-            <li><span>1</span><div><strong>Choose your preference</strong><p>Select a location, department, service, Doctor and time.</p></div></li>
-            <li><span>2</span><div><strong>Send your request</strong><p>We use the patient details already linked to your account.</p></div></li>
-            <li><span>3</span><div><strong>Track the status</strong><p>Follow progress from your appointments workspace.</p></div></li>
-          </ol>
-          <div className="patient-booking-help__link">
-            <LockKeyhole aria-hidden="true" />
-            <div><strong>Your account details</strong><p>Booking for {patientName}. Need to change your contact details?</p><Link href="/portal/profile">View my profile <span aria-hidden="true">→</span></Link></div>
-          </div>
-          <div className="patient-booking-help__link">
-            <MessageSquareText aria-hidden="true" />
-            <div><strong>Need help?</strong><p>Find configured clinic contact information.</p><Link href="/portal/help">Help &amp; Contact <span aria-hidden="true">→</span></Link></div>
-          </div>
-          <p className="patient-booking-help__urgent"><CircleHelp aria-hidden="true" />Do not use this form for emergency care.</p>
-        </aside>
+      <div className="request-alert" role="note">
+        <Clock3 aria-hidden="true" />
+        <p><strong>Requests are reviewed by the clinic.</strong> Your preferred time is not confirmed until the clinic responds.</p>
       </div>
+      {facilities.length && departments.length ? (
+        <BookingForm
+          clinicians={clinicians}
+          departments={departments}
+          facilities={facilities}
+          initialClinician={initialClinician?.key}
+          initialError={initialError}
+          initialSelection={{
+            facility: params.facility,
+            department: params.department,
+            service: params.service,
+            date: params.date,
+            scheduledStart: params.scheduled_start,
+          }}
+          initialSlots={initialSlots}
+          patient={{
+            name: patientName,
+            patientNumber: patient.patient_number || "",
+            phone: patient.phone || "",
+            email: patient.email || user.email || "",
+          }}
+          services={services}
+          variant="portal"
+        />
+      ) : (
+        <div className="empty-state">Online appointment requests are currently unavailable. Please contact the clinic for help.</div>
+      )}
+      <details className="patient-booking-help-details">
+        <summary>How appointment requests work</summary>
+        <ol>
+          <li><span>1</span><div><strong>Choose your preference</strong><p>Select a location, department, service, Doctor and time.</p></div></li>
+          <li><span>2</span><div><strong>Send your request</strong><p>We use the patient details already linked to your account.</p></div></li>
+          <li><span>3</span><div><strong>Track the status</strong><p>Follow progress from your appointments workspace.</p></div></li>
+        </ol>
+        <p className="patient-booking-help__urgent"><CircleHelp aria-hidden="true" />Do not use this form for emergency care.</p>
+      </details>
     </div>
   );
 }

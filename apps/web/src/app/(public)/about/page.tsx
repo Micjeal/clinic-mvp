@@ -1,7 +1,7 @@
 import { CalendarCheck, HeartHandshake, MessagesSquare, Route, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
-import { PageHero } from "@/components/layout/page-hero";
+import { AboutHero } from "@/components/home/about-hero";
 import { clinicName, safeFacilityLocation, safeFacilityName } from "@/lib/public-content";
 import { getPublicFacilities } from "@/server/services/facility.service";
 import { getPublicOrganizationProfile } from "@/server/services/settings.service";
@@ -12,7 +12,7 @@ export default async function AboutPage() {
   const [facilities, organization] = await Promise.all([getPublicFacilities(), getPublicOrganizationProfile()]);
   return (
     <>
-      <PageHero eyebrow="About our care" title={`A patient-first approach at ${organization?.name || clinicName()}.`} description="Clear information, coordinated next steps and secure digital access help patients stay informed throughout their care journey." />
+      <AboutHero />
       <section className="section">
         <div className="site-container split-layout">
           <div className="section-copy"><p className="eyebrow">Who we are</p><h2>Care begins with clear, useful information.</h2><p>Our public website helps patients understand available departments and services, locate a facility and submit an appointment request with the details the clinic needs to review it.</p></div>

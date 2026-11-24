@@ -87,6 +87,7 @@ export function BookingForm({
   );
   const [slots, setSlots] = useState<Slot[]>(initialSlots);
   const [reason, setReason] = useState("");
+  const [search, setSearch] = useState("");
   const [error, setError] = useState(initialError);
   const [loading, startLoading] = useTransition();
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -157,31 +158,36 @@ export function BookingForm({
       return;
     }
     setError("");
+    setSearch("");
     setStep((value) => Math.min(6, value + 1));
   }
 
   const nameParts = patient?.name.split(" ").filter(Boolean) ?? [];
+  const q = search.trim().toLowerCase();
+  const matches = (...fields: (string | null | undefined)[]) => !q || fields.some((f) => (f ?? "").toLowerCase().includes(q));
+  const visibleFacilities = facilities.filter((f) => matches(f.name, f.city, f.district));
+  const visibleDepartments = availableDepartments.filter((d) => matches(d.name, d.description));
+  const visibleServices = availableServices.filter((v) => matches(v.name, v.description));
+  const visibleClinicians = availableClinicians.filter((c) => matches(c.displayName, c.professionalTitle));
 
   return (
     <form action={action} className="portal-booking-form">
-      <ol aria-label="Appointment request progress" className="portal-booking-stepper">
-        {portalBookingSteps.map((label, index) => (
-          <li className={step === index + 1 ? "is-current" : step > index + 1 ? "is-complete" : ""} key={label}>
-            <span>{index + 1}</span><strong>{label}</strong>
-          </li>
-        ))}
-      </ol>
-      <p className="portal-booking-mobile-step">Step {step} of {portalBookingSteps.length}<strong>{portalBookingSteps[step - 1]}</strong></p>
+      <div className="portal-booking-progress" aria-live="polite">
+        <p className="portal-booking-progress__label">Step {step} of {portalBookingSteps.length} — {portalBookingSteps[step - 1]}</p>
+        <div className="portal-booking-progress__bar" role="progressbar" aria-valuemin={1} aria-valuemax={portalBookingSteps.length} aria-valuenow={step}>
+          <span style={{ width: `${(step / portalBookingSteps.length) * 100}%` }} />
+        </div>
+      </div>
       <div className="portal-booking-panel">
         <h2 className="sr-only" ref={headingRef} tabIndex={-1}>{portalBookingSteps[step - 1]}</h2>
 
-        {step === 1 ? <fieldset><legend>Choose a care location</legend><div className="portal-choice-grid">{facilities.map((item) => <label className={`portal-choice ${facilityId === item.id ? "is-selected" : ""}`} key={item.id}><input checked={facilityId === item.id} onChange={() => { setFacilityId(item.id); setDepartmentId(""); setServiceId(""); retainClinician({ facilityId: item.id }); resetDate(); }} type="radio" name="facility_choice" /><span><strong>{item.name}</strong><small>{item.city || item.district || "Care location"}</small></span></label>)}</div></fieldset> : null}
+        {step === 1 ? <fieldset><legend>Choose a care location</legend><input className="portal-booking-search" onChange={(e) => setSearch(e.target.value)} placeholder="Search locations…" type="search" value={search} /><div className="portal-choice-grid">{visibleFacilities.map((item) => <label className={`portal-choice ${facilityId === item.id ? "is-selected" : ""}`} key={item.id}><input checked={facilityId === item.id} onChange={() => { setFacilityId(item.id); setDepartmentId(""); setServiceId(""); retainClinician({ facilityId: item.id }); resetDate(); }} type="radio" name="facility_choice" /><span><strong>{item.name}</strong><small>{item.city || item.district || "Care location"}</small></span></label>)}</div></fieldset> : null}
 
-        {step === 2 ? <fieldset><legend>Choose a department</legend><div className="portal-choice-grid">{availableDepartments.map((item) => <label className={`portal-choice ${departmentId === item.id ? "is-selected" : ""}`} key={item.id}><input checked={departmentId === item.id} onChange={() => { setDepartmentId(item.id); setServiceId(""); retainClinician({ facilityId, departmentId: item.id }); resetDate(); }} type="radio" name="department_choice" /><span><strong>{item.name}</strong><small>{item.description || "Available clinic department"}</small></span></label>)}</div></fieldset> : null}
+        {step === 2 ? <fieldset><legend>Choose a department</legend><input className="portal-booking-search" onChange={(e) => setSearch(e.target.value)} placeholder="Search departments…" type="search" value={search} /><div className="portal-choice-grid">{visibleDepartments.map((item) => <label className={`portal-choice ${departmentId === item.id ? "is-selected" : ""}`} key={item.id}><input checked={departmentId === item.id} onChange={() => { setDepartmentId(item.id); setServiceId(""); retainClinician({ facilityId, departmentId: item.id }); resetDate(); }} type="radio" name="department_choice" /><span><strong>{item.name}</strong><small>{item.description || "Available clinic department"}</small></span></label>)}</div></fieldset> : null}
 
-        {step === 3 ? <fieldset><legend>Choose a service</legend><div className="portal-choice-grid">{availableServices.map((item) => <label className={`portal-choice ${serviceId === item.id ? "is-selected" : ""}`} key={item.id}><input checked={serviceId === item.id} onChange={() => { setServiceId(item.id); retainClinician({ facilityId, departmentId, serviceId: item.id }); resetDate(); }} type="radio" name="service_choice" /><span><strong>{item.name}</strong><small>{item.duration_minutes ? `${item.duration_minutes} minutes` : department?.name || "Available service"}</small></span></label>)}</div></fieldset> : null}
+        {step === 3 ? <fieldset><legend>Choose a service</legend><input className="portal-booking-search" onChange={(e) => setSearch(e.target.value)} placeholder="Search services…" type="search" value={search} /><div className="portal-choice-grid">{visibleServices.map((item) => <label className={`portal-choice ${serviceId === item.id ? "is-selected" : ""}`} key={item.id}><input checked={serviceId === item.id} onChange={() => { setServiceId(item.id); retainClinician({ facilityId, departmentId, serviceId: item.id }); resetDate(); }} type="radio" name="service_choice" /><span><strong>{item.name}</strong><small>{item.duration_minutes ? `${item.duration_minutes} minutes` : department?.name || "Available service"}</small></span></label>)}</div></fieldset> : null}
 
-        {step === 4 ? <fieldset><legend>Choose your doctor</legend><div className="portal-choice-grid"><label className={`portal-choice ${!clinicianId ? "is-selected" : ""}`}><input checked={!clinicianId} onChange={() => { setClinicianId(""); resetDate(); }} type="radio" name="doctor_choice" /><span><strong>Any available doctor</strong><small>Get the earliest eligible appointment.</small></span></label>{availableClinicians.map((item) => <label className={`portal-choice ${clinicianId === item.key ? "is-selected" : ""}`} key={item.key}><input checked={clinicianId === item.key} onChange={() => { setClinicianId(item.key); resetDate(); }} type="radio" name="doctor_choice" /><span><strong>{item.displayName}</strong><small>{item.professionalTitle || "Eligible clinician"}</small></span></label>)}</div></fieldset> : null}
+        {step === 4 ? <fieldset><legend>Choose your doctor</legend><input className="portal-booking-search" onChange={(e) => setSearch(e.target.value)} placeholder="Search doctors…" type="search" value={search} /><div className="portal-choice-grid"><label className={`portal-choice ${!clinicianId ? "is-selected" : ""}`}><input checked={!clinicianId} onChange={() => { setClinicianId(""); resetDate(); }} type="radio" name="doctor_choice" /><span><strong>Any available doctor</strong><small>Get the earliest eligible appointment.</small></span></label>{visibleClinicians.map((item) => <label className={`portal-choice ${clinicianId === item.key ? "is-selected" : ""}`} key={item.key}><input checked={clinicianId === item.key} onChange={() => { setClinicianId(item.key); resetDate(); }} type="radio" name="doctor_choice" /><span><strong>{item.displayName}</strong><small>{item.professionalTitle || "Eligible clinician"}</small></span></label>)}</div></fieldset> : null}
 
         {step === 5 ? <fieldset><legend>Choose an available date and time</legend><label>Preferred date<input type="date" min={minDate} value={date} onChange={(event) => { setDate(event.target.value); setScheduledStart(""); setSlots([]); }} required /></label><button className="btn btn--secondary" disabled={loading || !date} onClick={loadSlots} type="button">{loading ? "Checking availability…" : "Find available times"}</button>{slots.length ? <div aria-label="Available appointment times" className="portal-slot-grid" role="radiogroup">{slots.map((slot) => <label className={`portal-slot ${scheduledStart === slot.startsAt ? "is-selected" : ""}`} key={slot.startsAt}><input checked={scheduledStart === slot.startsAt} name="slot_choice" onChange={() => setScheduledStart(slot.startsAt)} type="radio" /><span>{displayTime(slot.startsAt, facility?.timezone)}</span></label>)}</div> : date && !loading ? <p className="portal-booking-empty">No appointment times are available on this date. Choose another date or Doctor.</p> : null}<label>Reason for your request<textarea maxLength={500} onChange={(event) => setReason(event.target.value)} rows={4} value={reason} /></label><p className="portal-booking-notice">Only currently generated appointment times can be submitted. The clinic will review your request.</p></fieldset> : null}
 
@@ -202,7 +208,7 @@ export function BookingForm({
 
         {error || state?.error ? <p className="error" role="alert">{error || state?.error}</p> : null}
         <div className="portal-booking-actions">
-          {step > 1 ? <button className="btn btn--secondary" onClick={() => { setError(""); setStep((value) => Math.max(1, value - 1)); }} type="button"><ChevronLeft aria-hidden="true" />Back</button> : <span />}
+          {step > 1 ? <button className="btn btn--secondary" onClick={() => { setError(""); setSearch(""); setStep((value) => Math.max(1, value - 1)); }} type="button"><ChevronLeft aria-hidden="true" />Back</button> : <span />}
           {step < 6 ? <button className="btn" onClick={next} type="button">Continue<ChevronRight aria-hidden="true" /></button> : <Submit isPublic={isPublic} />}
         </div>
       </div>
