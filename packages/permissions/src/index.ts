@@ -47,6 +47,8 @@ export const Permissions = {
   WARD_READ: "ward.read",
   WARD_MANAGE: "ward.manage",
   ADMISSION_MANAGE: "admission.manage",
+  THEATRE_READ: "theatre.read",
+  THEATRE_MANAGE: "theatre.manage",
   REPORTS_READ: "reports.read",
   PROCUREMENT_READ: "procurement.read",
   PROCUREMENT_MANAGE: "procurement.manage",
