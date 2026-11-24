@@ -19,6 +19,9 @@ export const Permissions = {
   SETTINGS_MANAGE: "settings.manage",
   ORGANIZATION_MANAGE: "organization.manage",
   AUDIT_READ: "audit.read",
+  BILLING_READ: "billing.read",
+  BILLING_INVOICE_CREATE: "billing.invoice.create",
+  BILLING_PAYMENT_CREATE: "billing.payment.create",
 } as const;
 
 export type Permission = (typeof Permissions)[keyof typeof Permissions];
