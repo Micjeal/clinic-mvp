@@ -33,10 +33,8 @@ create policy equipment_read on public.equipment for select to authenticated usi
 create policy equipment_write on public.equipment for all to authenticated using (private.has_permission(organization_id,'equipment.manage')) with check (private.has_permission(organization_id,'equipment.manage'));
 create policy equipment_maintenance_read on public.equipment_maintenance for select to authenticated using (private.has_permission(organization_id,'equipment.read'));
 create policy equipment_maintenance_write on public.equipment_maintenance for all to authenticated using (private.has_permission(organization_id,'equipment.manage')) with check (private.has_permission(organization_id,'equipment.manage'));
-insert into public.permissions(key,domain,label,description) values
- ('equipment.read','operations','View equipment','View equipment register and maintenance'),
- ('equipment.manage','operations','Manage equipment','Register equipment and log maintenance')
-on conflict do nothing;
+insert into public.permissions(permission_key,description) values ('equipment.read','View equipment register and maintenance') on conflict do nothing;
+insert into public.permissions(permission_key,description) values ('equipment.manage','Register equipment and log maintenance') on conflict do nothing;
 insert into public.role_permissions(role_id,permission_key)
 select r.id,'equipment.read' from public.roles r where r.role_key in ('organization_admin','inventory_manager','receptionist') on conflict do nothing;
 insert into public.role_permissions(role_id,permission_key)
