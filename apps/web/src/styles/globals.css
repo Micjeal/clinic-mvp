@@ -4149,3 +4149,8 @@ img { max-width: 100%; }
 [data-theme="dark"] .patient-bottom-nav a { color: #9db4c6; }
 [data-theme="dark"] .patient-bottom-nav a.is-active { color: #74ddd7; }
 [data-theme="dark"] .patient-bottom-nav__book { background: var(--teal-600); color: var(--white); }
+
+[data-theme="dark"] .patient-sidebar-profile { border-color: rgba(255,255,255,.12); }
+[data-theme="dark"] .patient-sidebar-profile strong { color: var(--white); }
+[data-theme="dark"] .patient-sidebar-profile small { color: #91a9b8; }
+[data-theme="dark"] .patient-portal-sidebar__footer { border-color: rgba(255,255,255,.12); }
