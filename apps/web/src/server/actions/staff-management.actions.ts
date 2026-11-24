@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { AuthorizationError, safeServerMessage } from "@/server/errors";
 import { requirePermission } from "@/server/permissions/require-permission";
 import { createStaffProvisioning, deleteProvisionedAuthUser } from "@/server/repositories/staff-management.repository";
+import { insertAuditLog } from "@/server/repositories/settings.repository";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { facilityLocalDateTimeToInstant } from "@/lib/facility-time";
@@ -40,6 +41,44 @@ export async function createStaffAccountAction(_previous: unknown, formData: For
   } catch (error) {
     try { await deleteProvisionedAuthUser(authData.user.id); } catch { /* controlled compensation attempt */ }
     return { error: safeServerMessage(error, "We couldn't finish provisioning this staff account. No account was left active.") };
+  }
+}
+
+export async function resetStaffPasswordAction(membershipId: string) {
+  try {
+    const actor = await requirePermission(Permissions.STAFF_MANAGE);
+    const supabase = await createClient();
+    const { data: member, error: memberError } = await supabase
+      .from("staff_memberships")
+      .select("id,user_id,is_active,organization_id,profiles!staff_memberships_user_id_fkey(full_name)")
+      .eq("id", membershipId)
+      .eq("organization_id", actor.membership.organization_id)
+      .maybeSingle();
+    if (memberError || !member) return { error: "Staff member not found." };
+    if (!member.is_active) return { error: "Reactivate this account before resetting its password." };
+    const password = temporaryPassword();
+    const admin = createAdminClient();
+    const { error: updateError } = await admin.auth.admin.updateUserById(member.user_id, { password });
+    if (updateError) return { error: "We couldn't reset the password. Try again." };
+    const { error: flagError } = await supabase
+      .from("staff_memberships")
+      .update({ must_change_password: true })
+      .eq("id", member.id)
+      .eq("organization_id", actor.membership.organization_id);
+    if (flagError) return { error: "Password was reset but the change-password flag could not be set." };
+    const profile = member.profiles as { full_name?: string } | null;
+    await insertAuditLog({
+      organizationId: actor.membership.organization_id,
+      actorUserId: actor.user.id,
+      action: "staff.password.reset",
+      entityType: "staff_membership",
+      entityId: member.id,
+      before: null,
+      after: { member_name: profile?.full_name ?? null, must_change_password: true },
+    }).catch(() => undefined);
+    return { success: true, temporaryPassword: password };
+  } catch (error) {
+    return { error: safeServerMessage(error, "We couldn't reset the password.") };
   }
 }
 
