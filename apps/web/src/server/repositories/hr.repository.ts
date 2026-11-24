@@ -22,7 +22,7 @@ export async function listShifts(organizationId: string, fromDate?: string, toDa
 
 export async function listLeaveRequests(organizationId: string): Promise<any[]> {
   const supabase = await untyped();
-  const { data, error } = await supabase.from("leave_requests").select("*,staff_memberships!leave_requests_staff_membership_id_fkey(profiles!staff_memberships_user_id_fkey(full_name)),roles!staff_memberships_role_id_fkey(name)").eq("organization_id", organizationId).order("created_at", { ascending: false }).limit(200);
+  const { data, error } = await supabase.from("leave_requests").select("*,staff_memberships!leave_requests_staff_membership_id_fkey(profiles!staff_memberships_user_id_fkey(full_name))").eq("organization_id", organizationId).order("created_at", { ascending: false }).limit(200);
   if (error) throw error;
   return data ?? [];
 }
