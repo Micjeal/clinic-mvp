@@ -80,6 +80,7 @@ export async function approveLabResultAction(resultId: string, orderId: string) 
   const { orgId, userId } = await orgContext(Permissions.LAB_RESULT_APPROVE);
   await repo.approveLabResult(resultId, orgId, userId);
   await maybeCompleteOrder(orderId, orgId);
+  await notifyResultReady(orgId, orderId, "laboratory");
 }
 
 export async function createLabTest(input: { code: string; name: string; description: string | null; specimenType: string | null; defaultUnit: string | null; referenceRangeText: string | null; price: number; departmentId: string | null }) {
@@ -110,4 +111,21 @@ async function chargeCompletedLabOrder(order: Record<string, unknown> | null) {
       // Charge capture must never break the lab workflow.
     }
   }
+}
+
+async function notifyResultReady(orgId: string, orderId: string, kind: "laboratory" | "imaging") {
+  try {
+    const order = await repo.findLabOrder(orderId, orgId);
+    const patientId = (order as { patient_id?: string } | null)?.patient_id;
+    if (!patientId) return;
+    const admin = (await import("@/lib/supabase/admin")).createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+    const { data: patient } = await admin.from("patients").select("first_name,last_name,phone").eq("id", patientId).maybeSingle();
+    if (!patient) return;
+    const { sendNotification } = await import("@/server/services/notification.service");
+    const name = `${patient.first_name ?? ""} ${patient.last_name ?? ""}`.trim();
+    const message = `Hello ${name}, your ${kind} result is ready. Please visit the hospital or check your patient portal.`;
+    const base = { type: "result_ready" as const, recipientPatientId: patientId, recipientPhone: patient.phone ?? null, recipientName: name, subject: `${kind === "laboratory" ? "Lab" : "Imaging"} result ready`, message, metadata: { orderId } };
+    await sendNotification({ ...base, channel: "in_app" });
+    if (patient.phone) await sendNotification({ ...base, channel: "sms" });
+  } catch { /* notification must never break approval */ }
 }

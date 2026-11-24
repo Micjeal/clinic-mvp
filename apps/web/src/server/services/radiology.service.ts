@@ -80,6 +80,18 @@ export async function approveImagingReport(orderId: string) {
   } catch {
     // Charge capture must never break report approval.
   }
+  try {
+    const patientId = order.patient_id as string;
+    const admin = (await import("@/lib/supabase/admin")).createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+    const { data: patient } = await admin.from("patients").select("first_name,last_name,phone").eq("id", patientId).maybeSingle();
+    if (patient) {
+      const { sendNotification } = await import("@/server/services/notification.service");
+      const name = `${patient.first_name ?? ""} ${patient.last_name ?? ""}`.trim();
+      const base = { type: "result_ready" as const, recipientPatientId: patientId, recipientPhone: patient.phone ?? null, recipientName: name, subject: "Imaging result ready", message: `Hello ${name}, your imaging report is ready. Please visit the hospital or check your patient portal.`, metadata: { orderId } };
+      await sendNotification({ ...base, channel: "in_app" });
+      if (patient.phone) await sendNotification({ ...base, channel: "sms" });
+    }
+  } catch { /* notification must never break approval */ }
 }
 
 export async function listImagingTests() {

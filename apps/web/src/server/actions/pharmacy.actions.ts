@@ -31,7 +31,7 @@ export async function createPrescriptionAction(_prev: unknown, formData: FormDat
     let items: unknown[] = [];
     if (raw) { try { const parsed = JSON.parse(String(raw)); if (Array.isArray(parsed)) items = parsed; } catch { /* validation catches */ } }
     const input = rxSchema.parse({ encounter_id: formData.get("encounter_id"), notes: formData.get("notes") || "", items });
-    const id = await createPrescription({
+    const created = await createPrescription({
       encounterId: input.encounter_id, notes: input.notes || null,
       items: input.items.map((item) => ({
         medicationId: item.medication_id || null, medicationName: item.medication_name,
@@ -41,7 +41,7 @@ export async function createPrescriptionAction(_prev: unknown, formData: FormDat
       })),
     });
     revalidatePath("/staff/pharmacy");
-    return { success: true, prescriptionId: id };
+    return { success: true, prescriptionId: created.id, allergyWarnings: created.allergyWarnings };
   } catch (error) {
     logServerError("pharmacy", "rx-create-failed", error);
     return { error: safeServerMessage(error, "We couldn't create the prescription.") };

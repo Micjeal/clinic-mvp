@@ -29,6 +29,19 @@ export async function getPrescriptionForm() {
   return { encounters, medications };
 }
 
+async function allergyWarnings(patientId: string, organizationId: string, medicationNames: string[]): Promise<string[]> {
+  const admin = (await import("@/lib/supabase/admin")).createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+  const { data } = await admin.from("patient_allergies").select("allergen,severity").eq("patient_id", patientId).eq("organization_id", organizationId);
+  const warnings: string[] = [];
+  for (const allergy of data ?? []) {
+    const allergen = String((allergy as { allergen?: string }).allergen ?? "").toLowerCase();
+    for (const name of medicationNames) {
+      if (allergen && name.toLowerCase().includes(allergen)) warnings.push(`${allergen} (${(allergy as { severity?: string }).severity ?? "moderate"})`);
+    }
+  }
+  return [...new Set(warnings)];
+}
+
 export async function createPrescription(input: {
   encounterId: string; notes: string | null;
   items: { medicationId: string | null; medicationName: string; dose: string | null; route: string | null; frequency: string | null; durationDays: number | null; quantity: number | null; instructions: string | null }[];
@@ -38,11 +51,13 @@ export async function createPrescription(input: {
   const encounter = (await labRepo.listOrderableEncounters(orgId)).find((item) => item.id === input.encounterId);
   if (!encounter) throw new NotFoundError("Encounter not found");
   if (!encounter.facility_id || !encounter.department_id) throw new ValidationError("This encounter is missing facility or department context.");
-  return repo.createPrescription({
+  const warnings = await allergyWarnings(encounter.patient_id, orgId, input.items.map((item) => item.medicationName));
+  const id = await repo.createPrescription({
     organizationId: orgId, facilityId: encounter.facility_id, departmentId: encounter.department_id,
     encounterId: input.encounterId, patientId: encounter.patient_id, prescriberUserId: userId,
     notes: input.notes, items: input.items,
   });
+  return { id, allergyWarnings: warnings };
 }
 
 export async function dispensePrescriptionItem(itemId: string, prescriptionId: string, organizationId: string) {

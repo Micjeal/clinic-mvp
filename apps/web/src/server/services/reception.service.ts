@@ -76,6 +76,32 @@ export async function transitionQueue(id: string, nextStatus: QueueStatus, prior
   if (nextStatus === "completed") { patch.consult_completed_by = staff.user.id; patch.consult_completed_at = now; if (isClinicalOverride) patch.completion_override_reason = options?.overrideReason?.trim() ?? null; }
   const updated = await updateQueueEntry(id, staff.membership.organization_id, patch);
   if ((nextStatus === "completed" || nextStatus === "cancelled") && current.encounters?.id) { try { const admin = createAdminClient(); const { error } = await admin.from("encounters").update({ status: nextStatus, ended_at: now }).eq("id", current.encounters.id).eq("organization_id", staff.membership.organization_id); if (error) throw error; } catch (syncError) { logServerError("reception", "encounter-sync-failed", syncError, { queueId: id }); } }
+  if (nextStatus === "completed" && current.encounters?.id) { try { await chargeConsultation(staff.membership.organization_id, current.encounters.id, staff.user.id); } catch (chargeError) { logServerError("billing", "consultation-charge-failed", chargeError, { encounterId: current.encounters.id }); } }
   return updated;
 }
 export async function recordTriage(input: { queueId: string; priority: QueuePriority; temperatureC?: number; pulseBpm?: number; respiratoryRate?: number; systolicBp?: number; diastolicBp?: number; oxygenSaturation?: number; weightKg?: number; heightCm?: number; notes?: string }) { const staff = await requirePermission(Permissions.TRIAGE_WRITE); const queue = await getQueueEntry(input.queueId, staff.membership.organization_id); if (!queue) throw new NotFoundError("Queue entry not found."); if (queue.status !== "in_triage") throw new ValidationError("Start triage before recording vitals."); const numeric = [input.temperatureC, input.pulseBpm, input.respiratoryRate, input.systolicBp, input.diastolicBp, input.oxygenSaturation, input.weightKg, input.heightCm].filter((value) => value !== undefined); if (numeric.some((value) => !Number.isFinite(value) || (value as number) < 0) || (input.oxygenSaturation !== undefined && input.oxygenSaturation > 100)) throw new ValidationError("Check the vital sign values and try again."); const encounter = queue.encounters; if (!encounter?.patient_id) throw new NotFoundError("Encounter not found."); await createVitals({ organization_id: staff.membership.organization_id, encounter_id: encounter.id, patient_id: encounter.patient_id, recorded_by: staff.user.id, temperature_c: input.temperatureC ?? null, pulse_bpm: input.pulseBpm ?? null, respiratory_rate: input.respiratoryRate ?? null, systolic_bp: input.systolicBp ?? null, diastolic_bp: input.diastolicBp ?? null, oxygen_saturation: input.oxygenSaturation ?? null, weight_kg: input.weightKg ?? null, height_cm: input.heightCm ?? null, notes: input.notes?.trim() || null }); return transitionQueue(input.queueId, "waiting_clinician", input.priority); }
+
+async function chargeConsultation(organizationId: string, encounterId: string, actorId: string) {
+  const admin = createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+  const { data: encounter } = await admin.from("encounters").select("id,patient_id,facility_id,department_id,service_id").eq("id", encounterId).eq("organization_id", organizationId).maybeSingle();
+  if (!encounter?.service_id || !encounter.patient_id) return;
+  const { data: service } = await admin.from("services").select("name,base_price,currency_code").eq("id", encounter.service_id).eq("organization_id", organizationId).maybeSingle();
+  const price = Number(service?.base_price ?? 0);
+  if (!service || price <= 0) return;
+  const { error } = await admin.from("encounter_charges").insert({
+    organization_id: organizationId,
+    encounter_id: encounterId,
+    patient_id: encounter.patient_id,
+    facility_id: encounter.facility_id ?? null,
+    charge_type: "consultation",
+    description: `Consultation: ${service.name}`,
+    quantity: 1,
+    unit_price: price,
+    total: price,
+    currency_code: service.currency_code ?? "UGX",
+    source_type: "encounter",
+    source_id: encounterId,
+    created_by: actorId,
+  });
+  if (error && error.code !== "23505") throw error;
+}

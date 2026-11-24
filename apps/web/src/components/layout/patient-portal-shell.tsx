@@ -1,6 +1,6 @@
 "use client";
 
-import {ArrowLeft,Bell,CalendarDays,CalendarPlus,CircleHelp,Cross,LayoutDashboard,LogOut,Menu,PanelLeftClose,PanelLeftOpen,UserRound,X} from "lucide-react";
+import { Wallet, ArrowLeft,Bell,CalendarDays,CalendarPlus,CircleHelp,Cross,LayoutDashboard,LogOut,Menu,PanelLeftClose,PanelLeftOpen,UserRound,X} from "lucide-react";
 import Link from "next/link";
 import {usePathname,useRouter} from "next/navigation";
 import {useEffect,useRef,useState} from "react";
@@ -12,6 +12,7 @@ import type {PortalNotification} from "@/server/services/notification.service";
 const portalNavigation=[
   {href:"/portal",label:"Overview",icon:LayoutDashboard},
   {href:"/portal/appointments",label:"Appointments",icon:CalendarDays},
+  {href:"/portal/billing",label:"Billing & Results",icon:Wallet},
   {href:"/portal/appointments/new",label:"Book Appointment",mobileLabel:"Book",icon:CalendarPlus},
   {href:"/portal/profile",label:"My Profile",mobileLabel:"Profile",icon:UserRound},
   {href:"/portal/help",label:"Help & Contact",icon:CircleHelp},
