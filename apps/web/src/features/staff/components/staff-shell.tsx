@@ -27,11 +27,8 @@ import { Wrench,
   ShieldCheck,
   Wallet,
   X,
-<<<<<<< HEAD
-  Ambulance } from "lucide-react";
-=======
+  Ambulance,
   Receipt } from "lucide-react";
->>>>>>> main
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
