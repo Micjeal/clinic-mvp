@@ -1,6 +1,10 @@
 import { StaffPageHeader } from "@/features/staff/components/staff-content";
 import { StaffAccessDenied } from "@/features/staff/components/access-denied";
-import { listBillingInvoices } from "@/server/services/billing.service";
+import { listBillingInvoices, listUnbilledCharges } from "@/server/services/billing.service";
+import { listOrgFacilities } from "@/server/repositories/billing.repository";
+import { requirePermission } from "@/server/permissions/require-permission";
+import { Permissions } from "@clinic/permissions";
+import { UnbilledCharges } from "@/features/billing/components/unbilled-charges";
 import { AuthorizationError } from "@/server/errors";
 import Link from "next/link";
 
@@ -16,6 +20,12 @@ export default async function BillingPage() {
     if (error instanceof AuthorizationError) return <StaffAccessDenied />;
     throw error;
   }
+  let charges: Awaited<ReturnType<typeof listUnbilledCharges>> = [];
+  let facilities: { id: string; name: string }[] = [];
+  try {
+    const staff = await requirePermission(Permissions.BILLING_READ);
+    [charges, facilities] = await Promise.all([listUnbilledCharges(), listOrgFacilities(staff.membership.organization_id)]);
+  } catch { /* unbilled section optional */ }
   const outstanding = invoices.filter((i) => i.balance > 0 && i.status !== "void").reduce((s, i) => s + Number(i.balance), 0);
   const collected = invoices.filter((i) => i.status === "paid").reduce((s, i) => s + Number(i.total), 0);
 
@@ -27,6 +37,10 @@ export default async function BillingPage() {
         <div className="staff-kpi"><span>Collected</span><strong>{collected.toLocaleString()} UGX</strong></div>
         <div className="staff-kpi"><span>Outstanding</span><strong>{outstanding.toLocaleString()} UGX</strong></div>
       </div>
+      <section className="staff-panel">
+        <div className="staff-panel__header"><h2>Unbilled charges</h2><span className="staff-table-sub">{charges.length} pending — auto-captured from lab, imaging and pharmacy</span></div>
+        <UnbilledCharges charges={charges as never} facilities={facilities} />
+      </section>
       <section className="staff-panel">
         <div className="staff-table-wrap">
           <table className="staff-table">

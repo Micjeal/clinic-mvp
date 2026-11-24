@@ -2,7 +2,7 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import type { TablesInsert } from "@clinic/database";
 
-const ORDER_SELECT = "*,patients!lab_orders_patient_id_fkey(id,first_name,last_name,patient_number),facilities!lab_orders_facility_id_fkey(id,name),departments!lab_orders_department_id_fkey(id,name),lab_order_items(id,lab_test_id,status,specimen_id,collected_at,completed_at,lab_tests(id,code,name,specimen_type,default_unit,reference_range_text),lab_results(id,result_value,unit,reference_range,abnormal_flag,result_text,patient_visible,resulted_at,approved_at))";
+const ORDER_SELECT = "*,patients!lab_orders_patient_id_fkey(id,first_name,last_name,patient_number),facilities!lab_orders_facility_id_fkey(id,name),departments!lab_orders_department_id_fkey(id,name),lab_order_items(id,lab_test_id,status,specimen_id,collected_at,completed_at,lab_tests(id,code,name,specimen_type,default_unit,reference_range_text,price,currency_code),lab_results(id,result_value,unit,reference_range,abnormal_flag,result_text,patient_visible,resulted_at,approved_at))";
 
 export async function listLabOrders(organizationId: string) {
   const supabase = await createClient();

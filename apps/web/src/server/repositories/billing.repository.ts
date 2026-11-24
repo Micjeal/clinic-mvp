@@ -61,9 +61,9 @@ export async function createInvoice(input: {
     line_total: item.lineTotal,
     service_id: item.serviceId ?? null,
   }));
-  const { error: itemsError } = await supabase.from("invoice_items").insert(itemRows);
+  const { data: insertedItems, error: itemsError } = await supabase.from("invoice_items").insert(itemRows).select("id");
   if (itemsError) throw itemsError;
-  return invoice.id;
+  return { invoiceId: invoice.id, itemIds: (insertedItems ?? []).map((row) => row.id) };
 }
 
 export async function updateInvoiceStatus(invoiceId: string, organizationId: string, patch: Partial<Pick<InvoiceRow, "status" | "balance" | "issued_at" | "subtotal" | "total" | "discount_total" | "tax_total">>) {

@@ -4,6 +4,7 @@ import { NotFoundError, ValidationError } from "@/server/errors";
 import { requirePermission } from "@/server/permissions/require-permission";
 import * as labRepo from "@/server/repositories/lab.repository";
 import * as repo from "@/server/repositories/pharmacy.repository";
+import * as charges from "@/server/repositories/charge.repository";
 
 async function orgContext(permission: import("@clinic/permissions").Permission) {
   const staff = await requirePermission(permission);
@@ -46,6 +47,7 @@ export async function createPrescription(input: {
 
 export async function dispensePrescriptionItem(itemId: string, prescriptionId: string, organizationId: string) {
   await repo.updatePrescriptionItemStatus(itemId, "dispensed");
+  await chargeDispensedItem(itemId, prescriptionId, organizationId);
   const rx = await repo.findPrescription(prescriptionId, organizationId);
   if (!rx) return;
   const items = (rx.prescription_items ?? []) as { status?: string }[];
@@ -72,4 +74,29 @@ export async function createMedication(input: { code: string; genericName: strin
   const { orgId } = await orgContext(Permissions.PHARMACY_MANAGE);
   if (!input.code.trim() || !input.genericName.trim()) throw new ValidationError("Code and generic name are required.");
   return repo.createMedication({ ...input, organizationId: orgId });
+}
+
+async function chargeDispensedItem(itemId: string, prescriptionId: string, organizationId: string) {
+  try {
+    const item = await repo.findPrescriptionItem(itemId);
+    const rx = item ? await repo.findPrescription(prescriptionId, organizationId) : null;
+    if (!item || !rx || !item.medication_id) return;
+    const price = await repo.findMedicationSellingPrice(organizationId, item.medication_id);
+    if (!price) return;
+    const encounterId = rx.encounter_id as string | null;
+    const patientId = rx.patient_id as string;
+    if (!encounterId) return;
+    await charges.insertCharge({
+      organizationId, encounterId, patientId,
+      facilityId: (rx.facility_id as string | null) ?? null,
+      chargeType: "medication",
+      description: `Medication: ${item.medication_name ?? "item"}`,
+      quantity: Number(item.quantity ?? 1),
+      unitPrice: price,
+      sourceType: "prescription_item",
+      sourceId: itemId,
+    });
+  } catch {
+    // Charge capture must never break dispensing.
+  }
 }

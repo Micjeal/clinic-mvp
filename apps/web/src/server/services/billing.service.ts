@@ -52,7 +52,7 @@ export async function createBillingInvoice(input: {
   const supabase = await createClient();
   const { count } = await supabase.from("invoices").select("id", { count: "exact", head: true }).eq("organization_id", orgId);
   const invoiceNumber = `INV-${new Date().getFullYear()}-${String((count ?? 0) + 1).padStart(5, "0")}`;
-  const invoiceId = await repo.createInvoice({
+  const created = await repo.createInvoice({
     organizationId: orgId,
     facilityId: input.facilityId,
     patientId: input.patientId,
@@ -62,7 +62,7 @@ export async function createBillingInvoice(input: {
     total: subtotal,
     items,
   });
-  return invoiceId;
+  return created.invoiceId;
 }
 
 export async function issueBillingInvoice(invoiceId: string) {
@@ -113,4 +113,52 @@ export async function recordBillingPayment(input: {
   const status = newBalance <= 0.005 ? "paid" : "partially_paid";
   await repo.updateInvoiceStatus(invoice.id, orgId, { balance: Math.max(0, newBalance), status });
   return invoice.id;
+}
+
+export async function listUnbilledCharges() {
+  const staff = await requirePermission(Permissions.BILLING_READ);
+  const orgId = staff.membership.organization_id;
+  const supabase = (await (await import("@/lib/supabase/server")).createClient()) as unknown as import("@supabase/supabase-js").SupabaseClient;
+  const { data, error } = await supabase.from("encounter_charges").select("*,patients!encounter_charges_patient_id_fkey(id,first_name,last_name,patient_number)").eq("organization_id", orgId).eq("status", "pending").order("created_at", { ascending: false }).limit(300);
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function createInvoiceFromCharges(input: { chargeIds: string[]; facilityId: string }) {
+  const staff = await requirePermission(Permissions.BILLING_INVOICE_CREATE);
+  const orgId = staff.membership.organization_id;
+  const chargeRepo = await import("@/server/repositories/charge.repository");
+  const charges = await chargeRepo.findPendingChargesByIds(input.chargeIds, orgId);
+  if (!charges.length) throw new ValidationError("No pending charges selected.");
+  const byPatient = new Map<string, typeof charges>();
+  for (const charge of charges) {
+    const key = charge.patient_id as string;
+    byPatient.set(key, [...(byPatient.get(key) ?? []), charge]);
+  }
+  const invoiceIds: string[] = [];
+  for (const [patientId, patientCharges] of byPatient) {
+    const facilityId = (patientCharges[0].facility_id as string | null) ?? input.facilityId;
+    const items = patientCharges.map((charge) => ({
+      description: charge.description as string,
+      quantity: Number(charge.quantity),
+      unitPrice: Number(charge.unit_price),
+      lineTotal: Number(charge.total),
+    }));
+    const subtotal = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+    const { createClient } = await import("@/lib/supabase/server");
+    const supabase = await createClient();
+    const { count } = await supabase.from("invoices").select("id", { count: "exact", head: true }).eq("organization_id", orgId);
+    const invoiceNumber = `INV-${new Date().getFullYear()}-${String((count ?? 0) + 1).padStart(5, "0")}`;
+    const created = await repo.createInvoice({
+      organizationId: orgId, facilityId, patientId, invoiceNumber,
+      currencyCode: (patientCharges[0].currency_code as string) ?? "UGX",
+      subtotal, total: subtotal, items,
+    });
+    const itemIds = created.itemIds;
+    const chargeItemMap: Record<string, string> = {};
+    patientCharges.forEach((charge, index) => { chargeItemMap[charge.id as string] = itemIds[index] ?? ""; });
+    await chargeRepo.markChargesInvoiced(patientCharges.map((c) => c.id as string), chargeItemMap, orgId);
+    invoiceIds.push(created.invoiceId);
+  }
+  return invoiceIds;
 }
