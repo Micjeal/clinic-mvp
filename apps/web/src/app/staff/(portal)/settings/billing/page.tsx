@@ -5,10 +5,18 @@ import { getSettingsContext } from "@/server/services/settings.service";
 import { SettingsBackLink } from "@/features/settings/components/settings-back-link";
 import { ChargeCatalog } from "@/features/settings/components/charge-catalog";
 import { listStandardCharges } from "@/server/repositories/charge.repository";
+import { createClient } from "@/lib/supabase/server";
+import { PendingLabTests } from "@/features/settings/components/pending-lab-tests";
 
 export const metadata = { title: "Billing & payments · Settings" };
 
 const METHODS = ["Cash", "Card", "Mobile money", "Bank transfer", "Insurance", "Other"];
+
+async function pendingTests(orgId: string) {
+  const supabase = await createClient();
+  const { data } = await supabase.from("lab_tests").select("id,code,name,price").eq("organization_id", orgId).eq("is_active", false).order("created_at", { ascending: false }).limit(50);
+  return data ?? [];
+}
 
 export default async function BillingSettingsPage() {
   let context;
@@ -40,6 +48,9 @@ export default async function BillingSettingsPage() {
       </StaffSection>
       <StaffSection title="Standard charges" eyebrow="Catalog" description="Stable fees used for automatic charge capture — consultation, triage, bed-day and procedures. Changing a price here affects new charges only.">
         <ChargeCatalog charges={await listStandardCharges(context.organization.id)} />
+      </StaffSection>
+      <StaffSection title="Pending lab tests" eyebrow="Approval" description="Tests requested by clinicians stay inactive until approved here.">
+        <PendingLabTests tests={await pendingTests(context.organization.id)} />
       </StaffSection>
       <StaffSection title="Provider integration" eyebrow="Status">
         <dl className="staff-settings-summary">

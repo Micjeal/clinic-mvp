@@ -1,3 +1,4 @@
+import { chargeFromCatalog } from "@/server/services/charge-hooks";
 import "server-only";
 import { Permissions } from "@clinic/permissions";
 import { NotFoundError, ValidationError } from "@/server/errors";
@@ -49,6 +50,13 @@ export async function admitPatient(input: { patientId: string; wardId: string; b
     reasonForAdmission: input.reasonForAdmission, diagnosisOnAdmission: input.diagnosisOnAdmission,
   });
   await repo.setBedStatus(bedId, orgId, "occupied");
+  if (input.encounterId) {
+    const admin = (await import("@/lib/supabase/admin")).createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+    const { data: enc } = await admin.from("encounters").select("patient_id,facility_id").eq("id", input.encounterId).eq("organization_id", orgId).maybeSingle();
+    if (enc?.patient_id) {
+      await chargeFromCatalog({ organizationId: orgId, encounterId: input.encounterId, patientId: enc.patient_id, facilityId: enc.facility_id ?? input.facilityId, category: "bed_day", nameMatch: ward.name, quantity: 1, actorId: userId, sourceType: "admission", sourceId: id, description: `Ward admission: ${ward.name}` });
+    }
+  }
   return id;
 }
 

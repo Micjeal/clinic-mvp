@@ -74,6 +74,12 @@ export async function recordTransfusionAction(_prev: unknown, formData: FormData
     }).parse({ blood_unit_id: formData.get("blood_unit_id"), patient_id: formData.get("patient_id"), encounter_id: formData.get("encounter_id") || "", reaction_notes: formData.get("reaction_notes") || "" });
     const { orgId, userId } = await ctx(Permissions.BLOODBANK_MANAGE);
     await repo.recordTransfusion({ organizationId: orgId, bloodUnitId: input.blood_unit_id, patientId: input.patient_id, encounterId: input.encounter_id || null, reactionNotes: input.reaction_notes || null, createdBy: userId });
+    if (input.encounter_id) {
+      const { chargeFromCatalog } = await import("@/server/services/charge-hooks");
+      const admin = (await import("@/lib/supabase/admin")).createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+      const { data: enc } = await admin.from("encounters").select("facility_id").eq("id", input.encounter_id).eq("organization_id", orgId).maybeSingle();
+      await chargeFromCatalog({ organizationId: orgId, encounterId: input.encounter_id, patientId: input.patient_id, facilityId: enc?.facility_id ?? null, category: "procedure", nameMatch: "transfusion", quantity: 1, actorId: userId, sourceType: "transfusion", sourceId: input.blood_unit_id, description: "Blood transfusion" });
+    }
     revalidatePath("/staff/bloodbank");
     return { success: true };
   } catch (error) {
