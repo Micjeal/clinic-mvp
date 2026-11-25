@@ -31,7 +31,7 @@ export function ImagingOrderForm({ encounters, tests, initialEncounterId = "" }:
               <option value="">Choose the encounter</option>
               {encounters.filter((encounter) => { const p = encounter.patients; return `${p?.first_name ?? ""} ${p?.last_name ?? ""} ${p?.patient_number ?? ""}`.toLowerCase().includes(encQuery.toLowerCase()); }).map((encounter) => {
                 const patient = encounter.patients;
-                return <option key={encounter.id} value={encounter.id}>{patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}{patient?.patient_number ? ` • ${patient.patient_number}` : ""} — {encounter.started_at ? new Date(encounter.started_at).toLocaleDateString() : ""}</option>;
+                return <option key={encounter.id} value={encounter.id}>{patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}{patient?.patient_number ? ` • ${patient.patient_number}` : ""} — {encounter.started_at ? new Date(encounter.started_at).toLocaleDateString("en-UG") : ""}</option>;
               })}
             </select>
           </label>
