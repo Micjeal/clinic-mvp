@@ -76,7 +76,7 @@ export async function transitionQueue(id: string, nextStatus: QueueStatus, prior
   if (nextStatus === "completed") { patch.consult_completed_by = staff.user.id; patch.consult_completed_at = now; if (isClinicalOverride) patch.completion_override_reason = options?.overrideReason?.trim() ?? null; }
   const updated = await updateQueueEntry(id, staff.membership.organization_id, patch);
   if (nextStatus === "with_clinician" && current.encounters?.id) { try { const admin = createAdminClient(); const { error } = await admin.from("encounters").update({ clinician_user_id: staff.user.id }).eq("id", current.encounters.id).eq("organization_id", staff.membership.organization_id).is("clinician_user_id", null); if (error) throw error; } catch (syncError) { logServerError("reception", "encounter-assign-failed", syncError, { queueId: id }); } }
-  if ((nextStatus === "completed" || nextStatus === "cancelled") && current.encounters?.id) { try { const admin = createAdminClient(); const { error } = await admin.from("encounters").update({ status: nextStatus, ended_at: now }).eq("id", current.encounters.id).eq("organization_id", staff.membership.organization_id); if (error) throw error; } catch (syncError) { logServerError("reception", "encounter-sync-failed", syncError, { queueId: id }); } }
+  if ((nextStatus === "completed" || nextStatus === "cancelled") && current.encounters?.id) { try { const admin = createAdminClient(); const { error } = await admin.from("encounters").update({ status: nextStatus, ended_at: now }).eq("id", current.encounters.id).eq("organization_id", staff.membership.organization_id); if (error) throw error; const { data: enc } = await admin.from("encounters").select("appointment_id").eq("id", current.encounters.id).maybeSingle(); if (enc?.appointment_id) { await admin.from("appointments").update({ status: nextStatus === "completed" ? "completed" : "cancelled" }).eq("id", enc.appointment_id).eq("organization_id", staff.membership.organization_id); } } catch (syncError) { logServerError("reception", "encounter-sync-failed", syncError, { queueId: id }); } }
   if (nextStatus === "waiting_clinician" && current.encounters?.id) { try { await chargeStandard(staff.membership.organization_id, current.encounters.id, staff.user.id, "triage", "Triage assessment"); } catch (chargeError) { logServerError("billing", "triage-charge-failed", chargeError, { encounterId: current.encounters.id }); } }
   if (nextStatus === "completed" && current.encounters?.id) { try { await chargeConsultation(staff.membership.organization_id, current.encounters.id, staff.user.id); } catch (chargeError) { logServerError("billing", "consultation-charge-failed", chargeError, { encounterId: current.encounters.id }); } }
   return updated;
@@ -122,4 +122,23 @@ async function chargeStandard(organizationId: string, encounterId: string, actor
     currency_code: charge.currency_code ?? "UGX", source_type: "standard_charge", source_id: encounterId, created_by: actorId,
   });
   if (error && error.code !== "23505") throw error;
+}
+
+export async function syncQueueForAppointmentStatus(appointmentId: string, organizationId: string, userId: string, target: "with_clinician" | "completed") {
+  const admin = createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+  const { data: encounter } = await admin.from("encounters").select("id,patient_id,appointment_id,clinician_user_id").eq("appointment_id", appointmentId).eq("organization_id", organizationId).maybeSingle();
+  if (!encounter?.id) return;
+  const { data: queue } = await admin.from("queue_entries").select("id,status").eq("encounter_id", encounter.id).eq("organization_id", organizationId).maybeSingle();
+  if (!queue?.id) return;
+  const now = new Date().toISOString();
+  if (target === "with_clinician") {
+    if (queue.status !== "waiting_clinician") return;
+    await admin.from("queue_entries").update({ status: "with_clinician", consult_started_by: userId, consult_started_at: now }).eq("id", queue.id);
+    if (!encounter.clinician_user_id) await admin.from("encounters").update({ clinician_user_id: userId }).eq("id", encounter.id);
+    return;
+  }
+  if (queue.status !== "with_clinician" && queue.status !== "waiting_clinician") return;
+  await admin.from("queue_entries").update({ status: "completed", consult_completed_by: userId, consult_completed_at: now }).eq("id", queue.id);
+  await admin.from("encounters").update({ status: "completed", ended_at: now }).eq("id", encounter.id);
+  try { await chargeConsultation(organizationId, encounter.id, userId); } catch (chargeError) { logServerError("billing", "consultation-charge-failed", chargeError, { encounterId: encounter.id }); }
 }
