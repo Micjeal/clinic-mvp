@@ -1,10 +1,12 @@
-import { StaffPageHeader } from "@/features/staff/components/staff-content";
+import { StaffKpiCard } from "@/features/staff/components/staff-content";
+import { InventoryStockTable } from "@/features/inventory/components/inventory-stock-table";
 import { StaffAccessDenied } from "@/features/staff/components/access-denied";
 import { getInventoryForm, listInventory } from "@/server/services/inventory.service";
 import { requirePermission } from "@/server/permissions/require-permission";
 import { Permissions } from "@clinic/permissions";
 import { AuthorizationError } from "@/server/errors";
-import { InventoryItemForm } from "@/features/inventory/components/inventory-forms";
+import { InventoryItemForm, EssentialCatalogLoader } from "@/features/inventory/components/inventory-forms";
+import { Boxes, PackageX, ArrowLeftRight } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = { title: "Inventory" };
@@ -26,42 +28,38 @@ export default async function InventoryPage() {
 
   return (
     <div className="staff-page">
-      <StaffPageHeader eyebrow="Operations" title="Inventory" description="Stock levels, movements and reordering." />
-      <div className="staff-kpi-grid">
-        <div className="staff-kpi"><span>Items</span><strong>{items.length}</strong></div>
-        <div className="staff-kpi"><span>Low stock</span><strong>{lowStock.length}</strong></div>
-        <div className="staff-kpi"><span>Recent movements</span><strong>{movements.length}</strong></div>
+      <div className="staff-page-heading staff-page-heading--doctor lab-order-heading">
+        <div className="staff-doctor-avatar lab-order-heading__icon" aria-hidden="true"><Boxes size={26} /></div>
+        <div className="doctor-identity-copy">
+          <p className="eyebrow">Operations</p>
+          <h1>Inventory</h1>
+          <p>Stock levels, movements and reordering.</p>
+        </div>
       </div>
-      {canAdjust ? <section className="staff-panel"><div className="staff-panel__header"><h2>Add inventory item</h2></div><InventoryItemForm facilities={formData.facilities as never} /></section> : null}
-      <section className="staff-panel">
-        <div className="staff-panel__header"><h2>Stock items</h2></div>
-        <div className="staff-table-wrap"><table className="staff-table">
-          <thead><tr><th>SKU</th><th>Item</th><th>Facility</th><th className="staff-col-amount">On hand</th><th className="staff-col-amount">Reorder at</th><th>Price</th></tr></thead>
-          <tbody>
-            {items.length === 0 ? <tr><td colSpan={6} className="staff-table-empty">No inventory items yet.</td></tr> :
-              items.map((item) => {
-                const facility = item.facilities as { name?: string } | null;
-                const low = Number(item.on_hand_quantity) <= Number(item.reorder_level);
-                return (
-                  <tr key={item.id}>
-                    <td>{item.sku}</td>
-                    <td><Link className="staff-table-link" href={`/staff/inventory/${item.id}`}>{item.item_name}</Link>{low ? <span className="staff-status staff-status--issued" style={{ marginLeft: ".4rem" }}>Low</span> : null}</td>
-                    <td>{facility?.name ?? "—"}</td>
-                    <td className="staff-col-amount">{Number(item.on_hand_quantity).toLocaleString()} {item.unit}</td>
-                    <td className="staff-col-amount">{Number(item.reorder_level).toLocaleString()}</td>
-                    <td>{Number(item.selling_price).toLocaleString()}</td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table></div>
+      <div className="staff-kpi-grid">
+        <StaffKpiCard icon={Boxes} label="Items" tone="teal" value={items.length} />
+        <StaffKpiCard icon={PackageX} label="Low stock" tone={lowStock.length > 0 ? "amber" : "green"} value={lowStock.length} />
+        <StaffKpiCard icon={ArrowLeftRight} label="Recent movements" tone="blue" value={movements.length} />
+      </div>
+      {canAdjust ? <section className="staff-panel inventory-add-panel"><div className="staff-panel__header"><h2>Add inventory item</h2></div><InventoryItemForm facilities={formData.facilities as never} /><EssentialCatalogLoader facilities={formData.facilities as never} /></section> : null}
+      <section className="staff-panel inventory-panel">
+        <div className="staff-panel__header"><h2>Stock items</h2><span className="staff-table-sub">{items.length} tracked</span></div>
+        <InventoryStockTable items={items as never} />
       </section>
       <section className="staff-panel">
         <div className="staff-panel__header"><h2>Recent movements</h2></div>
         {movements.length === 0 ? <p className="staff-table-empty">No stock movements recorded.</p> : (
-          <ul className="staff-simple-list">{movements.slice(0, 15).map((movement) => {
+          <ul className="inventory-movements">{movements.slice(0, 15).map((movement) => {
             const mover = movement.profiles as { full_name?: string } | null;
-            return <li key={movement.id}><span>{MOVEMENT_LABELS[movement.movement_type] ?? movement.movement_type} — {Number(movement.quantity)} × {movement.batch_number ?? ""}</span><span>{mover?.full_name ?? "System"} • {new Date(movement.created_at).toLocaleString()}</span></li>;
+            const inbound = ["opening","purchase","adjustment_in","return","transfer_in"].includes(movement.movement_type);
+            return <li className="inventory-movement" key={movement.id}>
+              <span className={`inventory-movement__icon${inbound ? "" : " inventory-movement__icon--out"}`} aria-hidden="true">{inbound ? "↓" : "↑"}</span>
+              <span className="inventory-movement__body">
+                <span className="inventory-movement__top"><span className={`inventory-movement__type inventory-movement__type--${inbound ? "in" : "out"}`}>{MOVEMENT_LABELS[movement.movement_type] ?? movement.movement_type}</span><strong>{Number(movement.quantity)} x {movement.batch_number ?? "stock"}</strong></span>
+                <small>{mover?.full_name ?? "System"}</small>
+              </span>
+              <time className="inventory-movement__time">{new Date(movement.created_at).toLocaleString("en-UG", { dateStyle: "medium", timeStyle: "short" })}</time>
+            </li>;
           })}</ul>
         )}
       </section>

@@ -15,6 +15,9 @@ export function PrescriptionForm({ encounters, medications }: { encounters: Enco
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [lines, setLines] = useState<RxLine[]>([{ ...EMPTY_LINE }]);
+  const [encounterId, setEncounterId] = useState("");
+  const [encQuery, setEncQuery] = useState("");
+  const [encOpen, setEncOpen] = useState(false);
 
   const setLine = (index: number, patch: Partial<RxLine>) => setLines((prev) => prev.map((line, i) => (i === index ? { ...line, ...patch } : line)));
   const pickMedication = (index: number, medicationId: string) => {
@@ -31,18 +34,37 @@ export function PrescriptionForm({ encounters, medications }: { encounters: Enco
         if (result.allergyWarnings?.length) window.alert(`Allergy warning: this patient has recorded allergies matching — ${result.allergyWarnings.join(", ")}`);
         router.push(`/staff/pharmacy/${result.prescriptionId}`);
       }
-    })} className="staff-editor-sections">
+    })} className="staff-editor-sections pharmacy-form">
       <section className="staff-editor-section">
         <p className="eyebrow">Prescription</p>
         <h2>New prescription</h2>
         <div className="staff-form-grid">
-          <label>Encounter<select name="encounter_id" required>
-            <option value="">Choose the encounter</option>
-            {encounters.map((encounter) => {
-              const patient = encounter.patients;
-              return <option key={encounter.id} value={encounter.id}>{patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}{patient?.patient_number ? ` • ${patient.patient_number}` : ""} — {encounter.started_at ? new Date(encounter.started_at).toLocaleDateString() : ""}</option>;
-            })}
-          </select></label>
+          <div className="staff-form-grid__wide encounter-picker" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node)) setEncOpen(false); }}>
+            <span className="encounter-picker__label">Encounter</span>
+            <button aria-expanded={encOpen} className="encounter-picker__toggle" onClick={() => setEncOpen((v) => !v)} type="button">
+              {encounterId ? (() => { const e = encounters.find((x) => x.id === encounterId); const p = e?.patients; return p ? `${p.first_name} ${p.last_name}${p.patient_number ? ` (${p.patient_number})` : ""}` : "Encounter selected"; })() : "Choose a patient encounter…"}
+              <span className="encounter-picker__chevron" aria-hidden="true">▾</span>
+            </button>
+            {encOpen ? <>
+              <div className="encounter-picker__search"><input autoFocus onChange={(event) => setEncQuery(event.target.value)} placeholder="Search patient name or number…" value={encQuery} /></div>
+              <p className="encounter-picker__count">{encounters.filter((encounter) => { const p = encounter.patients; return `${p?.first_name ?? ""} ${p?.last_name ?? ""} ${p?.patient_number ?? ""}`.toLowerCase().includes(encQuery.toLowerCase()); }).length} encounters</p>
+              <div className="encounter-picker__list">
+                {encounters.filter((encounter) => { const p = encounter.patients; return `${p?.first_name ?? ""} ${p?.last_name ?? ""} ${p?.patient_number ?? ""}`.toLowerCase().includes(encQuery.toLowerCase()); }).slice(0, 30).map((encounter) => {
+                  const patient = encounter.patients;
+                  const active = encounterId === encounter.id;
+                  return (
+                    <button className={`encounter-picker__item${active ? " is-active" : ""}`} key={encounter.id} onClick={() => { setEncounterId(encounter.id); setEncQuery(""); setEncOpen(false); }} type="button">
+                      <span className="encounter-picker__avatar" aria-hidden="true">{(patient?.first_name?.[0] ?? "P")}{(patient?.last_name?.[0] ?? "")}</span>
+                      <span className="encounter-picker__info"><strong>{patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}</strong><small>{patient?.patient_number ?? ""}{encounter.started_at ? ` · ${new Date(encounter.started_at).toLocaleDateString("en-UG")}` : ""}</small></span>
+                      {active ? <span className="encounter-picker__check" aria-hidden="true">✓</span> : null}
+                    </button>
+                  );
+                })}
+                {encounters.filter((encounter) => { const p = encounter.patients; return `${p?.first_name ?? ""} ${p?.last_name ?? ""} ${p?.patient_number ?? ""}`.toLowerCase().includes(encQuery.toLowerCase()); }).length === 0 ? <p className="encounter-picker__empty">No encounters match.</p> : null}
+              </div>
+            </> : null}
+            <input name="encounter_id" type="hidden" value={encounterId} required />
+          </div>
           <label className="staff-form-grid__wide">Notes<textarea name="notes" rows={2} placeholder="Optional clinical note for the pharmacist" /></label>
         </div>
       </section>
@@ -74,7 +96,7 @@ export function PrescriptionForm({ encounters, medications }: { encounters: Enco
         <div className="staff-form-actions"><button className="btn btn--secondary btn--compact" onClick={() => setLines((prev) => [...prev, { ...EMPTY_LINE }])} type="button">+ Add medication</button></div>
       </section>
       {error ? <p className="staff-form-message staff-form-message--error" role="alert">{error}</p> : null}
-      <div className="staff-form-actions"><button className="btn" disabled={pending} type="submit">{pending ? "Creating…" : "Create prescription"}</button></div>
+      <div className="staff-form-actions lab-order-actions"><span className="lab-order-actions__hint">{!encounterId ? "Choose a patient encounter" : lines.every((l) => !l.medication_name.trim()) ? "Add at least one medication" : "Ready to create the prescription"}</span><button className="btn" disabled={pending || !encounterId || lines.every((l) => !l.medication_name.trim())} type="submit">{pending ? "Creating…" : "Create prescription"}</button></div>
     </form>
   );
 }

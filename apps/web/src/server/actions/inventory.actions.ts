@@ -5,6 +5,9 @@ import { z } from "zod";
 import { safeServerMessage } from "@/server/errors";
 import { logServerError } from "@/server/logging";
 import { createInventoryItem, recordStockMovement } from "@/server/services/inventory.service";
+import { requirePermission } from "@/server/permissions/require-permission";
+import { Permissions } from "@clinic/permissions";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 const itemSchema = z.object({
   facility_id: z.string().uuid(),
@@ -55,5 +58,33 @@ export async function recordMovementAction(_prev: unknown, formData: FormData) {
   } catch (error) {
     logServerError("inventory", "movement-failed", error);
     return { error: safeServerMessage(error, "We couldn't record the movement.") };
+  }
+}
+
+const CATALOG_FACILITY_NOTE = "essential-catalog";
+
+export async function loadEssentialCatalogAction(_prev: unknown, formData: FormData) {
+  try {
+    const facilityId = z.string().uuid().parse(formData.get("facility_id"));
+    const staff = await requirePermission(Permissions.INVENTORY_ADJUST);
+    const orgId = staff.membership.organization_id;
+    const admin = createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+    const { data: existing } = await admin.from("inventory_items").select("sku").eq("organization_id", orgId).eq("facility_id", facilityId);
+    const existingSkus = new Set((existing ?? []).map((row) => row.sku as string));
+    const { ESSENTIAL_CATALOG } = await import("@/features/inventory/essential-catalog");
+    const toInsert = ESSENTIAL_CATALOG.filter((item) => !existingSkus.has(item.sku)).map((item) => ({
+      organization_id: orgId, facility_id: facilityId, department_id: null, medication_id: null,
+      sku: item.sku, item_name: item.name, unit: item.unit,
+      on_hand_quantity: 0, reorder_level: item.reorder, cost_price: item.cost, selling_price: item.price,
+    }));
+    if (toInsert.length) {
+      const { error } = await admin.from("inventory_items").insert(toInsert);
+      if (error) throw error;
+    }
+    revalidatePath("/staff/inventory");
+    return { success: `${toInsert.length} catalog items added (${existingSkus.size ? `${ESSENTIAL_CATALOG.length - toInsert.length} already existed` : "all new"}).` };
+  } catch (error) {
+    logServerError("inventory", "catalog-load-failed", error);
+    return { error: safeServerMessage(error, "Unable to load the catalog.") };
   }
 }

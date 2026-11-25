@@ -7,40 +7,97 @@ import { approveImagingReportAction, createImagingOrderAction, createImagingTest
 type Encounter = { id: string; started_at: string | null; patients?: { first_name?: string; last_name?: string; patient_number?: string } | null };
 type Test = { id: string; code: string; name: string; modality: string; body_part: string | null; price: number; currency_code: string };
 
-export function ImagingOrderForm({ encounters, tests }: { encounters: Encounter[]; tests: Test[] }) {
+export function ImagingOrderForm({ encounters, tests, initialEncounterId = "" }: { encounters: Encounter[]; tests: Test[]; initialEncounterId?: string }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [testId, setTestId] = useState("");
+  const [encQuery, setEncQuery] = useState("");
+  const [encounterId, setEncounterId] = useState(initialEncounterId);
+  const [encOpen, setEncOpen] = useState(false);
+  const [priority, setPriority] = useState("routine");
+  const [examQuery, setExamQuery] = useState("");
+  const [examOpen, setExamOpen] = useState(false);
 
   return (
     <form action={(formData) => startTransition(async () => {
       const result = await createImagingOrderAction(null, formData);
       if (result.error) { setError(result.error); return; }
       if (result.orderId) router.push(`/staff/radiology/orders/${result.orderId}`);
-    })} className="staff-editor-sections">
+    })} className="staff-editor-sections lab-order-form imaging-order-form">
       <section className="staff-editor-section">
         <p className="eyebrow">Order</p>
         <h2>New imaging order</h2>
         <div className="staff-form-grid">
-          <label>Encounter<select name="encounter_id" required>
-            <option value="">Choose the encounter</option>
-            {encounters.map((encounter) => {
-              const patient = encounter.patients;
-              return <option key={encounter.id} value={encounter.id}>{patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}{patient?.patient_number ? ` • ${patient.patient_number}` : ""} — {encounter.started_at ? new Date(encounter.started_at).toLocaleDateString() : ""}</option>;
-            })}
-          </select></label>
-          <label>Exam<select name="imaging_test_id" onChange={(e) => setTestId(e.target.value)} required value={testId}>
-            <option value="">Choose the exam</option>
-            {tests.map((test) => <option key={test.id} value={test.id}>{test.name} ({test.modality.toUpperCase()}){test.body_part ? ` — ${test.body_part}` : ""}</option>)}
-          </select></label>
-          <label>Priority<select name="priority" defaultValue="routine"><option value="routine">Routine</option><option value="urgent">Urgent</option><option value="stat">STAT</option></select></label>
-          <label>Scheduled at<input name="scheduled_at" type="datetime-local" /></label>
+          <div className="staff-form-grid__wide encounter-picker" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node)) setEncOpen(false); }}>
+            <span className="encounter-picker__label">Encounter</span>
+            <button aria-expanded={encOpen} className="encounter-picker__toggle" onClick={() => setEncOpen((v) => !v)} type="button">
+              {encounterId ? (() => { const e = encounters.find((x) => x.id === encounterId); const p = e?.patients; return p ? `${p.first_name} ${p.last_name}${p.patient_number ? ` (${p.patient_number})` : ""}` : "Encounter selected"; })() : "Choose a patient encounter…"}
+              <span className="encounter-picker__chevron" aria-hidden="true">▾</span>
+            </button>
+            {encOpen ? <>
+              <div className="encounter-picker__search">
+                <input autoFocus onChange={(event) => setEncQuery(event.target.value)} placeholder="Search patient name or number…" value={encQuery} />
+              </div>
+              {(() => { const filtered = encounters.filter((encounter) => { const p = encounter.patients; return `${p?.first_name ?? ""} ${p?.last_name ?? ""} ${p?.patient_number ?? ""}`.toLowerCase().includes(encQuery.toLowerCase()); }); return <p className="encounter-picker__count">{filtered.length} encounter{filtered.length === 1 ? "" : "s"}{filtered.length > 30 ? ` — showing first 30, refine your search` : ""}</p>; })()}
+              <div className="encounter-picker__list">
+                {encounters.filter((encounter) => { const p = encounter.patients; return `${p?.first_name ?? ""} ${p?.last_name ?? ""} ${p?.patient_number ?? ""}`.toLowerCase().includes(encQuery.toLowerCase()); }).slice(0, 30).map((encounter) => {
+                  const patient = encounter.patients;
+                  const active = encounterId === encounter.id;
+                  return (
+                    <button className={`encounter-picker__item${active ? " is-active" : ""}`} key={encounter.id} onClick={() => { setEncounterId(encounter.id); setEncQuery(""); setEncOpen(false); }} type="button">
+                      <span className="encounter-picker__avatar" aria-hidden="true">{(patient?.first_name?.[0] ?? "P")}{(patient?.last_name?.[0] ?? "")}</span>
+                      <span className="encounter-picker__info">
+                        <strong>{patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}</strong>
+                        <small>{patient?.patient_number ?? ""}{encounter.started_at ? ` · ${new Date(encounter.started_at).toLocaleDateString("en-UG")}` : ""}</small>
+                      </span>
+                      {active ? <span className="encounter-picker__check" aria-hidden="true">✓</span> : null}
+                    </button>
+                  );
+                })}
+                {encounters.filter((encounter) => { const p = encounter.patients; return `${p?.first_name ?? ""} ${p?.last_name ?? ""} ${p?.patient_number ?? ""}`.toLowerCase().includes(encQuery.toLowerCase()); }).length === 0 ? <p className="encounter-picker__empty">No encounters match.</p> : null}
+              </div>
+            </> : null}
+            <input name="encounter_id" type="hidden" value={encounterId} required />
+          </div>
+          <div className="staff-form-grid__wide exam-picker" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node)) setExamOpen(false); }}>
+            <span className="encounter-picker__label">Exam</span>
+            <button aria-expanded={examOpen} className="encounter-picker__toggle exam-picker__toggle" onClick={() => setExamOpen((v) => !v)} type="button">
+              {testId ? (() => { const t = tests.find((x) => x.id === testId); return t ? `${t.name} (${t.modality.toUpperCase()})` : "Exam selected"; })() : "Choose the exam…"}
+              <span className="encounter-picker__chevron" aria-hidden="true">▾</span>
+            </button>
+            {examOpen ? <>
+              <div className="encounter-picker__search exam-picker__search">
+                <input autoFocus onChange={(e) => setExamQuery(e.target.value)} placeholder="Search exams…" value={examQuery} />
+              </div>
+              <div className="exam-picker__list">
+                {tests.filter((t) => `${t.name} ${t.modality} ${t.body_part ?? ""}`.toLowerCase().includes(examQuery.toLowerCase())).slice(0, 30).map((test) => (
+                  <button className={`exam-picker__item${testId === test.id ? " is-active" : ""}`} key={test.id} onClick={() => { setTestId(test.id); setExamQuery(""); setExamOpen(false); }} type="button">
+                    <span className="exam-picker__modality">{test.modality.toUpperCase()}</span>
+                    <span className="exam-picker__info"><strong>{test.name}</strong><small>{test.body_part ?? ""}{Number(test.price) > 0 ? ` · ${Number(test.price).toLocaleString()} ${test.currency_code}` : ""}</small></span>
+                    {testId === test.id ? <span className="encounter-picker__check" aria-hidden="true">✓</span> : null}
+                  </button>
+                ))}
+                {tests.filter((t) => `${t.name} ${t.modality} ${t.body_part ?? ""}`.toLowerCase().includes(examQuery.toLowerCase())).length === 0 ? <p className="encounter-picker__empty">No exams match.</p> : null}
+              </div>
+            </> : null}
+            <input name="imaging_test_id" type="hidden" value={testId} required />
+          </div>
+          <div className="staff-form-grid__wide priority-picker">
+            <span className="encounter-picker__label">Priority</span>
+            <div className="priority-picker__options">
+              {([["routine","Routine"],["urgent","Urgent"],["stat","STAT"]] as const).map(([value,label]) => (
+                <button className={`priority-picker__option${priority === value ? " is-active" : ""}${value === "stat" ? " priority-picker__option--stat" : value === "urgent" ? " priority-picker__option--urgent" : ""}`} key={value} onClick={() => setPriority(value)} type="button">{label}</button>
+              ))}
+            </div>
+            <input name="priority" type="hidden" value={priority} />
+          </div>
+          <label className="staff-form-grid__wide">Scheduled at<input name="scheduled_at" type="datetime-local" /></label>
           <label className="staff-form-grid__wide">Clinical indication<textarea name="clinical_indication" placeholder="Why this study is needed…" rows={3} /></label>
         </div>
       </section>
       {error ? <p className="staff-form-message staff-form-message--error" role="alert">{error}</p> : null}
-      <div className="staff-form-actions"><button className="btn" disabled={pending || !testId} type="submit">{pending ? "Creating…" : "Create imaging order"}</button></div>
+      <div className="staff-form-actions lab-order-actions"><span className="lab-order-actions__hint">{!encounterId ? "Choose a patient encounter" : !testId ? "Choose an exam to continue" : "Ready to create the order"}</span><button className="btn" disabled={pending || !testId || !encounterId} type="submit">{pending ? "Creating…" : "Create imaging order"}</button></div>
     </form>
   );
 }
@@ -107,13 +164,12 @@ export function ImagingTestForm({ canManage }: { canManage: boolean }) {
       const result = await createImagingTestAction(null, formData);
       setMessage(result.error ?? "Exam added.");
       if (!result.error) window.location.reload();
-    })} className="staff-form-grid" style={{ marginBottom: "1.25rem" }}>
-      <label>Code<input name="code" placeholder="e.g. CXR-PA" required /></label>
+    })} className="staff-form-grid imaging-test-form">
+      <label>Code<input name="code" placeholder="Auto-generated if blank" /></label>
       <label>Name<input name="name" placeholder="Chest X-ray PA" required /></label>
       <label>Modality<select name="modality" defaultValue="xray"><option value="xray">X-ray</option><option value="ultrasound">Ultrasound</option><option value="ct">CT</option><option value="mri">MRI</option><option value="mammography">Mammography</option><option value="fluoroscopy">Fluoroscopy</option><option value="other">Other</option></select></label>
       <label>Body part<input name="body_part" placeholder="e.g. Chest" /></label>
-      <label>Price<input min="0" name="price" step="0.01" type="number" required /></label>
-      <div className="staff-form-actions"><button className="btn btn--compact" disabled={pending} type="submit">{pending ? "Adding…" : "Add exam"}</button>{message ? <span className="staff-table-empty">{message}</span> : null}</div>
+            <div className="staff-form-actions"><button className="btn btn--compact" disabled={pending} type="submit">{pending ? "Adding…" : "Add exam"}</button>{message ? <span className="staff-table-empty">{message}</span> : null}</div>
     </form>
   );
 }

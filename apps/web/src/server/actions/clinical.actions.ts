@@ -5,6 +5,9 @@ import { z } from "zod";
 import { safeServerMessage } from "@/server/errors";
 import { logServerError } from "@/server/logging";
 import { addClinicalNote, addDiagnosis } from "@/server/services/clinical.service";
+import { requirePermission } from "@/server/permissions/require-permission";
+import { Permissions } from "@clinic/permissions";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 const noteSchema = z.object({
   encounter_id: z.string().uuid(),
@@ -51,5 +54,27 @@ export async function addDiagnosisAction(_prev: unknown, formData: FormData) {
   } catch (error) {
     logServerError("clinical", "diagnosis-create-failed", error);
     return { error: safeServerMessage(error, "We couldn't save the diagnosis.") };
+  }
+}
+
+export async function addEncounterChargeAction(_prev: unknown, formData: FormData) {
+  try {
+    const encounterId = String(formData.get("encounter_id") || "");
+    const description = String(formData.get("description") || "").trim();
+    const quantity = Number(formData.get("quantity") || 1);
+    const unitPrice = Number(formData.get("unit_price") || 0);
+    if (!encounterId || !description || !Number.isFinite(quantity) || quantity <= 0 || !Number.isFinite(unitPrice) || unitPrice < 0) return { error: "Enter a description, quantity and price." };
+    const staff = await requirePermission(Permissions.CLINICAL_NOTE_WRITE);
+    const admin = createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+    const { data: enc } = await admin.from("encounters").select("id,patient_id,facility_id").eq("id", encounterId).eq("organization_id", staff.membership.organization_id).maybeSingle();
+    if (!enc?.patient_id) return { error: "Encounter not found." };
+    const { insertCharge } = await import("@/server/repositories/charge.repository");
+    const id = await insertCharge({ organizationId: staff.membership.organization_id, encounterId, patientId: enc.patient_id, facilityId: enc.facility_id ?? null, chargeType: "procedure", description, quantity, unitPrice, sourceType: "manual", sourceId: crypto.randomUUID(), createdBy: staff.user.id });
+    if (!id) return { error: "Duplicate charge — already recorded." };
+    revalidatePath("/staff/billing");
+    return { success: "Charge added to unbilled." };
+  } catch (error) {
+    logServerError("clinical", "manual-charge-failed", error);
+    return { error: safeServerMessage(error, "Unable to add the charge.") };
   }
 }

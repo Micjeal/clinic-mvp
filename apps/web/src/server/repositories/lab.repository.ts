@@ -18,9 +18,11 @@ export async function findLabOrder(id: string, organizationId: string) {
   return data;
 }
 
-export async function listLabTests(organizationId: string) {
+export async function listLabTests(organizationId: string, includeInactive = false) {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("lab_tests").select("*,departments!lab_tests_department_id_fkey(id,name)").eq("organization_id", organizationId).eq("is_active", true).order("name");
+  let query = supabase.from("lab_tests").select("*,departments!lab_tests_department_id_fkey(id,name)").eq("organization_id", organizationId);
+  if (!includeInactive) query = query.eq("is_active", true);
+  const { data, error } = await query.order("name");
   if (error) throw error;
   return data ?? [];
 }
@@ -34,7 +36,7 @@ export async function listLabDepartments(organizationId: string) {
 
 export async function listOrderableEncounters(organizationId: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("encounters").select("id,patient_id,facility_id,department_id,started_at,status,patients!encounters_patient_id_fkey(id,first_name,last_name,patient_number)").eq("organization_id", organizationId).order("started_at", { ascending: false }).limit(100);
+  const { data, error } = await supabase.from("encounters").select("id,patient_id,facility_id,department_id,started_at,status,patients!encounters_patient_id_fkey(id,first_name,last_name,patient_number)").eq("organization_id", organizationId).order("started_at", { ascending: false }).limit(500);
   if (error) throw error;
   return data ?? [];
 }
@@ -105,4 +107,20 @@ export async function createLabTest(input: { organizationId: string; code: strin
   } satisfies TablesInsert<"lab_tests">).select("id").single();
   if (error) throw error;
   return data.id;
+}
+
+export async function markOrderNotified(orderId: string, organizationId: string) {
+  const supabase = (await createClient()) as unknown as import("@supabase/supabase-js").SupabaseClient;
+  const { error } = await supabase.from("lab_orders").update({ clinician_notified_at: new Date().toISOString() }).eq("id", orderId).eq("organization_id", organizationId);
+  if (error) throw error;
+}
+
+export async function updateLabTest(input: { id: string; organizationId: string; code: string; name: string; description: string | null; specimenType: string | null; defaultUnit: string | null; referenceRangeText: string | null; price: number; departmentId: string | null; isActive: boolean }) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("lab_tests").update({
+    code: input.code, name: input.name, description: input.description,
+    specimen_type: input.specimenType, default_unit: input.defaultUnit, reference_range_text: input.referenceRangeText,
+    price: input.price, department_id: input.departmentId, is_active: input.isActive,
+  }).eq("id", input.id).eq("organization_id", input.organizationId);
+  if (error) throw error;
 }

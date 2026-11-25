@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { safeServerMessage } from "@/server/errors";
 import { logServerError } from "@/server/logging";
+import { requirePermission } from "@/server/permissions/require-permission";
+import { Permissions } from "@clinic/permissions";
 import { approveImagingReport, createImagingOrder, createImagingTest, saveImagingReport, setImagingStatus } from "@/server/services/radiology.service";
 
 const orderSchema = z.object({
@@ -71,22 +73,35 @@ export async function approveImagingReportAction(orderId: string) {
 }
 
 const testSchema = z.object({
-  code: z.string().trim().min(1).max(40),
+  code: z.string().trim().max(40).optional().or(z.literal("")),
   name: z.string().trim().min(2).max(160),
   modality: z.enum(["xray", "ultrasound", "ct", "mri", "mammography", "fluoroscopy", "other"]),
   body_part: z.string().trim().max(80).optional().or(z.literal("")),
   description: z.string().trim().max(500).optional().or(z.literal("")),
-  price: z.coerce.number().min(0).max(999999999),
+  price: z.coerce.number().min(0).max(999999999).optional().nullable().or(z.literal("")),
 });
 
 export async function createImagingTestAction(_prev: unknown, formData: FormData) {
   try {
     const input = testSchema.parse(Object.fromEntries(formData));
-    await createImagingTest({ code: input.code, name: input.name, modality: input.modality, bodyPart: input.body_part || null, description: input.description || null, price: input.price });
+    await createImagingTest({ code: input.code ?? "", name: input.name, modality: input.modality, bodyPart: input.body_part || null, description: input.description || null, price: input.price == null || input.price === "" ? null : Number(input.price) });
     revalidatePath("/staff/radiology/tests");
     return { success: true };
   } catch (error) {
     logServerError("radiology", "test-create-failed", error);
     return { error: safeServerMessage(error, "We couldn't add the exam.") };
+  }
+}
+
+export async function notifyDoctorImagingAction(orderId: string) {
+  try {
+    const staff = await requirePermission(Permissions.RADIOLOGY_REPORT_WRITE);
+    const { markImagingOrderNotified } = await import("@/server/repositories/radiology.repository");
+    await markImagingOrderNotified(orderId, staff.membership.organization_id);
+    revalidatePath(`/staff/radiology/orders/${orderId}`);
+    return { success: "Doctor notified — results are visible on the encounter." };
+  } catch (error) {
+    logServerError("radiology", "notify-doctor-failed", error);
+    return { error: safeServerMessage(error, "Unable to notify the doctor.") };
   }
 }

@@ -103,7 +103,7 @@ const testSchema = z.object({
   specimen_type: z.string().trim().max(80).optional().or(z.literal("")),
   default_unit: z.string().trim().max(40).optional().or(z.literal("")),
   reference_range_text: z.string().trim().max(200).optional().or(z.literal("")),
-  price: z.coerce.number().min(0).max(999999999),
+  price: z.coerce.number().min(0).max(999999999).optional().nullable().or(z.literal("")),
   department_id: z.string().uuid().optional().or(z.literal("")),
 });
 
@@ -113,7 +113,7 @@ export async function createLabTestAction(_prev: unknown, formData: FormData) {
     await createLabTest({
       code: input.code, name: input.name, description: input.description || null,
       specimenType: input.specimen_type || null, defaultUnit: input.default_unit || null,
-      referenceRangeText: input.reference_range_text || null, price: input.price,
+      referenceRangeText: input.reference_range_text || null, price: input.price === "" || input.price == null ? null : Number(input.price),
       departmentId: input.department_id || null,
     });
     revalidatePath("/staff/lab/tests");
@@ -138,5 +138,36 @@ export async function requestLabTestAction(_prev: unknown, formData: FormData) {
   } catch (error) {
     logServerError("lab", "test-request-failed", error);
     return { error: safeServerMessage(error, "Unable to request the test.") };
+  }
+}
+
+export async function notifyDoctorLabAction(orderId: string) {
+  try {
+    const staff = await requirePermission(Permissions.LAB_RESULT_WRITE);
+    const { markOrderNotified } = await import("@/server/repositories/lab.repository");
+    await markOrderNotified(orderId, staff.membership.organization_id);
+    revalidatePath(`/staff/lab/orders/${orderId}`);
+    return { success: "Doctor notified — results are visible on the encounter." };
+  } catch (error) {
+    logServerError("lab", "notify-doctor-failed", error);
+    return { error: safeServerMessage(error, "Unable to notify the doctor.") };
+  }
+}
+
+export async function updateLabTestAction(_prev: unknown, formData: FormData) {
+  try {
+    const input = testSchema.extend({ id: z.string().uuid(), is_active: z.string().optional() }).parse({ ...Object.fromEntries(formData), is_active: formData.get("is_active") === "true" ? "true" : undefined });
+    const { updateLabTestDetails } = await import("@/server/services/lab.service");
+    await updateLabTestDetails({
+      id: input.id, code: input.code, name: input.name, description: input.description || null,
+      specimenType: input.specimen_type || null, defaultUnit: input.default_unit || null,
+      referenceRangeText: input.reference_range_text || null, price: input.price === "" || input.price == null ? 0 : Number(input.price),
+      departmentId: input.department_id || null, isActive: formData.get("is_active") === "true",
+    });
+    revalidatePath("/staff/lab/tests");
+    return { success: true };
+  } catch (error) {
+    logServerError("lab", "test-update-failed", error);
+    return { error: safeServerMessage(error, "We couldn't update the test.") };
   }
 }

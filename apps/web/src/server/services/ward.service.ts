@@ -61,11 +61,26 @@ export async function admitPatient(input: { patientId: string; wardId: string; b
 }
 
 export async function dischargeAdmission(admissionId: string, dischargeSummary: string | null) {
-  const { orgId } = await orgContext(Permissions.ADMISSION_MANAGE);
+  const { orgId, userId } = await orgContext(Permissions.ADMISSION_MANAGE);
   const admission = await repo.findAdmission(admissionId, orgId);
   if (!admission) throw new NotFoundError("Admission not found");
   if (admission.status !== "admitted" && admission.status !== "on_leave") throw new ValidationError("This admission cannot be discharged.");
   await repo.updateAdmission(admissionId, orgId, { status: "discharged", discharged_at: new Date().toISOString(), discharge_summary: dischargeSummary });
+  try {
+    const admittedAt = admission.admitted_at ? new Date(admission.admitted_at) : null;
+    if (admittedAt && admission.encounter_id) {
+      const nights = Math.max(0, Math.floor((Date.now() - admittedAt.getTime()) / 86400000));
+      const { chargeFromCatalog } = await import("@/server/services/charge-hooks");
+      const admin = (await import("@/lib/supabase/admin")).createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+      const { data: enc } = await admin.from("encounters").select("patient_id,facility_id").eq("id", admission.encounter_id).maybeSingle();
+      const ward = (await repo.listWards(orgId)).find((w) => w.id === admission.ward_id);
+      if (enc?.patient_id && nights > 0) {
+        for (let d = 1; d <= nights; d++) {
+          await chargeFromCatalog({ organizationId: orgId, encounterId: admission.encounter_id, patientId: enc.patient_id, facilityId: enc.facility_id ?? admission.facility_id ?? null, category: "bed_day", nameMatch: ward?.name, quantity: 1, actorId: userId, sourceType: "bed_day", sourceId: `${admissionId}:${d}`, description: `Ward bed-day ${d}: ${ward?.name ?? "Ward"}` });
+        }
+      }
+    }
+  } catch (e) { const { logServerError } = await import("@/server/logging"); logServerError("billing", "bed-day-charge-failed", e, { admissionId }); }
   if (admission.bed_id) await repo.setBedStatus(admission.bed_id, orgId, "available");
 }
 

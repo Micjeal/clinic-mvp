@@ -34,14 +34,14 @@ export function LabResultForm({ itemId, orderId, patientId, unit, referenceRange
 }) {
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState("");
-  if (approved) return <span className="staff-status staff-status--paid">Approved</span>;
+  if (approved) return <span className="lab-flag lab-flag--normal lab-flag--approved">Approved</span>;
   if (readOnly) return <span className="staff-table-sub">{result ? "Result pending approval" : "Awaiting sample"}</span>;
   return (
     <form action={(formData) => startTransition(async () => {
       const outcome = await saveLabResultAction(null, formData);
       setMessage(outcome.error ?? "Result saved.");
       if (!outcome.error) window.location.reload();
-    })} className="staff-form-grid" style={{ minWidth: "16rem" }}>
+    })} className="staff-form-grid lab-result-form">
       <input name="item_id" type="hidden" value={itemId} />
       <input name="order_id" type="hidden" value={orderId} />
       <input name="patient_id" type="hidden" value={patientId} />
@@ -52,7 +52,7 @@ export function LabResultForm({ itemId, orderId, patientId, unit, referenceRange
         <option value="">—</option><option value="normal">Normal</option><option value="low">Low</option><option value="high">High</option><option value="critical">Critical</option><option value="abnormal">Abnormal</option>
       </select></label>
       <label className="staff-form-grid__wide">Notes<textarea defaultValue={result?.result_text ?? ""} name="result_text" rows={2} /></label>
-      <div className="staff-form-actions"><button className="btn btn--compact" disabled={pending} type="submit">{pending ? "Saving…" : "Save result"}</button>{message ? <span className="staff-table-empty">{message}</span> : null}</div>
+      <div className="lab-result-form__actions"><button className="btn lab-result-form__save" disabled={pending} type="submit">{pending ? "Saving…" : "Save result"}</button>{message ? <span className="staff-table-empty">{message}</span> : null}</div>
     </form>
   );
 }

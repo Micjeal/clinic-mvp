@@ -1,6 +1,7 @@
 "use client";
 
 import {useActionState,useEffect,useId,useRef} from "react";
+import {useRouter} from "next/navigation";
 import {useFormStatus} from "react-dom";
 import {appointmentTransitionLabel,allowedStatusTransitions,destructiveAppointmentTransitions} from "@clinic/shared";
 import {updateAppointmentStatusAction} from "@/server/actions/staff-appointment.actions";
@@ -8,7 +9,8 @@ import {updateAppointmentStatusAction} from "@/server/actions/staff-appointment.
 function Submit({status}:{status:string}){const {pending}=useFormStatus();return <button className={`btn${destructiveAppointmentTransitions.has(status)?" btn-danger":""}`} disabled={pending} type="submit">{pending?"Updating…":appointmentTransitionLabel(status)}</button>;}
 
 function StatusAction({appointmentId,status}:{appointmentId:string;status:string}){
-  const [state,action]=useActionState(updateAppointmentStatusAction.bind(null,appointmentId,status),null);
+  const router=useRouter();
+  const [state,action]=useActionState(async(prev:unknown,formData:FormData)=>{const result=await updateAppointmentStatusAction(appointmentId,status,prev as null);if(!result?.error&&status==="in_progress"&&result?.queueId){router.push(`/staff/triage/${result.queueId}`);}return result;},null);
   const dialogRef=useRef<HTMLDialogElement>(null),titleId=useId(),destructive=destructiveAppointmentTransitions.has(status);
   useEffect(()=>{if(state?.success)dialogRef.current?.close();},[state?.success]);
   if(!destructive)return <form action={action} className="staff-action-form"><Submit status={status}/>{state?.error?<p className="staff-form-message staff-form-message--error" role="alert">{state.error}</p>:null}{state?.success?<p className="staff-form-message staff-form-message--success" role="status">{state.success}</p>:null}</form>;

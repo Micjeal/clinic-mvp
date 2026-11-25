@@ -3,6 +3,7 @@ import { StaffPageHeader, StaffSection } from "@/features/staff/components/staff
 import { AuthorizationError } from "@/server/errors";
 import { getSettingsContext } from "@/server/services/settings.service";
 import { SettingsBackLink } from "@/features/settings/components/settings-back-link";
+import { ReceiptText } from "lucide-react";
 import { ChargeCatalog } from "@/features/settings/components/charge-catalog";
 import { listStandardCharges } from "@/server/repositories/charge.repository";
 import { createClient } from "@/lib/supabase/server";
@@ -30,11 +31,14 @@ export default async function BillingSettingsPage() {
   return (
     <div className="staff-page">
       <SettingsBackLink />
-      <StaffPageHeader
-        eyebrow="Settings"
-        title="Billing & payments"
-        description="Currency and payment configuration for your organization."
-      />
+      <div className="staff-page-heading staff-page-heading--doctor lab-order-heading">
+        <div className="staff-doctor-avatar lab-order-heading__icon" aria-hidden="true"><ReceiptText size={26} /></div>
+        <div className="doctor-identity-copy">
+          <p className="eyebrow">Settings</p>
+          <h1>Billing & payments</h1>
+          <p>Currency, payment methods and the standard charge catalog used for automatic billing.</p>
+        </div>
+      </div>
       <StaffSection title="Currency" eyebrow="Organization" description="Set under Organization profile. It applies to new invoices and payments only.">
         <dl className="staff-settings-summary">
           <div><dt>Billing currency</dt><dd>{context.organization.currency_code}</dd></div>
@@ -46,7 +50,7 @@ export default async function BillingSettingsPage() {
           {METHODS.map((method) => <li key={method}>{method}</li>)}
         </ul>
       </StaffSection>
-      <StaffSection title="Standard charges" eyebrow="Catalog" description="Stable fees used for automatic charge capture — consultation, triage, bed-day and procedures. Changing a price here affects new charges only.">
+      <StaffSection className="billing-settings-panel" title="Standard charges" eyebrow="Catalog" description="Stable fees used for automatic charge capture — consultation, triage, bed-day and procedures. Changing a price here affects new charges only.">
         <ChargeCatalog charges={await listStandardCharges(context.organization.id)} />
       </StaffSection>
       <StaffSection title="Pending lab tests" eyebrow="Approval" description="Tests requested by clinicians stay inactive until approved here.">
