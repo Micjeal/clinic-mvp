@@ -4174,3 +4174,10 @@ img { max-width: 100%; }
 .nav-link:hover, .nav-dropdown[open] > .nav-link { transform: translateY(-1px); }
 .nav-link svg { transition: transform .25s ease; }
 .nav-link:hover svg, .nav-dropdown[open] > .nav-link svg { transform: rotate(180deg); }
+
+/* Unbilled charges per-patient rollup */
+.staff-unbilled-summary { display: grid; grid-template-columns: repeat(auto-fill,minmax(13rem,1fr)); gap: .75rem; margin-bottom: 1rem; }
+.staff-unbilled-patient { display: flex; flex-direction: column; gap: .15rem; border: 1px solid var(--slate-200); border-radius: 12px; padding: .85rem 1rem; background: var(--blue-50); }
+.staff-unbilled-patient strong { font-size: .85rem; color: var(--navy-900); }
+.staff-unbilled-patient span { font-size: .72rem; color: var(--slate-600); }
+.staff-unbilled-patient__total { font-weight: 800; color: var(--teal-600); font-size: .85rem; }

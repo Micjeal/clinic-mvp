@@ -83,7 +83,7 @@ export async function approveLabResultAction(resultId: string, orderId: string) 
   await notifyResultReady(orgId, orderId, "laboratory");
 }
 
-export async function createLabTest(input: { code: string; name: string; description: string | null; specimenType: string | null; defaultUnit: string | null; referenceRangeText: string | null; price: number; departmentId: string | null }) {
+export async function createLabTest(input: { code: string; name: string; description: string | null; specimenType: string | null; defaultUnit: string | null; referenceRangeText: string | null; price: number; departmentId: string | null; isActive?: boolean }) {
   const staff = await requirePermission(Permissions.DEPARTMENT_MANAGE);
   const orgId = staff.membership.organization_id;
   if (!input.code.trim() || !input.name.trim()) throw new ValidationError("Code and name are required.");

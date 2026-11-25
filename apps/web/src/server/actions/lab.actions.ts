@@ -5,6 +5,8 @@ import { z } from "zod";
 import { safeServerMessage } from "@/server/errors";
 import { logServerError } from "@/server/logging";
 import { approveLabResultAction as approveResult, collectLabSample, createLabOrder, createLabTest, saveLabResult, setLabItemProcessing } from "@/server/services/lab.service";
+import { requirePermission } from "@/server/permissions/require-permission";
+import { Permissions } from "@clinic/permissions";
 
 const orderSchema = z.object({
   encounter_id: z.string().uuid(),
@@ -119,5 +121,22 @@ export async function createLabTestAction(_prev: unknown, formData: FormData) {
   } catch (error) {
     logServerError("lab", "test-create-failed", error);
     return { error: safeServerMessage(error, "We couldn't add the test.") };
+  }
+}
+
+export async function requestLabTestAction(_prev: unknown, formData: FormData) {
+  try {
+    const name = String(formData.get("name") || "").trim();
+    const code = String(formData.get("code") || "").trim().toUpperCase().replace(/\s+/g, "_");
+    const price = Number(formData.get("price") || 0);
+    const specimenType = String(formData.get("specimen_type") || "").trim() || null;
+    if (!name || !code) return { error: "Test name and code are required." };
+    const staff = await requirePermission(Permissions.LAB_ORDER);
+    const { createLabTest } = await import("@/server/repositories/lab.repository");
+    await createLabTest({ organizationId: staff.membership.organization_id, code, name, description: String(formData.get("description") || "") || null, specimenType, defaultUnit: null, referenceRangeText: null, price: Number.isFinite(price) ? price : 0, departmentId: null, isActive: false });
+    return { success: "Test requested — pending admin activation." };
+  } catch (error) {
+    logServerError("lab", "test-request-failed", error);
+    return { error: safeServerMessage(error, "Unable to request the test.") };
   }
 }

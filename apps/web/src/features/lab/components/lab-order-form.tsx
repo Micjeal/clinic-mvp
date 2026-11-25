@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { createLabOrderAction } from "@/server/actions/lab.actions";
+import { createLabOrderAction, requestLabTestAction } from "@/server/actions/lab.actions";
 
 type Encounter = { id: string; patient_id: string; started_at: string | null; status: string | null; patients?: { first_name?: string; last_name?: string; patient_number?: string } | null };
 type Test = { id: string; code: string; name: string; specimen_type: string | null; price: number; currency_code: string };
@@ -41,7 +41,10 @@ export function LabOrderForm({ encounters, tests }: { encounters: Encounter[]; t
       <section className="staff-editor-section">
         <p className="eyebrow">Tests</p>
         <h2>Select tests ({selected.length})</h2>
-        <input onChange={(event) => setQuery(event.target.value)} placeholder="Filter tests…" style={{ marginBottom: "0.75rem", width: "100%" }} value={query} />
+        <div style={{ display: "flex", gap: ".6rem", marginBottom: ".75rem" }}>
+          <input onChange={(event) => setQuery(event.target.value)} placeholder="Search tests by name or code…" style={{ flex: 1 }} value={query} />
+          <RequestTestButton />
+        </div>
         <div className="staff-table-wrap" style={{ maxHeight: "22rem", overflowY: "auto" }}><table className="staff-table">
           <thead><tr><th /><th>Code</th><th>Test</th><th>Specimen</th><th className="staff-col-amount">Price</th></tr></thead>
           <tbody>
@@ -58,6 +61,28 @@ export function LabOrderForm({ encounters, tests }: { encounters: Encounter[]; t
       </section>
       {error ? <p className="staff-form-message staff-form-message--error" role="alert">{error}</p> : null}
       <div className="staff-form-actions"><button className="btn" disabled={pending || selected.length === 0} type="submit">{pending ? "Creating…" : "Create lab order"}</button></div>
+    </form>
+  );
+}
+
+
+function RequestTestButton() {
+  const [open, setOpen] = useState(false);
+  const [reqState, setReqState] = useState<{ error?: string; success?: string } | null>(null);
+  const [pending, startTransition] = useTransition();
+  if (!open) return <button className="btn btn--secondary" onClick={() => setOpen(true)} type="button">Request new test</button>;
+  return (
+    <form action={(fd) => startTransition(async () => { const r = await requestLabTestAction(null, fd); setReqState(r); if (r?.success) setOpen(false); })} className="staff-form-grid" style={{ flex: 2 }}>
+      <input name="name" placeholder="Test name" required />
+      <input name="code" placeholder="Code (e.g. FBC)" required />
+      <input name="price" placeholder="Price UGX" step="0.01" type="number" />
+      <input name="specimen_type" placeholder="Specimen (blood, urine…)" />
+      <div style={{ display: "flex", gap: ".5rem" }}>
+        <button className="btn" disabled={pending} type="submit">{pending ? "Sending…" : "Request"}</button>
+        <button className="btn btn--secondary" onClick={() => setOpen(false)} type="button">Cancel</button>
+      </div>
+      {reqState?.error ? <p className="error" role="alert">{reqState.error}</p> : null}
+      {reqState?.success ? <p className="success">{reqState.success}</p> : null}
     </form>
   );
 }

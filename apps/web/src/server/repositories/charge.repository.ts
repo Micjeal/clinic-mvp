@@ -64,3 +64,35 @@ export async function markChargesInvoiced(chargeIds: string[], invoiceItemIds: R
     if (error) throw error;
   }
 }
+
+export async function listStandardCharges(organizationId: string): Promise<any[]> {
+  const supabase = await untyped();
+  const { data, error } = await supabase.from("standard_charges").select("*").eq("organization_id", organizationId).eq("is_active", true).order("category").order("name");
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function findStandardCharge(organizationId: string, category: string, name?: string): Promise<any | null> {
+  const supabase = await untyped();
+  let query = supabase.from("standard_charges").select("*").eq("organization_id", organizationId).eq("category", category).eq("is_active", true);
+  if (name) query = query.ilike("name", name);
+  const { data, error } = await query.order("created_at", { ascending: true }).limit(1).maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+export async function upsertStandardCharge(input: { id?: string; organizationId: string; name: string; category: string; price: number; currencyCode?: string; isActive?: boolean }) {
+  const supabase = await untyped();
+  const row = { organization_id: input.organizationId, name: input.name, category: input.category, price: input.price, currency_code: input.currencyCode ?? "UGX", is_active: input.isActive ?? true };
+  const { data, error } = input.id
+    ? await supabase.from("standard_charges").update(row).eq("id", input.id).eq("organization_id", input.organizationId).select("id").single()
+    : await supabase.from("standard_charges").insert(row).select("id").single();
+  if (error) throw error;
+  return data.id as string;
+}
+
+export async function deactivateStandardCharge(id: string, organizationId: string) {
+  const supabase = await untyped();
+  const { error } = await supabase.from("standard_charges").update({ is_active: false }).eq("id", id).eq("organization_id", organizationId);
+  if (error) throw error;
+}

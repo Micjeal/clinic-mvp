@@ -3,6 +3,8 @@ import { StaffPageHeader, StaffSection } from "@/features/staff/components/staff
 import { AuthorizationError } from "@/server/errors";
 import { getSettingsContext } from "@/server/services/settings.service";
 import { SettingsBackLink } from "@/features/settings/components/settings-back-link";
+import { ChargeCatalog } from "@/features/settings/components/charge-catalog";
+import { listStandardCharges } from "@/server/repositories/charge.repository";
 
 export const metadata = { title: "Billing & payments · Settings" };
 
@@ -35,6 +37,9 @@ export default async function BillingSettingsPage() {
         <ul className="staff-settings-chips">
           {METHODS.map((method) => <li key={method}>{method}</li>)}
         </ul>
+      </StaffSection>
+      <StaffSection title="Standard charges" eyebrow="Catalog" description="Stable fees used for automatic charge capture — consultation, triage, bed-day and procedures. Changing a price here affects new charges only.">
+        <ChargeCatalog charges={await listStandardCharges(context.organization.id)} />
       </StaffSection>
       <StaffSection title="Provider integration" eyebrow="Status">
         <dl className="staff-settings-summary">

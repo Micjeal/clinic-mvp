@@ -76,6 +76,7 @@ export async function transitionQueue(id: string, nextStatus: QueueStatus, prior
   if (nextStatus === "completed") { patch.consult_completed_by = staff.user.id; patch.consult_completed_at = now; if (isClinicalOverride) patch.completion_override_reason = options?.overrideReason?.trim() ?? null; }
   const updated = await updateQueueEntry(id, staff.membership.organization_id, patch);
   if ((nextStatus === "completed" || nextStatus === "cancelled") && current.encounters?.id) { try { const admin = createAdminClient(); const { error } = await admin.from("encounters").update({ status: nextStatus, ended_at: now }).eq("id", current.encounters.id).eq("organization_id", staff.membership.organization_id); if (error) throw error; } catch (syncError) { logServerError("reception", "encounter-sync-failed", syncError, { queueId: id }); } }
+  if (nextStatus === "waiting_clinician" && current.encounters?.id) { try { await chargeStandard(staff.membership.organization_id, current.encounters.id, staff.user.id, "triage", "Triage assessment"); } catch (chargeError) { logServerError("billing", "triage-charge-failed", chargeError, { encounterId: current.encounters.id }); } }
   if (nextStatus === "completed" && current.encounters?.id) { try { await chargeConsultation(staff.membership.organization_id, current.encounters.id, staff.user.id); } catch (chargeError) { logServerError("billing", "consultation-charge-failed", chargeError, { encounterId: current.encounters.id }); } }
   return updated;
 }
@@ -102,6 +103,22 @@ async function chargeConsultation(organizationId: string, encounterId: string, a
     source_type: "encounter",
     source_id: encounterId,
     created_by: actorId,
+  });
+  if (error && error.code !== "23505") throw error;
+}
+
+async function chargeStandard(organizationId: string, encounterId: string, actorId: string, category: string, label: string) {
+  const admin = createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+  const { data: encounter } = await admin.from("encounters").select("id,patient_id,facility_id").eq("id", encounterId).eq("organization_id", organizationId).maybeSingle();
+  if (!encounter?.patient_id) return;
+  const { data: charge } = await admin.from("standard_charges").select("name,price,currency_code").eq("organization_id", organizationId).eq("category", category).eq("is_active", true).order("created_at", { ascending: true }).limit(1).maybeSingle();
+  const price = Number(charge?.price ?? 0);
+  if (!charge || price <= 0) return;
+  const { error } = await admin.from("encounter_charges").insert({
+    organization_id: organizationId, encounter_id: encounterId, patient_id: encounter.patient_id,
+    facility_id: encounter.facility_id ?? null, charge_type: category === "triage" ? "procedure" : "procedure",
+    description: `${label}: ${charge.name}`, quantity: 1, unit_price: price, total: price,
+    currency_code: charge.currency_code ?? "UGX", source_type: "standard_charge", source_id: encounterId, created_by: actorId,
   });
   if (error && error.code !== "23505") throw error;
 }

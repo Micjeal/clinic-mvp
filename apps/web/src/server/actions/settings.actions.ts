@@ -235,3 +235,44 @@ export async function uploadOrganizationLogoAction(_prev: unknown, formData: For
     return { error: safeServerMessage(error, "We couldn't update the logo.") };
   }
 }
+
+const chargeSchema = z.object({
+  id: z.string().uuid().optional().or(z.literal("")),
+  name: z.string().trim().min(1).max(120),
+  category: z.enum(["consultation","triage","procedure","bed_day","registration","other"]),
+  price: z.coerce.number().min(0).max(999999999),
+  is_active: boolField,
+});
+
+export async function saveStandardChargeAction(_previous: unknown, formData: FormData) {
+  try {
+    const parsed = chargeSchema.safeParse({
+      id: formData.get("id"), name: formData.get("name"), category: formData.get("category"),
+      price: formData.get("price"), is_active: formData.get("is_active"),
+    });
+    if (!parsed.success) return { error: "Enter a valid charge name, category and price." };
+    const { getSettingsContext } = await import("@/server/services/settings.service");
+    const context = await getSettingsContext();
+    const { upsertStandardCharge } = await import("@/server/repositories/charge.repository");
+    await upsertStandardCharge({ id: parsed.data.id || undefined, organizationId: context.organization.id, name: parsed.data.name, category: parsed.data.category, price: parsed.data.price, isActive: parsed.data.is_active ?? true });
+    revalidatePath("/staff/settings/billing");
+    return { success: "Charge saved." };
+  } catch (error) {
+    logServerError("settings-actions", "save-charge-failed", error);
+    return { error: safeServerMessage(error, "Unable to save the charge.") };
+  }
+}
+
+export async function deactivateStandardChargeAction(id: string) {
+  try {
+    const { getSettingsContext } = await import("@/server/services/settings.service");
+    const context = await getSettingsContext();
+    const { deactivateStandardCharge } = await import("@/server/repositories/charge.repository");
+    await deactivateStandardCharge(id, context.organization.id);
+    revalidatePath("/staff/settings/billing");
+    return { success: "Charge deactivated." };
+  } catch (error) {
+    logServerError("settings-actions", "deactivate-charge-failed", error);
+    return { error: safeServerMessage(error, "Unable to deactivate the charge.") };
+  }
+}

@@ -96,12 +96,12 @@ export async function approveLabResult(resultId: string, organizationId: string,
   if (error) throw error;
 }
 
-export async function createLabTest(input: { organizationId: string; code: string; name: string; description: string | null; specimenType: string | null; defaultUnit: string | null; referenceRangeText: string | null; price: number; departmentId: string | null }) {
+export async function createLabTest(input: { organizationId: string; code: string; name: string; description: string | null; specimenType: string | null; defaultUnit: string | null; referenceRangeText: string | null; price: number; departmentId: string | null; isActive?: boolean }) {
   const supabase = await createClient();
   const { data, error } = await supabase.from("lab_tests").insert({
     organization_id: input.organizationId, code: input.code, name: input.name, description: input.description,
     specimen_type: input.specimenType, default_unit: input.defaultUnit, reference_range_text: input.referenceRangeText,
-    price: input.price, department_id: input.departmentId,
+    price: input.price, department_id: input.departmentId, is_active: input.isActive ?? true,
   } satisfies TablesInsert<"lab_tests">).select("id").single();
   if (error) throw error;
   return data.id;

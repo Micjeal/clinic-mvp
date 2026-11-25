@@ -35,9 +35,29 @@ export function UnbilledCharges({ charges, facilities }: { charges: Charge[]; fa
   const selectedCharges = charges.filter((charge) => selected.has(charge.id));
   const total = selectedCharges.reduce((sum, charge) => sum + Number(charge.total), 0);
   const patients = new Set(selectedCharges.map((c) => c.patient_id));
+  const byPatient = charges.reduce<Record<string, { name: string; count: number; total: number; currency: string }>>((acc, c) => {
+    const key = c.patient_id;
+    const name = c.patients ? `${c.patients.first_name ?? ""} ${c.patients.last_name ?? ""}`.trim() : "Patient";
+    const row = acc[key] ?? { name, count: 0, total: 0, currency: c.currency_code };
+    row.count += 1; row.total += Number(c.total);
+    acc[key] = row;
+    return acc;
+  }, {});
+  const patientRows = Object.values(byPatient).sort((a, b) => b.total - a.total);
 
   return (
     <div>
+      {charges.length > 0 ? (
+        <div className="staff-unbilled-summary">
+          {patientRows.map((row) => (
+            <div className="staff-unbilled-patient" key={row.name}>
+              <strong>{row.name}</strong>
+              <span>{row.count} charge{row.count === 1 ? "" : "s"}</span>
+              <span className="staff-unbilled-patient__total">{row.total.toLocaleString()} {row.currency}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
       {charges.length === 0 ? <p className="staff-table-empty">No unbilled charges — lab results, imaging reports and dispensed medication will appear here automatically.</p> : (
         <>
           <div className="staff-table-wrap"><table className="staff-table">
