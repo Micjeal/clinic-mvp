@@ -18,7 +18,7 @@ export function LabTestForm({ departments, canManage }: { departments: { id: str
       <label>Specimen<input name="specimen_type" placeholder="e.g. Blood" /></label>
       <label>Unit<input name="default_unit" placeholder="e.g. g/dL" /></label>
       <label>Reference range<input name="reference_range_text" placeholder="e.g. 12–16" /></label>
-      <label>Price<input min="0" name="price" step="0.01" type="number" required /></label>
+      <label>Price<input min="0" name="price" placeholder="From Settings catalog" step="0.01" type="number" /></label>
       <label>Department<select name="department_id" defaultValue=""><option value="">General lab</option>{departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}</select></label>
       <div className="staff-form-actions"><button className="btn btn--compact" disabled={pending} type="submit">{pending ? "Adding…" : "Add test"}</button>{message ? <span className="staff-table-empty">{message}</span> : null}</div>
     </form>

@@ -81,6 +81,16 @@ export async function approveImagingReport(orderId: string) {
     // Charge capture must never break report approval.
   }
   try {
+    const { chargeFromCatalog } = await import("@/server/services/charge-hooks");
+    const encounterId = order.encounter_id as string; const patientId = order.patient_id as string; const facilityId = (order.facility_id as string | null) ?? null;
+    if (encounterId && patientId) {
+      await chargeFromCatalog({ organizationId: orgId, encounterId, patientId, facilityId, category: "procedure", nameMatch: "report", quantity: 1, actorId: userId, sourceType: "imaging_report", sourceId: orderId, description: "Radiologist reporting fee" });
+      if (/contrast/i.test(String(order.clinical_indication ?? ""))) {
+        await chargeFromCatalog({ organizationId: orgId, encounterId, patientId, facilityId, category: "procedure", nameMatch: "contrast", quantity: 1, actorId: userId, sourceType: "contrast", sourceId: orderId, description: "Contrast media" });
+      }
+    }
+  } catch { /* fees must never break approval */ }
+  try {
     const patientId = order.patient_id as string;
     const admin = (await import("@/lib/supabase/admin")).createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
     const { data: patient } = await admin.from("patients").select("first_name,last_name,phone").eq("id", patientId).maybeSingle();
@@ -99,9 +109,30 @@ export async function listImagingTests() {
   return repo.listImagingTests(orgId);
 }
 
-export async function createImagingTest(input: { code: string; name: string; modality: string; bodyPart: string | null; description: string | null; price: number }) {
+async function nextImagingTestCode(orgId: string, modality: string, name: string) {
+  const prefix = (modality || "img").slice(0, 3).toUpperCase();
+  const slug = name.toUpperCase().replace(/[^A-Z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 24) || "EXAM";
+  const base = `${prefix}-${slug}`;
+  const admin = (await import("@/lib/supabase/admin")).createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+  for (let i = 1; i <= 50; i++) {
+    const code = i === 1 ? base : `${base}-${i}`;
+    const { data } = await admin.from("imaging_tests").select("id").eq("organization_id", orgId).eq("code", code).maybeSingle();
+    if (!data) return code;
+  }
+  return `${base}-${Date.now().toString(36).toUpperCase()}`;
+}
+
+export async function createImagingTest(input: { code: string; name: string; modality: string; bodyPart: string | null; description: string | null; price: number | null }) {
   const staff = await requirePermission(Permissions.DEPARTMENT_MANAGE);
   const orgId = staff.membership.organization_id;
-  if (!input.code.trim() || !input.name.trim()) throw new ValidationError("Code and name are required.");
-  return repo.createImagingTest({ ...input, organizationId: orgId });
+  if (!input.name.trim()) throw new ValidationError("Name is required.");
+  const code = input.code.trim() || await nextImagingTestCode(orgId, input.modality, input.name);
+  let price = input.price;
+  if (price == null || price <= 0) {
+    const { findStandardCharge } = await import("@/server/repositories/charge.repository");
+    const catalog = await findStandardCharge(orgId, "procedure", input.name).catch(() => null)
+      ?? await findStandardCharge(orgId, "other", input.modality).catch(() => null);
+    price = Number(catalog?.price ?? 0);
+  }
+  return repo.createImagingTest({ ...input, code, price: price ?? 0, organizationId: orgId });
 }

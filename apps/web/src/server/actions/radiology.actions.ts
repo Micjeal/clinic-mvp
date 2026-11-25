@@ -73,18 +73,18 @@ export async function approveImagingReportAction(orderId: string) {
 }
 
 const testSchema = z.object({
-  code: z.string().trim().min(1).max(40),
+  code: z.string().trim().max(40).optional().or(z.literal("")),
   name: z.string().trim().min(2).max(160),
   modality: z.enum(["xray", "ultrasound", "ct", "mri", "mammography", "fluoroscopy", "other"]),
   body_part: z.string().trim().max(80).optional().or(z.literal("")),
   description: z.string().trim().max(500).optional().or(z.literal("")),
-  price: z.coerce.number().min(0).max(999999999),
+  price: z.coerce.number().min(0).max(999999999).optional().nullable().or(z.literal("")),
 });
 
 export async function createImagingTestAction(_prev: unknown, formData: FormData) {
   try {
     const input = testSchema.parse(Object.fromEntries(formData));
-    await createImagingTest({ code: input.code, name: input.name, modality: input.modality, bodyPart: input.body_part || null, description: input.description || null, price: input.price });
+    await createImagingTest({ code: input.code ?? "", name: input.name, modality: input.modality, bodyPart: input.body_part || null, description: input.description || null, price: input.price == null || input.price === "" ? null : Number(input.price) });
     revalidatePath("/staff/radiology/tests");
     return { success: true };
   } catch (error) {

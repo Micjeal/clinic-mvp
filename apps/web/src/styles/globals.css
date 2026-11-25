@@ -4302,3 +4302,49 @@ img { max-width: 100%; }
 .lab-test-edit__active { flex-direction: row !important; align-items: center; gap: .4rem !important; text-transform: none !important; letter-spacing: 0 !important; font-weight: 600 !important; color: var(--navy-950) !important; }
 .lab-test-edit__actions { display: flex; align-items: center; gap: .5rem; }
 .lab-test-edit-row td { background: var(--blue-50); padding: 1rem; }
+
+/* Imaging order — exam picker */
+.exam-picker { display: grid; gap: .55rem; }
+.exam-picker__search input { width: 100%; min-height: 2.75rem; border: 1px solid var(--slate-300); border-radius: 10px; padding: .65rem .9rem; font: inherit; font-size: .92rem; }
+.exam-picker__search input:focus { outline: 2px solid var(--teal-500); border-color: var(--teal-500); }
+.exam-picker__list { display: grid; grid-template-columns: repeat(auto-fill,minmax(13rem,1fr)); gap: .45rem; max-height: 16rem; overflow-y: auto; border: 1px solid var(--slate-200); border-radius: 12px; padding: .5rem; background: var(--blue-50); }
+.exam-picker__item { display: flex; align-items: center; gap: .6rem; border: 1px solid transparent; border-radius: 10px; padding: .55rem .7rem; background: transparent; cursor: pointer; text-align: left; font: inherit; transition: all .15s; }
+.exam-picker__item:hover { background: var(--white); border-color: var(--slate-200); }
+.exam-picker__item.is-active { background: var(--white); border-color: var(--teal-500); box-shadow: 0 0 0 1px var(--teal-500); }
+.exam-picker__modality { flex-shrink: 0; padding: .2rem .45rem; border-radius: 6px; background: var(--navy-900); color: var(--white); font-size: .6rem; font-weight: 800; letter-spacing: .05em; }
+.exam-picker__info { flex: 1; min-width: 0; display: grid; gap: .1rem; }
+.exam-picker__info strong { font-size: .82rem; color: var(--navy-950); }
+.exam-picker__info small { font-size: .7rem; color: var(--slate-600); }
+.imaging-order-form .staff-editor-section { background: var(--white); border: 1px solid var(--slate-200); border-radius: 16px; padding: 1.4rem; margin-bottom: 1rem; box-shadow: 0 8px 24px rgba(12,39,64,.04); }
+
+/* Imaging order — field polish */
+.imaging-order-form .staff-form-grid label { display: grid; gap: .4rem; }
+.imaging-order-form .staff-form-grid label > span, .imaging-order-form .staff-form-grid label { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--slate-600); }
+.imaging-order-form .staff-form-grid input:not([type="hidden"]), .imaging-order-form .staff-form-grid select, .imaging-order-form .staff-form-grid textarea { min-height: 2.75rem; border: 1px solid var(--slate-300); border-radius: 10px; padding: .65rem .85rem; font: inherit; font-size: .9rem; background: var(--white); color: var(--navy-950); text-transform: none; letter-spacing: normal; }
+.imaging-order-form .staff-form-grid input:focus, .imaging-order-form .staff-form-grid select:focus, .imaging-order-form .staff-form-grid textarea:focus { outline: 2px solid var(--teal-500); border-color: var(--teal-500); }
+.imaging-order-form .staff-form-grid textarea { resize: vertical; min-height: 5rem; }
+.imaging-order-form .staff-form-grid input[type="datetime-local"] { color-scheme: light; }
+
+/* Imaging order — elevated fields */
+.imaging-order-form .staff-form-grid label { position: relative; }
+.imaging-order-form .staff-form-grid input:not([type="hidden"]), .imaging-order-form .staff-form-grid select { background: #fbfdfe; transition: border-color .15s, box-shadow .15s; }
+.imaging-order-form .staff-form-grid input:not([type="hidden"]):hover, .imaging-order-form .staff-form-grid select:hover { border-color: #9fc4c9; }
+.imaging-order-form .staff-form-grid input:focus, .imaging-order-form .staff-form-grid select:focus, .imaging-order-form .staff-form-grid textarea:focus { box-shadow: 0 0 0 3px rgba(23,190,187,.15); }
+.imaging-order-form .staff-form-grid textarea { background: #fbfdfe; border-left: 3px solid var(--teal-500); padding-left: .8rem; }
+.imaging-order-form .staff-form-grid input[type="datetime-local"] { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235f7b87' stroke-width='2'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right .8rem center; padding-right: 2.4rem; }
+
+/* Dropdown polish + compact encounter picker */
+.encounter-picker, .exam-picker { max-width: 34rem; }
+.encounter-picker__toggle { border-radius: 12px; box-shadow: 0 1px 3px rgba(12,39,64,.06); }
+.encounter-picker__list, .exam-picker__list { box-shadow: 0 12px 32px rgba(12,39,64,.12); border-radius: 14px; }
+.encounter-picker__search input { border-radius: 10px; }
+.exam-picker__search input { min-height: 2.5rem; font-size: .85rem; }
+.exam-picker__list { max-height: 13rem; }
+.encounter-picker__item, .exam-picker__item { border-radius: 8px; }
+.encounter-picker__avatar { width: 1.9rem; height: 1.9rem; font-size: .65rem; }
+
+/* Imaging exam catalog */
+.imaging-test-form { background: var(--white); border: 1px solid var(--slate-200); border-radius: 16px; padding: 1.2rem; }
+.imaging-test-form label { display: grid; gap: .35rem; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--slate-600); }
+.imaging-test-form input, .imaging-test-form select { min-height: 2.6rem; border: 1px solid var(--slate-300); border-radius: 10px; padding: .55rem .8rem; font: inherit; font-size: .88rem; background: #fbfdfe; color: var(--navy-950); text-transform: none; letter-spacing: normal; }
+.imaging-test-form input:focus, .imaging-test-form select:focus { outline: 2px solid var(--teal-500); border-color: var(--teal-500); box-shadow: 0 0 0 3px rgba(23,190,187,.15); }

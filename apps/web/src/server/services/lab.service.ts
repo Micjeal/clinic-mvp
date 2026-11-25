@@ -83,11 +83,17 @@ export async function approveLabResultAction(resultId: string, orderId: string) 
   await notifyResultReady(orgId, orderId, "laboratory");
 }
 
-export async function createLabTest(input: { code: string; name: string; description: string | null; specimenType: string | null; defaultUnit: string | null; referenceRangeText: string | null; price: number; departmentId: string | null; isActive?: boolean }) {
+export async function createLabTest(input: { code: string; name: string; description: string | null; specimenType: string | null; defaultUnit: string | null; referenceRangeText: string | null; price: number | null; departmentId: string | null; isActive?: boolean }) {
   const staff = await requirePermission(Permissions.DEPARTMENT_MANAGE);
   const orgId = staff.membership.organization_id;
   if (!input.code.trim() || !input.name.trim()) throw new ValidationError("Code and name are required.");
-  return repo.createLabTest({ ...input, organizationId: orgId });
+  let price = input.price ?? 0;
+  if (price <= 0) {
+    const { findStandardCharge } = await import("@/server/repositories/charge.repository");
+    const catalog = await findStandardCharge(orgId, "procedure", input.name).catch(() => null) ?? await findStandardCharge(orgId, "other", input.name).catch(() => null);
+    price = Number(catalog?.price ?? 0);
+  }
+  return repo.createLabTest({ ...input, price, organizationId: orgId });
 }
 
 async function chargeCompletedLabOrder(order: Record<string, unknown> | null) {

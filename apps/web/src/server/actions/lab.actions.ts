@@ -103,7 +103,7 @@ const testSchema = z.object({
   specimen_type: z.string().trim().max(80).optional().or(z.literal("")),
   default_unit: z.string().trim().max(40).optional().or(z.literal("")),
   reference_range_text: z.string().trim().max(200).optional().or(z.literal("")),
-  price: z.coerce.number().min(0).max(999999999),
+  price: z.coerce.number().min(0).max(999999999).optional().nullable().or(z.literal("")),
   department_id: z.string().uuid().optional().or(z.literal("")),
 });
 
@@ -113,7 +113,7 @@ export async function createLabTestAction(_prev: unknown, formData: FormData) {
     await createLabTest({
       code: input.code, name: input.name, description: input.description || null,
       specimenType: input.specimen_type || null, defaultUnit: input.default_unit || null,
-      referenceRangeText: input.reference_range_text || null, price: input.price,
+      referenceRangeText: input.reference_range_text || null, price: input.price === "" || input.price == null ? null : Number(input.price),
       departmentId: input.department_id || null,
     });
     revalidatePath("/staff/lab/tests");
@@ -161,7 +161,7 @@ export async function updateLabTestAction(_prev: unknown, formData: FormData) {
     await updateLabTestDetails({
       id: input.id, code: input.code, name: input.name, description: input.description || null,
       specimenType: input.specimen_type || null, defaultUnit: input.default_unit || null,
-      referenceRangeText: input.reference_range_text || null, price: input.price,
+      referenceRangeText: input.reference_range_text || null, price: input.price === "" || input.price == null ? 0 : Number(input.price),
       departmentId: input.department_id || null, isActive: formData.get("is_active") === "true",
     });
     revalidatePath("/staff/lab/tests");

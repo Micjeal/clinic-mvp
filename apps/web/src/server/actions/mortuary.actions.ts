@@ -57,6 +57,18 @@ export async function releaseMortuaryEntryAction(_prev: unknown, formData: FormD
     const releasedTo = z.string().trim().min(1).max(200).parse(formData.get("released_to"));
     const { orgId } = await ctx(Permissions.MORTUARY_MANAGE);
     await repo.releaseEntry(id, orgId, releasedTo);
+    try {
+      const admin = (await import("@/lib/supabase/admin")).createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+      const { data: entry } = await admin.from("mortuary_register").select("patient_id,facility_id,admitted_at,released_at").eq("id", id).eq("organization_id", orgId).maybeSingle();
+      if (entry?.patient_id) {
+        const { data: openEnc } = await admin.from("encounters").select("id").eq("patient_id", entry.patient_id).eq("organization_id", orgId).in("status", ["open","on_hold"]).order("started_at", { ascending: false }).limit(1).maybeSingle();
+        if (openEnc?.id) {
+          const days = Math.max(1, Math.round(((entry.released_at ? new Date(entry.released_at).getTime() : Date.now()) - new Date(entry.admitted_at ?? Date.now()).getTime()) / 86400000));
+          const { chargeFromCatalog } = await import("@/server/services/charge-hooks");
+          await chargeFromCatalog({ organizationId: orgId, encounterId: openEnc.id, patientId: entry.patient_id, facilityId: entry.facility_id ?? null, category: "other", nameMatch: "mortuary", quantity: days, actorId: (await ctx(Permissions.MORTUARY_MANAGE)).userId, sourceType: "mortuary", sourceId: id, description: `Mortuary storage (${days} day${days === 1 ? "" : "s"})` });
+        }
+      }
+    } catch (e) { logServerError("billing", "mortuary-charge-failed", e, { entryId: id }); }
     revalidatePath("/staff/mortuary");
     return { success: true };
   } catch (error) {
