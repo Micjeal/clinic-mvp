@@ -124,21 +124,22 @@ async function chargeStandard(organizationId: string, encounterId: string, actor
   if (error && error.code !== "23505") throw error;
 }
 
-export async function syncQueueForAppointmentStatus(appointmentId: string, organizationId: string, userId: string, target: "with_clinician" | "completed") {
+export async function syncQueueForAppointmentStatus(appointmentId: string, organizationId: string, userId: string, target: "with_clinician" | "completed"): Promise<string | null> {
   const admin = createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
   const { data: encounter } = await admin.from("encounters").select("id,patient_id,appointment_id,clinician_user_id").eq("appointment_id", appointmentId).eq("organization_id", organizationId).maybeSingle();
-  if (!encounter?.id) return;
+  if (!encounter?.id) return null;
   const { data: queue } = await admin.from("queue_entries").select("id,status").eq("encounter_id", encounter.id).eq("organization_id", organizationId).maybeSingle();
-  if (!queue?.id) return;
+  if (!queue?.id) return null;
   const now = new Date().toISOString();
   if (target === "with_clinician") {
-    if (queue.status !== "waiting_clinician") return;
+    if (queue.status !== "waiting_clinician") return null;
     await admin.from("queue_entries").update({ status: "with_clinician", consult_started_by: userId, consult_started_at: now }).eq("id", queue.id);
     if (!encounter.clinician_user_id) await admin.from("encounters").update({ clinician_user_id: userId }).eq("id", encounter.id);
-    return;
+    return queue.id;
   }
-  if (queue.status !== "with_clinician" && queue.status !== "waiting_clinician") return;
+  if (queue.status !== "with_clinician" && queue.status !== "waiting_clinician") return null;
   await admin.from("queue_entries").update({ status: "completed", consult_completed_by: userId, consult_completed_at: now }).eq("id", queue.id);
   await admin.from("encounters").update({ status: "completed", ended_at: now }).eq("id", encounter.id);
   try { await chargeConsultation(organizationId, encounter.id, userId); } catch (chargeError) { logServerError("billing", "consultation-charge-failed", chargeError, { encounterId: encounter.id }); }
+  return queue.id;
 }
