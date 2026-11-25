@@ -69,3 +69,17 @@ export async function listOrgFacilities(organizationId: string) {
   if (error) throw error;
   return data ?? [];
 }
+
+export async function updateInventoryItem(input: {
+  id: string; organizationId: string; facilityId: string;
+  sku: string; itemName: string; unit: string;
+  reorderLevel: number; costPrice: number; sellingPrice: number; isActive: boolean;
+}) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("inventory_items").update({
+    facility_id: input.facilityId, sku: input.sku, item_name: input.itemName, unit: input.unit,
+    reorder_level: input.reorderLevel, cost_price: input.costPrice, selling_price: input.sellingPrice,
+    is_active: input.isActive,
+  }).eq("id", input.id).eq("organization_id", input.organizationId);
+  if (error) throw error;
+}

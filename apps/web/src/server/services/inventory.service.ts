@@ -62,3 +62,9 @@ export async function recordStockMovement(input: {
   });
   return input.itemId;
 }
+
+export async function updateInventoryItemDetails(input: { id: string; facilityId: string; sku: string; itemName: string; unit: string; reorderLevel: number; costPrice: number; sellingPrice: number; isActive: boolean }) {
+  const staff = await requirePermission(Permissions.INVENTORY_ADJUST);
+  if (!input.sku.trim() || !input.itemName.trim()) throw new ValidationError("SKU and item name are required.");
+  await repo.updateInventoryItem({ ...input, organizationId: staff.membership.organization_id });
+}
