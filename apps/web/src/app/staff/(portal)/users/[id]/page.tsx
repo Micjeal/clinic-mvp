@@ -95,8 +95,9 @@ export default async function StaffMemberPage({
       </Link>
 
       <header
-        className={`staff-page-heading ${member.role_key === "doctor" ? "staff-page-heading--doctor doctor-identity-header" : "staff-page-heading--staff-member"}`}
+        className={`staff-page-heading doctor-hero-card ${member.role_key === "doctor" ? "staff-page-heading--doctor doctor-identity-header" : "staff-page-heading--staff-member"}`}
       >
+        <span className="doctor-hero-card__accent" aria-hidden="true" />
         <div className="staff-page-heading__identity">
           <span aria-hidden="true" className="staff-doctor-avatar">
             {doctorInitials(member.role_key === "doctor" ? doctorName : member.full_name)}

@@ -112,6 +112,7 @@ export default async function PatientRecordPage({ params }: { params: Promise<{ 
         <div className="staff-panel__header"><h2>Vitals trends</h2><span className="staff-table-sub">{timeline.vitals.length} readings</span></div>
         {timeline.vitals.length === 0 ? <p className="staff-table-empty">No vitals recorded.</p> : <VitalsTrends vitals={timeline.vitals as never} />}
       </section>
+      {(() => { const visits = [...timeline.appointments.map((a) => a.scheduled_start ? new Date(a.scheduled_start).getTime() : 0), ...timeline.encounters.map((e) => e.started_at ? new Date(e.started_at).getTime() : 0)].filter(Boolean); const lastVisit = visits.length ? new Date(Math.max(...visits)) : null; const totalVisits = timeline.appointments.length + timeline.encounters.length; return totalVisits ? <section className="staff-panel staff-last-visit"><div className="staff-panel__header"><h2>Visit history</h2></div><div className="staff-last-visit__stats"><div><span className="staff-last-visit__num">{totalVisits}</span><span className="staff-last-visit__label">Total visits</span></div><div><span className="staff-last-visit__num">{lastVisit ? lastVisit.toLocaleDateString("en-UG", { dateStyle: "medium" }) : "—"}</span><span className="staff-last-visit__label">Last visit</span></div></div></section> : null; })()}
       <section className="staff-panel">
         <div className="staff-panel__header"><h2>Appointments & encounters</h2></div>
         <div className="staff-table-wrap"><table className="staff-table">

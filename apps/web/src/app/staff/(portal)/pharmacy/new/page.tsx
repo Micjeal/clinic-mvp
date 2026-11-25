@@ -28,7 +28,7 @@ export default async function NewPrescriptionPage({ searchParams }: { searchPara
         </div>
         <div className="staff-page-heading__actions"><Link className="btn btn--secondary" href="/staff/pharmacy">← Back to pharmacy</Link></div>
       </div>
-      <PrescriptionForm encounters={data.encounters as never} initialEncounterId={encounter ?? ""} medications={data.medications as never} />
+      <PrescriptionForm encounters={data.encounters as never} initialEncounterId={encounter ?? ""} medications={data.medications as never} stock={data.stock as never} stockItems={data.stockItems as never} />
     </div>
   );
 }

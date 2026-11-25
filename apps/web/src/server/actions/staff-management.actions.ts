@@ -8,6 +8,7 @@ import { AuthorizationError, safeServerMessage } from "@/server/errors";
 import { requirePermission } from "@/server/permissions/require-permission";
 import { createStaffProvisioning, deleteProvisionedAuthUser } from "@/server/repositories/staff-management.repository";
 import { insertAuditLog } from "@/server/repositories/settings.repository";
+import { logServerError } from "@/server/logging";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { facilityLocalDateTimeToInstant } from "@/lib/facility-time";
@@ -210,7 +211,10 @@ revalidatePath(`/staff/users/${membershipId}`); revalidatePath("/doctors"); reva
       ? supabase.storage.from("clinician-photos").getPublicUrl(nextPhotoPath).data.publicUrl
       : null;
     return { success: true, photoPath: publicPhotoPath, warning: cleanupWarning };
-  } catch (error) { return { error: safeServerMessage(error, "We couldn't save the clinician profile.") }; }
+  } catch (error) {
+    logServerError("staff", "clinician-profile-save-failed", error);
+    return { error: safeServerMessage(error, "We couldn't save the clinician profile.") };
+  }
 }
 
 export async function saveClinicianPublishingAction(_previous: unknown, formData: FormData) {
