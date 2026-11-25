@@ -140,3 +140,16 @@ export async function requestLabTestAction(_prev: unknown, formData: FormData) {
     return { error: safeServerMessage(error, "Unable to request the test.") };
   }
 }
+
+export async function notifyDoctorLabAction(orderId: string) {
+  try {
+    const staff = await requirePermission(Permissions.LAB_RESULT_WRITE);
+    const { markOrderNotified } = await import("@/server/repositories/lab.repository");
+    await markOrderNotified(orderId, staff.membership.organization_id);
+    revalidatePath(`/staff/lab/orders/${orderId}`);
+    return { success: "Doctor notified — results are visible on the encounter." };
+  } catch (error) {
+    logServerError("lab", "notify-doctor-failed", error);
+    return { error: safeServerMessage(error, "Unable to notify the doctor.") };
+  }
+}

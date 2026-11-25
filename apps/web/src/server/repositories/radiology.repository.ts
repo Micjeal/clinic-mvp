@@ -68,3 +68,9 @@ export async function createImagingTest(input: { organizationId: string; code: s
   if (error) throw error;
   return data.id;
 }
+
+export async function markImagingOrderNotified(orderId: string, organizationId: string) {
+  const supabase = (await createClient()) as unknown as import("@supabase/supabase-js").SupabaseClient;
+  const { error } = await supabase.from("imaging_orders").update({ clinician_notified_at: new Date().toISOString() }).eq("id", orderId).eq("organization_id", organizationId);
+  if (error) throw error;
+}

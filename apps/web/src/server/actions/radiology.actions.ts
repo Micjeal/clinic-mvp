@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { safeServerMessage } from "@/server/errors";
 import { logServerError } from "@/server/logging";
+import { requirePermission } from "@/server/permissions/require-permission";
+import { Permissions } from "@clinic/permissions";
 import { approveImagingReport, createImagingOrder, createImagingTest, saveImagingReport, setImagingStatus } from "@/server/services/radiology.service";
 
 const orderSchema = z.object({
@@ -88,5 +90,18 @@ export async function createImagingTestAction(_prev: unknown, formData: FormData
   } catch (error) {
     logServerError("radiology", "test-create-failed", error);
     return { error: safeServerMessage(error, "We couldn't add the exam.") };
+  }
+}
+
+export async function notifyDoctorImagingAction(orderId: string) {
+  try {
+    const staff = await requirePermission(Permissions.RADIOLOGY_REPORT_WRITE);
+    const { markImagingOrderNotified } = await import("@/server/repositories/radiology.repository");
+    await markImagingOrderNotified(orderId, staff.membership.organization_id);
+    revalidatePath(`/staff/radiology/orders/${orderId}`);
+    return { success: "Doctor notified — results are visible on the encounter." };
+  } catch (error) {
+    logServerError("radiology", "notify-doctor-failed", error);
+    return { error: safeServerMessage(error, "Unable to notify the doctor.") };
   }
 }

@@ -7,6 +7,7 @@ import { Permissions } from "@clinic/permissions";
 import { AuthorizationError, NotFoundError } from "@/server/errors";
 import { ImagingReportForm, ImagingStatusButtons } from "@/features/radiology/components/radiology-workspace";
 import Link from "next/link";
+import { NotifyDoctorButton } from "@/features/lab/components/notify-doctor-button";
 
 export const metadata = { title: "Imaging order" };
 
@@ -36,7 +37,7 @@ export default async function ImagingOrderPage({ params }: { params: Promise<{ i
         eyebrow="Clinical"
         title={`${test?.name ?? "Imaging order"} — ${patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}`}
         description={`${test?.modality?.toUpperCase() ?? ""}${test?.body_part ? ` • ${test.body_part}` : ""} • ${order.priority.toUpperCase()} • ${order.status.replace("_", " ")}`}
-        actions={<Link className="btn btn--secondary" href="/staff/radiology">← Back to radiology</Link>}
+        actions={<div style={{ display: "flex", gap: ".5rem" }}><NotifyDoctorButton kind="imaging" notified={Boolean((order as { clinician_notified_at?: string }).clinician_notified_at)} orderId={order.id} /><Link className="btn btn--secondary" href="/staff/radiology">← Back</Link></div>}
       />
       <div className="staff-detail-grid">
         <section className="staff-panel">

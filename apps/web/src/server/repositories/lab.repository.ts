@@ -34,7 +34,7 @@ export async function listLabDepartments(organizationId: string) {
 
 export async function listOrderableEncounters(organizationId: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("encounters").select("id,patient_id,facility_id,department_id,started_at,status,patients!encounters_patient_id_fkey(id,first_name,last_name,patient_number)").eq("organization_id", organizationId).order("started_at", { ascending: false }).limit(100);
+  const { data, error } = await supabase.from("encounters").select("id,patient_id,facility_id,department_id,started_at,status,patients!encounters_patient_id_fkey(id,first_name,last_name,patient_number)").eq("organization_id", organizationId).order("started_at", { ascending: false }).limit(500);
   if (error) throw error;
   return data ?? [];
 }
@@ -105,4 +105,10 @@ export async function createLabTest(input: { organizationId: string; code: strin
   } satisfies TablesInsert<"lab_tests">).select("id").single();
   if (error) throw error;
   return data.id;
+}
+
+export async function markOrderNotified(orderId: string, organizationId: string) {
+  const supabase = (await createClient()) as unknown as import("@supabase/supabase-js").SupabaseClient;
+  const { error } = await supabase.from("lab_orders").update({ clinician_notified_at: new Date().toISOString() }).eq("id", orderId).eq("organization_id", organizationId);
+  if (error) throw error;
 }
