@@ -88,6 +88,14 @@ export async function updateSurgeryAction(_prev: unknown, formData: FormData) {
     }
     if (input.blood_loss_ml !== "") patch.blood_loss_ml = input.blood_loss_ml;
     await repo.updateSurgery(input.surgery_id, orgId, patch);
+    if (input.status === "completed") {
+      const admin = (await import("@/lib/supabase/admin")).createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+      const { data: surg } = await admin.from("surgeries").select("patient_id,encounter_id,facility_id,procedure_name").eq("id", input.surgery_id).eq("organization_id", orgId).maybeSingle();
+      if (surg?.encounter_id && surg.patient_id) {
+        const { chargeFromCatalog } = await import("@/server/services/charge-hooks");
+        await chargeFromCatalog({ organizationId: orgId, encounterId: surg.encounter_id, patientId: surg.patient_id, facilityId: surg.facility_id ?? null, category: "procedure", nameMatch: "surgery", quantity: 1, actorId: (await ctx(Permissions.THEATRE_MANAGE)).userId, sourceType: "surgery", sourceId: input.surgery_id, description: `Theatre: ${surg.procedure_name ?? "Surgery"}` });
+      }
+    }
     revalidatePath("/staff/theatre");
     return { success: true };
   } catch (error) {

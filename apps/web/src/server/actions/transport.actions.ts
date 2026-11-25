@@ -61,8 +61,19 @@ export async function updateTransportRequestAction(_prev: unknown, formData: For
     const driver = formData.get("driver_name");
     if (typeof vehicle === "string" && vehicle.trim()) patch.vehicle = vehicle.trim();
     if (typeof driver === "string" && driver.trim()) patch.driver_name = driver.trim();
-    const { orgId } = await ctx(Permissions.TRANSPORT_MANAGE);
+    const { orgId, userId } = await ctx(Permissions.TRANSPORT_MANAGE);
     await repo.updateRequest(id, orgId, patch);
+    if (status === "completed") {
+      const admin = (await import("@/lib/supabase/admin")).createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+      const { data: req } = await admin.from("transport_requests").select("patient_id,facility_id").eq("id", id).eq("organization_id", orgId).maybeSingle();
+      if (req?.patient_id) {
+        const { data: openEnc } = await admin.from("encounters").select("id").eq("patient_id", req.patient_id).eq("organization_id", orgId).in("status", ["open","in_progress"]).order("started_at", { ascending: false }).limit(1).maybeSingle();
+        if (openEnc?.id) {
+          const { chargeFromCatalog } = await import("@/server/services/charge-hooks");
+          await chargeFromCatalog({ organizationId: orgId, encounterId: openEnc.id, patientId: req.patient_id, facilityId: req.facility_id ?? null, category: "other", nameMatch: "transport", quantity: 1, actorId: userId, sourceType: "transport", sourceId: id, description: "Patient transport" });
+        }
+      }
+    }
     revalidatePath("/staff/transport");
     return { success: true };
   } catch (error) {
