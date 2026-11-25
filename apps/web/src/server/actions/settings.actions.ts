@@ -276,3 +276,20 @@ export async function deactivateStandardChargeAction(id: string) {
     return { error: safeServerMessage(error, "Unable to deactivate the charge.") };
   }
 }
+
+export async function activateLabTestAction(id: string) {
+  try {
+    const { getSettingsContext } = await import("@/server/services/settings.service");
+    const context = await getSettingsContext();
+    const { createClient } = await import("@/lib/supabase/server");
+    const supabase = await createClient();
+    const { error } = await supabase.from("lab_tests").update({ is_active: true }).eq("id", id).eq("organization_id", context.organization.id);
+    if (error) throw error;
+    revalidatePath("/staff/settings/billing");
+    revalidatePath("/staff/lab/tests");
+    return { success: "Test activated." };
+  } catch (error) {
+    logServerError("settings-actions", "activate-test-failed", error);
+    return { error: safeServerMessage(error, "Unable to activate the test.") };
+  }
+}
