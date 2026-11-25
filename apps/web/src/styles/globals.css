@@ -4293,3 +4293,12 @@ img { max-width: 100%; }
 .lab-list-panel .staff-table tbody tr:hover { background: var(--blue-50); }
 
 .lab-test-detail { margin-top: .2rem; font-size: .7rem; font-weight: 500; color: var(--slate-600); }
+
+/* Lab test catalog edit */
+.lab-test-edit { display: grid; gap: .6rem; }
+.lab-test-edit__grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(10rem,1fr)); gap: .6rem; }
+.lab-test-edit__grid label { display: grid; gap: .25rem; font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: var(--slate-600); }
+.lab-test-edit__grid input, .lab-test-edit__grid select { min-height: 2.3rem; border: 1px solid var(--slate-300); border-radius: 8px; padding: .4rem .6rem; font: inherit; font-size: .85rem; }
+.lab-test-edit__active { flex-direction: row !important; align-items: center; gap: .4rem !important; text-transform: none !important; letter-spacing: 0 !important; font-weight: 600 !important; color: var(--navy-950) !important; }
+.lab-test-edit__actions { display: flex; align-items: center; gap: .5rem; }
+.lab-test-edit-row td { background: var(--blue-50); padding: 1rem; }

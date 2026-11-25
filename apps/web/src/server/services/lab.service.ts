@@ -24,7 +24,7 @@ export async function getLabOrder(id: string) {
 
 export async function getLabTests() {
   const { orgId } = await orgContext(Permissions.LAB_READ);
-  return repo.listLabTests(orgId);
+  return repo.listLabTests(orgId, true);
 }
 
 export async function getLabOrderForm() {
@@ -128,4 +128,10 @@ async function notifyResultReady(orgId: string, orderId: string, kind: "laborato
     await sendNotification({ ...base, channel: "in_app" });
     if (patient.phone) await sendNotification({ ...base, channel: "sms" });
   } catch { /* notification must never break approval */ }
+}
+
+export async function updateLabTestDetails(input: { id: string; code: string; name: string; description: string | null; specimenType: string | null; defaultUnit: string | null; referenceRangeText: string | null; price: number; departmentId: string | null; isActive: boolean }) {
+  const staff = await requirePermission(Permissions.DEPARTMENT_MANAGE);
+  if (!input.code.trim() || !input.name.trim()) throw new ValidationError("Code and name are required.");
+  await repo.updateLabTest({ ...input, organizationId: staff.membership.organization_id });
 }

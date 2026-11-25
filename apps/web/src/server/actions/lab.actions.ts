@@ -153,3 +153,21 @@ export async function notifyDoctorLabAction(orderId: string) {
     return { error: safeServerMessage(error, "Unable to notify the doctor.") };
   }
 }
+
+export async function updateLabTestAction(_prev: unknown, formData: FormData) {
+  try {
+    const input = testSchema.extend({ id: z.string().uuid(), is_active: z.string().optional() }).parse({ ...Object.fromEntries(formData), is_active: formData.get("is_active") === "true" ? "true" : undefined });
+    const { updateLabTestDetails } = await import("@/server/services/lab.service");
+    await updateLabTestDetails({
+      id: input.id, code: input.code, name: input.name, description: input.description || null,
+      specimenType: input.specimen_type || null, defaultUnit: input.default_unit || null,
+      referenceRangeText: input.reference_range_text || null, price: input.price,
+      departmentId: input.department_id || null, isActive: formData.get("is_active") === "true",
+    });
+    revalidatePath("/staff/lab/tests");
+    return { success: true };
+  } catch (error) {
+    logServerError("lab", "test-update-failed", error);
+    return { error: safeServerMessage(error, "We couldn't update the test.") };
+  }
+}
