@@ -25,16 +25,31 @@ export function ImagingOrderForm({ encounters, tests, initialEncounterId = "" }:
         <p className="eyebrow">Order</p>
         <h2>New imaging order</h2>
         <div className="staff-form-grid">
-          <label className="staff-form-grid__wide">Encounter
-            <input onChange={(event) => setEncQuery(event.target.value)} placeholder="Search patient name or number…" value={encQuery} />
-            <select name="encounter_id" onChange={(event) => setEncounterId(event.target.value)} required value={encounterId}>
-              <option value="">Choose the encounter</option>
-              {encounters.filter((encounter) => { const p = encounter.patients; return `${p?.first_name ?? ""} ${p?.last_name ?? ""} ${p?.patient_number ?? ""}`.toLowerCase().includes(encQuery.toLowerCase()); }).map((encounter) => {
+          <div className="staff-form-grid__wide encounter-picker">
+            <span className="encounter-picker__label">Encounter</span>
+            <div className="encounter-picker__search">
+              <input onChange={(event) => setEncQuery(event.target.value)} placeholder="Search patient name or number…" value={encQuery} />
+            </div>
+            <div className="encounter-picker__list">
+              {encounters.filter((encounter) => { const p = encounter.patients; return `${p?.first_name ?? ""} ${p?.last_name ?? ""} ${p?.patient_number ?? ""}`.toLowerCase().includes(encQuery.toLowerCase()); }).slice(0, 30).map((encounter) => {
                 const patient = encounter.patients;
-                return <option key={encounter.id} value={encounter.id}>{patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}{patient?.patient_number ? ` • ${patient.patient_number}` : ""} — {encounter.started_at ? new Date(encounter.started_at).toLocaleDateString("en-UG") : ""}</option>;
+                const active = encounterId === encounter.id;
+                return (
+                  <button className={`encounter-picker__item${active ? " is-active" : ""}`} key={encounter.id} onClick={() => { setEncounterId(encounter.id); setEncQuery(""); }} type="button">
+                    <span className="encounter-picker__avatar" aria-hidden="true">{(patient?.first_name?.[0] ?? "P")}{(patient?.last_name?.[0] ?? "")}</span>
+                    <span className="encounter-picker__info">
+                      <strong>{patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}</strong>
+                      <small>{patient?.patient_number ?? ""}{encounter.started_at ? ` · ${new Date(encounter.started_at).toLocaleDateString("en-UG")}` : ""}</small>
+                    </span>
+                    {active ? <span className="encounter-picker__check" aria-hidden="true">✓</span> : null}
+                  </button>
+                );
               })}
-            </select>
-          </label>
+              {encounters.filter((encounter) => { const p = encounter.patients; return `${p?.first_name ?? ""} ${p?.last_name ?? ""} ${p?.patient_number ?? ""}`.toLowerCase().includes(encQuery.toLowerCase()); }).length === 0 ? <p className="encounter-picker__empty">No encounters match.</p> : null}
+            </div>
+            <input name="encounter_id" type="hidden" value={encounterId} required />
+            {encounterId ? <p className="encounter-picker__selected">Selected: {(() => { const e = encounters.find((x) => x.id === encounterId); const p = e?.patients; return p ? `${p.first_name} ${p.last_name}${p.patient_number ? ` (${p.patient_number})` : ""}` : "Encounter selected"; })()}</p> : <p className="encounter-picker__selected encounter-picker__selected--hint">Choose a patient encounter above.</p>}
+          </div>
           <label>Exam<select name="imaging_test_id" onChange={(e) => setTestId(e.target.value)} required value={testId}>
             <option value="">Choose the exam</option>
             {tests.map((test) => <option key={test.id} value={test.id}>{test.name} ({test.modality.toUpperCase()}){test.body_part ? ` — ${test.body_part}` : ""}</option>)}

@@ -4181,3 +4181,21 @@ img { max-width: 100%; }
 .staff-unbilled-patient strong { font-size: .85rem; color: var(--navy-900); }
 .staff-unbilled-patient span { font-size: .72rem; color: var(--slate-600); }
 .staff-unbilled-patient__total { font-weight: 800; color: var(--teal-600); font-size: .85rem; }
+
+/* Encounter picker — searchable patient list */
+.encounter-picker { display: grid; gap: .55rem; }
+.encounter-picker__label { font-size: .75rem; font-weight: 750; color: var(--navy-950); }
+.encounter-picker__search input { width: 100%; min-height: 2.75rem; border: 1px solid var(--slate-300); border-radius: 10px; padding: .65rem .85rem; font: inherit; font-size: .92rem; }
+.encounter-picker__search input:focus { outline: 2px solid var(--teal-500); border-color: var(--teal-500); }
+.encounter-picker__list { display: grid; gap: .4rem; max-height: 15rem; overflow-y: auto; border: 1px solid var(--slate-200); border-radius: 12px; padding: .5rem; background: var(--blue-50); }
+.encounter-picker__item { display: flex; align-items: center; gap: .7rem; width: 100%; border: 1px solid transparent; border-radius: 10px; padding: .55rem .7rem; background: transparent; cursor: pointer; text-align: left; font: inherit; transition: background .15s, border-color .15s; }
+.encounter-picker__item:hover { background: var(--white); border-color: var(--slate-200); }
+.encounter-picker__item.is-active { background: var(--white); border-color: var(--teal-500); box-shadow: 0 0 0 1px var(--teal-500); }
+.encounter-picker__avatar { flex-shrink: 0; width: 2.1rem; height: 2.1rem; border-radius: 50%; background: linear-gradient(135deg, var(--teal-500), var(--blue-700)); color: var(--white); font-size: .72rem; font-weight: 800; display: grid; place-items: center; }
+.encounter-picker__info { flex: 1; min-width: 0; display: grid; gap: .1rem; }
+.encounter-picker__info strong { font-size: .85rem; color: var(--navy-950); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.encounter-picker__info small { font-size: .72rem; color: var(--slate-600); }
+.encounter-picker__check { color: var(--teal-600); font-weight: 800; }
+.encounter-picker__empty { margin: .5rem; font-size: .82rem; color: var(--slate-600); text-align: center; }
+.encounter-picker__selected { margin: 0; font-size: .8rem; font-weight: 700; color: var(--teal-600); }
+.encounter-picker__selected--hint { color: var(--slate-500); font-weight: 500; }
