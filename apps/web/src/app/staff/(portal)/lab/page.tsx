@@ -44,12 +44,12 @@ export default async function LabPage() {
             <tbody>
               {orders.length === 0 ? <tr><td colSpan={6} className="staff-table-empty">No lab orders yet.</td></tr> :
                 orders.map((order) => {
-                  const patient = order.patients as { first_name?: string; last_name?: string; patient_number?: string } | null;
+                  const patient = order.patients as { id?: string; first_name?: string; last_name?: string; patient_number?: string } | null;
                   const items = (order.lab_order_items ?? []) as { id: string }[];
                   return (
                     <tr key={order.id}>
                       <td><Link className="staff-table-link" href={`/staff/lab/orders/${order.id}`}>{new Date(order.ordered_at).toLocaleDateString("en-UG")}</Link></td>
-                      <td>{patient ? `${patient.first_name} ${patient.last_name}` : "—"}</td>
+                      <td>{patient?.id ? <Link className="staff-table-link" href={`/staff/patients/${patient.id}`}>{patient.first_name} {patient.last_name}</Link> : patient ? `${patient.first_name} ${patient.last_name}` : "—"}</td>
                       <td><span className={`lab-order-meta__chip lab-order-meta__chip--${order.priority}`}>{PRIORITY_LABELS[order.priority] ?? order.priority}</span></td>
                       <td>{items.length}</td>
                       <td><span className={`lab-test-status lab-test-status--${order.status}`}>{STATUS_LABELS[order.status] ?? order.status}</span></td>

@@ -7,6 +7,7 @@ import { Permissions } from "@clinic/permissions";
 import { AuthorizationError, NotFoundError } from "@/server/errors";
 import { DischargeForm } from "@/features/ward/components/ward-workspace";
 import Link from "next/link";
+import { WardVitalsForm } from "@/features/ward/components/ward-vitals-form";
 
 export const metadata = { title: "Admission" };
 

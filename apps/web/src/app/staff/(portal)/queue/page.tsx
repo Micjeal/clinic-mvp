@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Clock3 } from "lucide-react";
 import { getQueue } from "@/server/services/reception.service";
 import { QueueAction } from "@/features/staff/components/reception-actions";
@@ -33,7 +34,7 @@ export default async function QueuePage() {
         return <section className="staff-queue-group" key={status}>
           <header className="staff-queue-group__header"><div><p className="eyebrow">Queue stage</p><h2>{label}</h2></div><span className="staff-queue-count">{group.length}</span></header>
           {group.length ? <div className="staff-queue-cards">{group.map((entry) => { const patient = entry.encounters?.patients; const clinicianUserId = entry.encounters?.clinician_user_id ?? null; const isClinicalStage = status === "waiting_clinician" || status === "with_clinician"; const canClinical = context.permissions?.includes("queue.clinical") ?? false; const canOverride = context.permissions?.includes("queue.override") ?? false; const isAssignedClinician = clinicianUserId != null && clinicianUserId === context.userId; const canAct = !isClinicalStage || (isAssignedClinician ? canClinical : canOverride); const requiresOverride = isClinicalStage && canAct && !isAssignedClinician; return <article className="staff-queue-card" key={entry.id}>
-            <div className="staff-queue-card__identity"><h3>{patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}</h3><p>{patient?.patient_number ?? "Patient number unavailable"}</p></div>
+            <div className="staff-queue-card__identity"><h3>{patient?.id ? <Link className="staff-table-link" href={`/staff/patients/${patient.id}`}>{patient.first_name} {patient.last_name}</Link> : patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}</h3><p>{patient?.patient_number ?? "Patient number unavailable"}</p></div>
             <span className={`staff-priority staff-priority--${entry.priority}`}>{entry.priority}</span>
             <dl><div><dt>Department</dt><dd>{entry.departments?.name ?? "Department unavailable"}</dd></div><div><dt>Waiting</dt><dd suppressHydrationWarning><Clock3 aria-hidden="true" />{waitingSince(entry.checked_in_at)}</dd></div></dl>
             {context.permissions?.includes(permission) ? <QueueAction id={entry.id} status={entry.status as "waiting_triage" | "in_triage" | "waiting_clinician" | "with_clinician"} priority={entry.priority as "routine" | "priority" | "urgent" | "emergency"} canAct={canAct} requiresOverride={requiresOverride} /> : null}

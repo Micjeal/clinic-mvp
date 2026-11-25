@@ -57,11 +57,11 @@ export default async function BillingPage() {
             <tbody>
               {invoices.length === 0 ? <tr><td colSpan={6} className="staff-table-empty">No invoices yet. Create the first one to start billing.</td></tr> :
                 invoices.map((invoice) => {
-                  const patient = invoice.patients as { first_name?: string; last_name?: string; patient_number?: string } | null;
+                  const patient = invoice.patients as { id?: string; first_name?: string; last_name?: string; patient_number?: string } | null;
                   return (
                     <tr key={invoice.id}>
                       <td><Link className="staff-table-link" href={`/staff/billing/${invoice.id}`}>{invoice.invoice_number}</Link></td>
-                      <td>{patient ? `${patient.first_name} ${patient.last_name}` : "—"}{patient?.patient_number ? <span className="staff-table-sub"> {patient.patient_number}</span> : null}</td>
+                      <td>{patient?.id ? <Link className="staff-table-link" href={`/staff/patients/${patient.id}`}>{patient.first_name} {patient.last_name}</Link> : patient ? `${patient.first_name} ${patient.last_name}` : "—"}{patient?.patient_number ? <span className="staff-table-sub"> {patient.patient_number}</span> : null}</td>
                       <td><span className={`staff-status staff-status--${invoice.status}`}>{STATUS_LABELS[invoice.status] ?? invoice.status}</span></td>
                       <td className="staff-col-amount">{Number(invoice.total).toLocaleString()} {invoice.currency_code}</td>
                       <td className="staff-col-amount">{Number(invoice.balance).toLocaleString()} {invoice.balance > 0 ? invoice.currency_code : ""}</td>

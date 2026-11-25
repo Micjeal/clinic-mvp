@@ -78,3 +78,28 @@ export async function addEncounterChargeAction(_prev: unknown, formData: FormDat
     return { error: safeServerMessage(error, "Unable to add the charge.") };
   }
 }
+
+export async function recordEncounterVitalsAction(_prev: unknown, formData: FormData) {
+  try {
+    const encounterId = String(formData.get("encounter_id") || "");
+    const staff = await requirePermission(Permissions.CLINICAL_NOTE_WRITE);
+    const admin = createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+    const { data: enc } = await admin.from("encounters").select("id,patient_id,organization_id").eq("id", encounterId).eq("organization_id", staff.membership.organization_id).maybeSingle();
+    if (!enc?.patient_id) return { error: "Encounter not found." };
+    const num = (key: string) => { const v = formData.get(key); return v === null || v === "" ? undefined : Number(v); };
+    const { createVitals } = await import("@/server/repositories/reception.repository");
+    await createVitals({
+      organization_id: staff.membership.organization_id, encounter_id: encounterId, patient_id: enc.patient_id,
+      recorded_by: staff.user.id,
+      temperature_c: num("temperature_c") ?? null, pulse_bpm: num("pulse_bpm") ?? null, respiratory_rate: num("respiratory_rate") ?? null,
+      systolic_bp: num("systolic_bp") ?? null, diastolic_bp: num("diastolic_bp") ?? null, oxygen_saturation: num("oxygen_saturation") ?? null,
+      weight_kg: num("weight_kg") ?? null, height_cm: num("height_cm") ?? null,
+      notes: String(formData.get("notes") || "").trim() || null,
+    });
+    revalidatePath(`/staff/triage/${formData.get("queue_id") || ""}`);
+    return { success: true };
+  } catch (error) {
+    logServerError("clinical", "encounter-vitals-failed", error);
+    return { error: safeServerMessage(error, "Unable to record vitals.") };
+  }
+}

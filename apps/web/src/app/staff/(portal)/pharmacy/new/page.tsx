@@ -8,7 +8,8 @@ import { Pill } from "lucide-react";
 
 export const metadata = { title: "New prescription" };
 
-export default async function NewPrescriptionPage() {
+export default async function NewPrescriptionPage({ searchParams }: { searchParams: Promise<{ encounter?: string }> }) {
+  const { encounter } = await searchParams;
   let data;
   try {
     data = await getPrescriptionForm();
@@ -27,7 +28,7 @@ export default async function NewPrescriptionPage() {
         </div>
         <div className="staff-page-heading__actions"><Link className="btn btn--secondary" href="/staff/pharmacy">← Back to pharmacy</Link></div>
       </div>
-      <PrescriptionForm encounters={data.encounters as never} medications={data.medications as never} />
+      <PrescriptionForm encounters={data.encounters as never} initialEncounterId={encounter ?? ""} medications={data.medications as never} stock={data.stock as never} stockItems={data.stockItems as never} />
     </div>
   );
 }

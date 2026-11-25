@@ -10,12 +10,82 @@ type RxLine = { medication_id: string; medication_name: string; dose: string; fr
 
 const EMPTY_LINE: RxLine = { medication_id: "", medication_name: "", dose: "", frequency: "", duration_days: "", quantity: "", instructions: "" };
 
-export function PrescriptionForm({ encounters, medications }: { encounters: Encounter[]; medications: Medication[] }) {
+
+
+type StockItem = { id: string; item_name: string; sku: string; unit: string | null; on_hand_quantity: number; medication_id: string | null };
+
+function MedicationCatalogSearch({ medications, stock = {}, stockItems = [], onAdd }: { medications: Medication[]; stock?: Record<string, number>; stockItems?: StockItem[]; onAdd: (entry: { medication_id: string; medication_name?: string; name: string }) => void }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const q = query.trim().toLowerCase();
+  const medMatches = medications.filter((m) => !q || `${m.generic_name} ${m.brand_name ?? ""} ${m.strength ?? ""} ${m.dosage_form ?? ""}`.toLowerCase().includes(q)).slice(0, 8)
+    .map((m) => ({ key: `med-${m.id}`, medication_id: m.id, name: `${m.generic_name}${m.strength ? ` ${m.strength}` : ""}`, sub: [m.dosage_form, m.unit].filter(Boolean).join(" · ") || m.code, stock: stock[m.id] ?? 0, unit: m.unit ?? "" }));
+  const itemMatches = stockItems.filter((i) => !q || `${i.item_name} ${i.sku}`.toLowerCase().includes(q)).slice(0, 8)
+    .map((i) => ({ key: `item-${i.id}`, medication_id: i.medication_id ?? "", name: i.item_name, sub: `${i.sku}${i.unit ? ` · ${i.unit}` : ""}`, stock: Number(i.on_hand_quantity), unit: i.unit ?? "" }));
+  const results = [...itemMatches, ...medMatches].slice(0, 12);
+  return (
+    <div className="med-catalog-search">
+      <input onChange={(e) => { setQuery(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)} placeholder="Search medication catalog to add…" value={query} />
+      {open && query.trim().length >= 1 ? (
+        <div className="med-catalog-search__drop">
+          {results.map((r) => (
+            <button className="med-picker__item" key={r.key} onClick={() => { onAdd(r); setQuery(""); setOpen(false); }} type="button">
+              <strong>{r.name}</strong>
+              <span>{r.sub}</span>
+              <em className={`med-stock${r.stock > 0 ? " med-stock--ok" : " med-stock--out"}`}>{r.stock > 0 ? `In stock: ${r.stock}` : "Out of stock"}</em>
+            </button>
+          ))}
+          {results.length === 0 ? <p className="med-picker__empty">No inventory or medication match.</p> : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function MedicationPicker({ medications, stock = {}, value, onPick }: {
+  medications: Medication[];
+  stock?: Record<string, number>;
+  value: { medication_id: string; medication_name: string };
+  onPick: (med: Medication | null) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const selected = medications.find((m) => m.id === value.medication_id);
+  const filtered = medications.filter((m) => {
+    const q = query.trim().toLowerCase();
+    return !q || `${m.generic_name} ${m.brand_name ?? ""} ${m.strength ?? ""} ${m.dosage_form ?? ""}`.toLowerCase().includes(q);
+  }).slice(0, 12);
+  return (
+    <div className="med-picker">
+      <button className="med-picker__toggle" onClick={() => setOpen((v) => !v)} type="button">
+        {selected ? `${selected.generic_name}${selected.strength ? ` ${selected.strength}` : ""}` : value.medication_name || "Search medication…"}
+        <span aria-hidden="true">▾</span>
+      </button>
+      {open ? (
+        <div className="med-picker__drop">
+          <input autoFocus onChange={(e) => setQuery(e.target.value)} placeholder="Type to search…" value={query} />
+          <div className="med-picker__list">
+            {filtered.map((med) => (
+              <button className="med-picker__item" key={med.id} onClick={() => { onPick(med); setOpen(false); setQuery(""); }} type="button">
+                <strong>{med.generic_name}{med.strength ? ` ${med.strength}` : ""}</strong>
+                <span>{[med.dosage_form, med.unit].filter(Boolean).join(" · ") || med.code}</span>
+              <em className={`med-stock${(stock[med.id] ?? 0) > 0 ? " med-stock--ok" : " med-stock--out"}`}>{(stock[med.id] ?? 0) > 0 ? `In stock: ${stock[med.id]}` : "Out of stock"}</em>
+              </button>
+            ))}
+            {filtered.length === 0 ? <p className="med-picker__empty">No catalog match — add it under Medications first.</p> : null}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+export function PrescriptionForm({ encounters, medications, initialEncounterId = "", stock = {}, stockItems = [] }: { encounters: Encounter[]; medications: Medication[]; initialEncounterId?: string; stock?: Record<string, number>; stockItems?: StockItem[] }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [lines, setLines] = useState<RxLine[]>([{ ...EMPTY_LINE }]);
-  const [encounterId, setEncounterId] = useState("");
+  const [encounterId, setEncounterId] = useState(initialEncounterId);
   const [encQuery, setEncQuery] = useState("");
   const [encOpen, setEncOpen] = useState(false);
 
@@ -71,17 +141,19 @@ export function PrescriptionForm({ encounters, medications }: { encounters: Enco
       <section className="staff-editor-section">
         <p className="eyebrow">Items</p>
         <h2>Medications ({lines.filter((l) => l.medication_name.trim()).length})</h2>
-        <div className="staff-table-wrap"><table className="staff-table">
+        <MedicationCatalogSearch medications={medications} stock={stock} stockItems={stockItems} onAdd={(entry) => {
+          const name = entry.name;
+          const empty = lines.findIndex((l) => !l.medication_name.trim());
+          if (empty >= 0) setLine(empty, { medication_id: entry.medication_id, medication_name: name });
+          else setLines((prev) => [...prev, { ...EMPTY_LINE, medication_id: entry.medication_id, medication_name: name }]);
+        }} />
+        <div className="staff-table-wrap"><table className="staff-table rx-table">
           <thead><tr><th>Medication</th><th>Dose</th><th>Frequency</th><th>Days</th><th>Qty</th><th>Instructions</th><th /></tr></thead>
           <tbody>
             {lines.map((line, index) => (
               <tr key={index}>
                 <td>
-                  <select onChange={(e) => pickMedication(index, e.target.value)} value={line.medication_id}>
-                    <option value="">Custom / choose…</option>
-                    {medications.map((med) => <option key={med.id} value={med.id}>{med.generic_name}{med.strength ? ` ${med.strength}` : ""}{med.dosage_form ? ` (${med.dosage_form})` : ""}</option>)}
-                  </select>
-                  {!line.medication_id ? <input onChange={(e) => setLine(index, { medication_name: e.target.value })} placeholder="Medication name" value={line.medication_name} /> : null}
+                  <MedicationPicker medications={medications} stock={stock} onPick={(med) => pickMedication(index, med?.id ?? "")} value={line} />
                 </td>
                 <td><input onChange={(e) => setLine(index, { dose: e.target.value })} placeholder="e.g. 500mg" style={{ width: "6rem" }} value={line.dose} /></td>
                 <td><input onChange={(e) => setLine(index, { frequency: e.target.value })} placeholder="e.g. BD" style={{ width: "6rem" }} value={line.frequency} /></td>

@@ -8,11 +8,12 @@ type Patient = { id: string; first_name: string; last_name: string; patient_numb
 type Ward = { id: string; name: string; ward_type: string; beds?: { id: string; bed_number: string; status: string }[] };
 type Facility = { id: string; name: string };
 
-export function AdmitForm({ wards, patients, facilities }: { wards: Ward[]; patients: Patient[]; facilities: Facility[] }) {
+export function AdmitForm({ wards, patients, facilities, initialPatientId = "", encounterId = "" }: { wards: Ward[]; patients: Patient[]; facilities: Facility[]; initialPatientId?: string; encounterId?: string }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [wardId, setWardId] = useState("");
+  const [patientId, setPatientId] = useState(initialPatientId);
   const ward = wards.find((item) => item.id === wardId);
   const freeBeds = (ward?.beds ?? []).filter((bed) => bed.status === "available");
 
@@ -26,7 +27,8 @@ export function AdmitForm({ wards, patients, facilities }: { wards: Ward[]; pati
         <p className="eyebrow">Admission</p>
         <h2>Admit a patient</h2>
         <div className="staff-form-grid">
-          <label>Patient<select name="patient_id" required>
+          {encounterId ? <input name="encounter_id" type="hidden" value={encounterId} /> : null}
+          <label>Patient<select name="patient_id" onChange={(e) => setPatientId(e.target.value)} required value={patientId}>
             <option value="">Choose a patient</option>
             {patients.map((patient) => <option key={patient.id} value={patient.id}>{patient.first_name} {patient.last_name}{patient.patient_number ? ` (${patient.patient_number})` : ""}</option>)}
           </select></label>

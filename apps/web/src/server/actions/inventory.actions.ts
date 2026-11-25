@@ -69,11 +69,28 @@ export async function loadEssentialCatalogAction(_prev: unknown, formData: FormD
     const staff = await requirePermission(Permissions.INVENTORY_ADJUST);
     const orgId = staff.membership.organization_id;
     const admin = createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
-    const { data: existing } = await admin.from("inventory_items").select("sku").eq("organization_id", orgId).eq("facility_id", facilityId);
+    const [{ data: existing }, { data: meds }] = await Promise.all([
+      admin.from("inventory_items").select("id,sku,item_name,medication_id").eq("organization_id", orgId).eq("facility_id", facilityId),
+      admin.from("medications").select("id,generic_name").eq("organization_id", orgId).eq("is_active", true),
+    ]);
+    const norm = (v: string) => v.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    const medByName = new Map((meds ?? []).map((m) => [norm(m.generic_name as string), m.id as string]));
+    const matchMed = (name: string) => {
+      const n = norm(name);
+      if (medByName.has(n)) return medByName.get(n)!;
+      for (const [key, id] of medByName) if (n.includes(key) || key.includes(n)) return id;
+      return null;
+    };
+    // link existing unlinked items to medications
+    for (const row of existing ?? []) {
+      if (row.medication_id) continue;
+      const medId = matchMed(row.item_name as string);
+      if (medId) await admin.from("inventory_items").update({ medication_id: medId }).eq("id", row.id);
+    }
     const existingSkus = new Set((existing ?? []).map((row) => row.sku as string));
     const { ESSENTIAL_CATALOG } = await import("@/features/inventory/essential-catalog");
     const toInsert = ESSENTIAL_CATALOG.filter((item) => !existingSkus.has(item.sku)).map((item) => ({
-      organization_id: orgId, facility_id: facilityId, department_id: null, medication_id: null,
+      organization_id: orgId, facility_id: facilityId, department_id: null, medication_id: matchMed(item.name),
       sku: item.sku, item_name: item.name, unit: item.unit,
       on_hand_quantity: 0, reorder_level: item.reorder, cost_price: item.cost, selling_price: item.price,
     }));

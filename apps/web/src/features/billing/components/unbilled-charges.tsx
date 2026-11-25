@@ -73,7 +73,7 @@ export function UnbilledCharges({ charges, facilities }: { charges: Charge[]; fa
                     <td>{charge.description}</td>
                     <td className="staff-col-amount">{Number(charge.quantity)}</td>
                     <td className="staff-col-amount">{Number(charge.total).toLocaleString()} {charge.currency_code}</td>
-                    <td>{new Date(charge.created_at).toLocaleDateString()}</td>
+                    <td>{String(charge.created_at).slice(0, 10)}</td>
                   </tr>
                 );
               })}
