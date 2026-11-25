@@ -88,3 +88,27 @@ export async function loadEssentialCatalogAction(_prev: unknown, formData: FormD
     return { error: safeServerMessage(error, "Unable to load the catalog.") };
   }
 }
+
+const updateItemSchema = z.object({
+  id: z.string().uuid(), facility_id: z.string().uuid(),
+  sku: z.string().trim().min(1).max(60), item_name: z.string().trim().min(2).max(200),
+  unit: z.string().trim().min(1).max(40), reorder_level: z.coerce.number().min(0),
+  cost_price: z.coerce.number().min(0), selling_price: z.coerce.number().min(0),
+});
+
+export async function updateInventoryItemAction(_prev: unknown, formData: FormData) {
+  try {
+    const input = updateItemSchema.parse(Object.fromEntries(formData));
+    const { updateInventoryItemDetails } = await import("@/server/services/inventory.service");
+    await updateInventoryItemDetails({
+      id: input.id, facilityId: input.facility_id, sku: input.sku, itemName: input.item_name,
+      unit: input.unit, reorderLevel: input.reorder_level, costPrice: input.cost_price,
+      sellingPrice: input.selling_price, isActive: formData.get("is_active") === "true",
+    });
+    revalidatePath("/staff/inventory");
+    return { success: true };
+  } catch (error) {
+    logServerError("inventory", "item-update-failed", error);
+    return { error: safeServerMessage(error, "Unable to update the item.") };
+  }
+}

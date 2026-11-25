@@ -44,7 +44,7 @@ export default async function InventoryPage() {
       {canAdjust ? <section className="staff-panel inventory-add-panel"><div className="staff-panel__header"><h2>Add inventory item</h2></div><InventoryItemForm facilities={formData.facilities as never} /><EssentialCatalogLoader facilities={formData.facilities as never} /></section> : null}
       <section className="staff-panel inventory-panel">
         <div className="staff-panel__header"><h2>Stock items</h2><span className="staff-table-sub">{items.length} tracked</span></div>
-        <InventoryStockTable items={items as never} />
+        <InventoryStockTable canManage={canAdjust} facilities={formData.facilities as never} items={items as never} />
       </section>
       <section className="staff-panel">
         <div className="staff-panel__header"><h2>Recent movements</h2></div>
