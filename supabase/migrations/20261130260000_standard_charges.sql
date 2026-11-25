@@ -32,4 +32,4 @@ create policy standard_charges_delete on public.standard_charges for delete to a
   using (private.has_permission(organization_id,'settings.manage'));
 
 create trigger standard_charges_set_updated_at before update on public.standard_charges
-  for each row execute function public.set_updated_at();
+  for each row execute function private.set_updated_at();
