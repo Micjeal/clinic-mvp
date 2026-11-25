@@ -7,7 +7,15 @@ import Link from "next/link";
 
 export const metadata = { title: "New admission" };
 
-export default async function NewAdmissionPage() {
+export default async function NewAdmissionPage({ searchParams }: { searchParams: Promise<{ encounter?: string }> }) {
+  const { encounter } = await searchParams;
+  let initialPatientId = "";
+  if (encounter) {
+    const { createAdminClient } = await import("@/lib/supabase/admin");
+    const admin = createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+    const { data: enc } = await admin.from("encounters").select("patient_id").eq("id", encounter).maybeSingle();
+    initialPatientId = enc?.patient_id ?? "";
+  }
   let data;
   try {
     data = await getAdmissionForm();
@@ -18,7 +26,7 @@ export default async function NewAdmissionPage() {
   return (
     <div className="staff-page">
       <StaffPageHeader eyebrow="Inpatient" title="New admission" description="Admit a patient to a ward bed." actions={<Link className="btn btn--secondary" href="/staff/wards">← Back to wards</Link>} />
-      <AdmitForm facilities={data.facilities as never} patients={data.patients as never} wards={data.wards as never} />
+      <AdmitForm encounterId={encounter ?? ""} facilities={data.facilities as never} initialPatientId={initialPatientId} patients={data.patients as never} wards={data.wards as never} />
     </div>
   );
 }

@@ -60,7 +60,7 @@ export async function resetStaffPasswordAction(membershipId: string) {
     const admin = createAdminClient();
     const { error: updateError } = await admin.auth.admin.updateUserById(member.user_id, { password });
     if (updateError) return { error: "We couldn't reset the password. Try again." };
-    const { error: flagError } = await supabase
+    const { error: flagError } = await admin
       .from("staff_memberships")
       .update({ must_change_password: true })
       .eq("id", member.id)
@@ -170,7 +170,7 @@ export async function saveClinicianProfileAction(_previous: unknown, formData: F
         p_display_name: displayName,
         p_professional_title: professionalTitle,
         p_public_bio: String(formData.get("public_bio") || "").trim(),
-        p_photo_path: nextPhotoPath || "",
+        p_photo_path: (nextPhotoPath || null) as unknown as string,
         p_years_experience: years ?? 0,
         p_experience_summary: String(formData.get("experience_summary") || "").trim(),
         p_languages: languages,

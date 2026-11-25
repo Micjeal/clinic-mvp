@@ -4534,3 +4534,13 @@ img { max-width: 100%; }
 .inventory-edit-active { flex-direction: row !important; align-items: center; gap: .45rem !important; text-transform: none !important; letter-spacing: 0 !important; font-weight: 600 !important; color: var(--navy-950) !important; }
 .inventory-edit-active input { width: 1.1rem; height: 1.1rem; accent-color: var(--teal-600); }
 .inventory-edit-actions { display: flex; align-items: center; gap: .5rem; }
+
+/* Staff member detail — polish */
+.doctor-identity-email { margin-top: .3rem; font-size: .82rem; color: var(--slate-600); display: inline-flex; align-items: center; gap: .35rem; }
+.staff-doctor-page .staff-panel { border-radius: 16px; }
+.staff-doctor-page .staff-form-grid label { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--slate-600); }
+.staff-doctor-page .staff-form-grid input, .staff-doctor-page .staff-form-grid select, .staff-doctor-page .staff-form-grid textarea { border-radius: 10px; }
+.staff-doctor-page .staff-form-grid input:focus, .staff-doctor-page .staff-form-grid select:focus, .staff-doctor-page .staff-form-grid textarea:focus { outline: 2px solid var(--teal-500); border-color: var(--teal-500); box-shadow: 0 0 0 3px rgba(23,190,187,.15); }
+.staff-doctor-page .staff-panel__header h2 { color: var(--navy-950); }
+.staff-setup-banner { border-radius: 14px; border-left: 4px solid var(--teal-500); }
+.doctor-more-menu__panel { border-radius: 12px; box-shadow: 0 12px 32px rgba(12,39,64,.14); }

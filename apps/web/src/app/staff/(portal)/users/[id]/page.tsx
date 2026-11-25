@@ -13,6 +13,7 @@ import { getPublicFacilities } from "@/server/services/facility.service";
 import { findPublicClinicianProfile } from "@/server/services/public-clinician.service";
 import { getPublicServices } from "@/server/services/service.service";
 import { ResetStaffPassword } from "@/features/staff/components/reset-staff-password";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata = { title: "Staff member" };
 
@@ -76,6 +77,9 @@ export default async function StaffMemberPage({
         timeZone: publicProfile.nextSlot.timeZone,
       }).format(new Date(publicProfile.nextSlot.startsAt))
     : null;
+  const admin = createAdminClient() as unknown as import("@supabase/supabase-js").SupabaseClient;
+  const { data: authUser } = await admin.auth.admin.getUserById(member.user_id);
+  const memberEmail = authUser?.user?.email ?? null;
   const facilityName =
     facilities.find((item) => item.id === member.primary_facility_id)?.name ?? null;
   const primaryDepartmentName = departmentIds.length
@@ -101,6 +105,7 @@ export default async function StaffMemberPage({
             <p className="eyebrow">{member.role_key === "doctor" ? "Doctor" : "Staff member"}</p>
             <h1>{member.role_key === "doctor" ? doctorName : member.full_name}</h1>
             {doctorTitle ? <p className="doctor-professional-title">{doctorTitle}</p> : null}
+            {memberEmail ? <p className="doctor-identity-email">{memberEmail}</p> : null}
             {member.role_key === "doctor" && (primaryDepartmentName || facilityName) ? (
               <p className="doctor-identity-meta">
                 {[primaryDepartmentName, facilityName].filter(Boolean).join(" • ")}

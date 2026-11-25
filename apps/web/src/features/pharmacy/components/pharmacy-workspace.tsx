@@ -10,12 +10,12 @@ type RxLine = { medication_id: string; medication_name: string; dose: string; fr
 
 const EMPTY_LINE: RxLine = { medication_id: "", medication_name: "", dose: "", frequency: "", duration_days: "", quantity: "", instructions: "" };
 
-export function PrescriptionForm({ encounters, medications }: { encounters: Encounter[]; medications: Medication[] }) {
+export function PrescriptionForm({ encounters, medications, initialEncounterId = "" }: { encounters: Encounter[]; medications: Medication[]; initialEncounterId?: string }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [lines, setLines] = useState<RxLine[]>([{ ...EMPTY_LINE }]);
-  const [encounterId, setEncounterId] = useState("");
+  const [encounterId, setEncounterId] = useState(initialEncounterId);
   const [encQuery, setEncQuery] = useState("");
   const [encOpen, setEncOpen] = useState(false);
 
