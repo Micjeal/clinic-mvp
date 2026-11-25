@@ -7,7 +7,8 @@ import Link from "next/link";
 
 export const metadata = { title: "New lab order" };
 
-export default async function NewLabOrderPage() {
+export default async function NewLabOrderPage({ searchParams }: { searchParams: Promise<{ encounter?: string }> }) {
+  const { encounter } = await searchParams;
   let data;
   try {
     data = await getLabOrderForm();
@@ -18,7 +19,7 @@ export default async function NewLabOrderPage() {
   return (
     <div className="staff-page">
       <StaffPageHeader eyebrow="Clinical" title="New lab order" description="Order tests against a patient encounter." actions={<Link className="btn btn--secondary" href="/staff/lab">← Back to laboratory</Link>} />
-      <LabOrderForm encounters={data.encounters as never} tests={data.tests as never} />
+      <LabOrderForm encounters={data.encounters as never} tests={data.tests as never} initialEncounterId={encounter ?? ""} />
     </div>
   );
 }

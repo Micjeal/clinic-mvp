@@ -7,12 +7,14 @@ import { createLabOrderAction, requestLabTestAction } from "@/server/actions/lab
 type Encounter = { id: string; patient_id: string; started_at: string | null; status: string | null; patients?: { first_name?: string; last_name?: string; patient_number?: string } | null };
 type Test = { id: string; code: string; name: string; specimen_type: string | null; price: number; currency_code: string };
 
-export function LabOrderForm({ encounters, tests }: { encounters: Encounter[]; tests: Test[] }) {
+export function LabOrderForm({ encounters, tests, initialEncounterId = "" }: { encounters: Encounter[]; tests: Test[]; initialEncounterId?: string }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
   const [query, setQuery] = useState("");
+  const [encQuery, setEncQuery] = useState("");
+  const [encounterId, setEncounterId] = useState(initialEncounterId);
 
   const filteredTests = tests.filter((test) => `${test.code} ${test.name}`.toLowerCase().includes(query.toLowerCase()));
 
@@ -27,13 +29,16 @@ export function LabOrderForm({ encounters, tests }: { encounters: Encounter[]; t
         <p className="eyebrow">Order</p>
         <h2>New lab order</h2>
         <div className="staff-form-grid">
-          <label>Encounter<select name="encounter_id" required>
-            <option value="">Choose the encounter this order is for</option>
-            {encounters.map((encounter) => {
-              const patient = encounter.patients;
-              return <option key={encounter.id} value={encounter.id}>{patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}{patient?.patient_number ? ` • ${patient.patient_number}` : ""} — {encounter.started_at ? new Date(encounter.started_at).toLocaleDateString() : ""}</option>;
-            })}
-          </select></label>
+          <label className="staff-form-grid__wide">Encounter
+            <input onChange={(event) => setEncQuery(event.target.value)} placeholder="Search patient name or number…" value={encQuery} />
+            <select name="encounter_id" onChange={(event) => setEncounterId(event.target.value)} required value={encounterId}>
+              <option value="">Choose the encounter this order is for</option>
+              {encounters.filter((encounter) => { const p = encounter.patients; return `${p?.first_name ?? ""} ${p?.last_name ?? ""} ${p?.patient_number ?? ""}`.toLowerCase().includes(encQuery.toLowerCase()); }).map((encounter) => {
+                const patient = encounter.patients;
+                return <option key={encounter.id} value={encounter.id}>{patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}{patient?.patient_number ? ` • ${patient.patient_number}` : ""} — {encounter.started_at ? new Date(encounter.started_at).toLocaleDateString() : ""}</option>;
+              })}
+            </select>
+          </label>
           <label>Priority<select name="priority" defaultValue="routine"><option value="routine">Routine</option><option value="urgent">Urgent</option><option value="stat">STAT</option></select></label>
           <label className="staff-form-grid__wide">Clinical notes<textarea name="clinical_notes" rows={3} placeholder="Reason for testing, relevant history…" /></label>
         </div>

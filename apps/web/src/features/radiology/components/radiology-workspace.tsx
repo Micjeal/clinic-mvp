@@ -7,11 +7,13 @@ import { approveImagingReportAction, createImagingOrderAction, createImagingTest
 type Encounter = { id: string; started_at: string | null; patients?: { first_name?: string; last_name?: string; patient_number?: string } | null };
 type Test = { id: string; code: string; name: string; modality: string; body_part: string | null; price: number; currency_code: string };
 
-export function ImagingOrderForm({ encounters, tests }: { encounters: Encounter[]; tests: Test[] }) {
+export function ImagingOrderForm({ encounters, tests, initialEncounterId = "" }: { encounters: Encounter[]; tests: Test[]; initialEncounterId?: string }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [testId, setTestId] = useState("");
+  const [encQuery, setEncQuery] = useState("");
+  const [encounterId, setEncounterId] = useState(initialEncounterId);
 
   return (
     <form action={(formData) => startTransition(async () => {
@@ -23,13 +25,16 @@ export function ImagingOrderForm({ encounters, tests }: { encounters: Encounter[
         <p className="eyebrow">Order</p>
         <h2>New imaging order</h2>
         <div className="staff-form-grid">
-          <label>Encounter<select name="encounter_id" required>
-            <option value="">Choose the encounter</option>
-            {encounters.map((encounter) => {
-              const patient = encounter.patients;
-              return <option key={encounter.id} value={encounter.id}>{patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}{patient?.patient_number ? ` • ${patient.patient_number}` : ""} — {encounter.started_at ? new Date(encounter.started_at).toLocaleDateString() : ""}</option>;
-            })}
-          </select></label>
+          <label className="staff-form-grid__wide">Encounter
+            <input onChange={(event) => setEncQuery(event.target.value)} placeholder="Search patient name or number…" value={encQuery} />
+            <select name="encounter_id" onChange={(event) => setEncounterId(event.target.value)} required value={encounterId}>
+              <option value="">Choose the encounter</option>
+              {encounters.filter((encounter) => { const p = encounter.patients; return `${p?.first_name ?? ""} ${p?.last_name ?? ""} ${p?.patient_number ?? ""}`.toLowerCase().includes(encQuery.toLowerCase()); }).map((encounter) => {
+                const patient = encounter.patients;
+                return <option key={encounter.id} value={encounter.id}>{patient ? `${patient.first_name} ${patient.last_name}` : "Patient"}{patient?.patient_number ? ` • ${patient.patient_number}` : ""} — {encounter.started_at ? new Date(encounter.started_at).toLocaleDateString() : ""}</option>;
+              })}
+            </select>
+          </label>
           <label>Exam<select name="imaging_test_id" onChange={(e) => setTestId(e.target.value)} required value={testId}>
             <option value="">Choose the exam</option>
             {tests.map((test) => <option key={test.id} value={test.id}>{test.name} ({test.modality.toUpperCase()}){test.body_part ? ` — ${test.body_part}` : ""}</option>)}
