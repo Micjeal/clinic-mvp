@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { createInventoryItemAction, recordMovementAction } from "@/server/actions/inventory.actions";
+import { createInventoryItemAction, loadEssentialCatalogAction, recordMovementAction } from "@/server/actions/inventory.actions";
 
 type Facility = { id: string; name: string };
 type Item = { id: string; sku: string; item_name: string; unit: string; on_hand_quantity: number };
@@ -24,6 +24,29 @@ export function InventoryItemForm({ facilities }: { facilities: Facility[] }) {
       <label>Cost price<input min="0" name="cost_price" step="0.01" type="number" /></label>
       <label>Selling price<input min="0" name="selling_price" step="0.01" type="number" /></label>
       <div className="staff-form-actions"><button className="btn btn--compact" disabled={pending} type="submit">{pending ? "Adding…" : "Add item"}</button>{message ? <span className="staff-table-empty">{message}</span> : null}</div>
+    </form>
+  );
+}
+
+export function EssentialCatalogLoader({ facilities }: { facilities: Facility[] }) {
+  const [pending, startTransition] = useTransition();
+  const [message, setMessage] = useState("");
+  const [facilityId, setFacilityId] = useState("");
+  return (
+    <form action={(formData) => startTransition(async () => {
+      const result = await loadEssentialCatalogAction(null, formData);
+      setMessage(result.error ?? result.success ?? "");
+      if (!result.error) window.location.reload();
+    })} className="inventory-catalog-loader">
+      <div className="inventory-catalog-loader__field">
+        <label htmlFor="catalog-facility">Facility</label>
+        <select id="catalog-facility" name="facility_id" onChange={(e) => setFacilityId(e.target.value)} required value={facilityId}>
+          <option value="">Choose facility…</option>
+          {facilities.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+        </select>
+      </div>
+      <button className="btn btn--secondary" disabled={pending || !facilityId} type="submit">{pending ? "Loading…" : "Load essential hospital catalog"}</button>
+      {message ? <span className="staff-table-empty">{message}</span> : null}
     </form>
   );
 }

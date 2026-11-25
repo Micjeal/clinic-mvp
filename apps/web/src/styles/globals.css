@@ -4348,3 +4348,178 @@ img { max-width: 100%; }
 .imaging-test-form label { display: grid; gap: .35rem; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--slate-600); }
 .imaging-test-form input, .imaging-test-form select { min-height: 2.6rem; border: 1px solid var(--slate-300); border-radius: 10px; padding: .55rem .8rem; font: inherit; font-size: .88rem; background: #fbfdfe; color: var(--navy-950); text-transform: none; letter-spacing: normal; }
 .imaging-test-form input:focus, .imaging-test-form select:focus { outline: 2px solid var(--teal-500); border-color: var(--teal-500); box-shadow: 0 0 0 3px rgba(23,190,187,.15); }
+
+/* Billing page polish */
+.billing-panel { border-radius: 16px; }
+.billing-panel .staff-table thead th { background: var(--blue-50); font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; color: var(--navy-900); }
+.billing-panel .staff-table-wrap { border: 1px solid var(--slate-200); border-radius: 12px; }
+.billing-panel .staff-table tbody tr:hover { background: var(--blue-50); }
+.staff-kpi { border-radius: 14px; }
+
+/* Settings billing polish */
+.billing-settings-panel .staff-table-list li { border-radius: 10px; }
+.staff-settings-summary div { background: var(--blue-50); border-radius: 10px; padding: .6rem .8rem; }
+.staff-settings-chips li { border-radius: 999px; }
+
+/* Settings billing — section cards */
+/* Settings billing — section cards */
+.staff-section { border-radius: 16px !important; box-shadow: 0 8px 24px rgba(12,39,64,.045); }
+.staff-section .staff-panel-heading h2 { color: var(--navy-950); }
+.staff-section-description { color: var(--slate-600); }
+.staff-settings-summary { display: grid; gap: .6rem; }
+.staff-settings-summary > div { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem .9rem; background: var(--blue-50); border: 1px solid var(--slate-200); border-radius: 10px; }
+.staff-settings-summary dt { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--slate-600); }
+.staff-settings-summary dd { margin: 0; font-size: .88rem; font-weight: 700; color: var(--navy-950); text-align: right; }
+.staff-settings-chips { display: flex; flex-wrap: wrap; gap: .45rem; list-style: none; margin: 0; padding: 0; }
+.staff-settings-chips li { padding: .35rem .8rem; border-radius: 999px; background: var(--cyan-100); color: var(--teal-600); font-size: .75rem; font-weight: 700; }
+
+/* Charge catalog rows */
+.charge-catalog-list { display: grid; gap: .5rem; list-style: none; margin: 0; padding: 0; }
+.charge-catalog-row { display: grid; grid-template-columns: minmax(0,1.6fr) minmax(0,1fr) auto auto; align-items: center; gap: .8rem; padding: .7rem .9rem; border: 1px solid var(--slate-200); border-radius: 12px; background: var(--white); }
+.charge-catalog-row__name { display: grid; gap: .1rem; min-width: 0; }
+.charge-catalog-row__name strong { font-size: .88rem; color: var(--navy-950); }
+.charge-catalog-row__name small { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--teal-600); }
+.charge-catalog-row__price { font-size: .9rem; font-weight: 800; color: var(--navy-900); }
+.charge-status { display: inline-block; padding: .25rem .65rem; border-radius: 999px; font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+.charge-status--active { background: #d1fae5; color: #065f46; }
+.charge-status--inactive { background: var(--slate-200); color: var(--slate-600); }
+.charge-catalog-row__actions { display: flex; gap: .4rem; }
+@media (max-width: 640px) { .charge-catalog-row { grid-template-columns: 1fr auto; } .charge-catalog-row__price, .charge-status { grid-column: 1 / -1; } }
+
+/* Charge catalog form */
+.charge-form { background: var(--blue-50); border: 1px solid var(--slate-200); border-radius: 14px; padding: 1rem; }
+.charge-form label { display: grid; gap: .35rem; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--slate-600); }
+.charge-form input:not([type="checkbox"]), .charge-form select { min-height: 2.6rem; border: 1px solid var(--slate-300); border-radius: 10px; padding: .55rem .8rem; font: inherit; font-size: .88rem; background: var(--white); color: var(--navy-950); text-transform: none; letter-spacing: normal; }
+.charge-form input:focus, .charge-form select:focus { outline: 2px solid var(--teal-500); border-color: var(--teal-500); box-shadow: 0 0 0 3px rgba(23,190,187,.15); }
+.charge-form__active { flex-direction: row !important; align-items: center; gap: .5rem !important; grid-column: 1 / -1; }
+.charge-form__active input { width: 1.1rem; height: 1.1rem; accent-color: var(--teal-600); }
+.charge-form__active span { text-transform: none !important; letter-spacing: normal !important; font-weight: 600 !important; font-size: .82rem !important; color: var(--navy-950) !important; }
+.charge-form .staff-form-actions { grid-column: 1 / -1; }
+.charge-form .btn { min-height: 2.5rem; }
+
+/* Charge catalog — spacing between list and form */
+.charge-catalog-list { margin-bottom: 1.25rem; }
+.charge-form { margin-top: .5rem; }
+
+/* Active toggle switch */
+.charge-form__active { cursor: pointer; }
+.charge-form__active input { appearance: none; -webkit-appearance: none; position: relative; width: 2.4rem; height: 1.35rem; border-radius: 999px; background: var(--slate-300); transition: background .2s; flex-shrink: 0; }
+.charge-form__active input::after { content: ""; position: absolute; top: .18rem; left: .18rem; width: 1rem; height: 1rem; border-radius: 50%; background: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,.2); transition: transform .2s; }
+.charge-form__active input:checked { background: var(--teal-600); }
+.charge-form__active input:checked::after { transform: translateX(1.05rem); }
+.charge-form__active input:focus-visible { outline: 2px solid var(--teal-500); outline-offset: 2px; }
+
+/* Active toggle — override conflicts */
+.charge-form__active input[type="checkbox"] { appearance: none !important; -webkit-appearance: none !important; accent-color: transparent !important; margin: 0 !important; display: inline-block !important; }
+
+/* Toggle switch — final spec */
+.charge-form__active { display: inline-flex !important; align-items: center; gap: .75rem; cursor: pointer; user-select: none; font-weight: 500; color: var(--slate-700); grid-column: 1 / -1; }
+.charge-form__active input[type="checkbox"] { appearance: none !important; -webkit-appearance: none !important; position: relative; display: inline-block !important; flex-shrink: 0; width: 2.75rem; height: 1.5rem; min-height: 1.5rem; padding: 0 !important; margin: 0 !important; border-radius: 999px; background: var(--slate-200); border: 1.5px solid var(--slate-300); cursor: pointer; vertical-align: middle; transition: background-color .2s ease, border-color .2s ease; }
+.charge-form__active input[type="checkbox"]::before { content: ""; position: absolute; top: 50%; left: .16rem; width: 1.05rem; height: 1.05rem; border-radius: 50%; background: var(--white); box-shadow: 0 1px 3px rgba(7,28,47,.24); transform: translate(0,-50%); transition: transform .2s cubic-bezier(.22,1,.36,1); }
+.charge-form__active input[type="checkbox"]:checked { background: var(--teal-600); border-color: var(--teal-600); }
+.charge-form__active input[type="checkbox"]:checked::before { transform: translate(1.22rem,-50%); }
+.charge-form__active input[type="checkbox"]:hover:not(:checked) { border-color: var(--slate-400); }
+.charge-form__active input[type="checkbox"]:hover:checked { background: var(--teal-500); border-color: var(--teal-500); }
+.charge-form__active input[type="checkbox"]:focus-visible { outline: 3px solid #0da7a0; outline-offset: 2px; }
+.charge-form__active input[type="checkbox"]:disabled { opacity: .55; cursor: not-allowed; }
+.charge-form__active span { font-size: .82rem !important; font-weight: 500 !important; color: var(--slate-700) !important; text-transform: none !important; letter-spacing: normal !important; }
+
+/* Billing unbilled table — toggle checkboxes */
+.billing-panel .staff-table input[type="checkbox"] { appearance: none !important; -webkit-appearance: none !important; position: relative; display: inline-block; flex-shrink: 0; width: 2.1rem; height: 1.15rem; min-height: 1.15rem; padding: 0 !important; margin: 0 !important; border-radius: 999px; background: var(--slate-200); border: 1.5px solid var(--slate-300); cursor: pointer; vertical-align: middle; transition: background-color .2s ease, border-color .2s ease; }
+.billing-panel .staff-table input[type="checkbox"]::before { content: ""; position: absolute; top: 50%; left: .13rem; width: .8rem; height: .8rem; border-radius: 50%; background: var(--white); box-shadow: 0 1px 3px rgba(7,28,47,.24); transform: translate(0,-50%); transition: transform .2s cubic-bezier(.22,1,.36,1); }
+.billing-panel .staff-table input[type="checkbox"]:checked { background: var(--teal-600); border-color: var(--teal-600); }
+.billing-panel .staff-table input[type="checkbox"]:checked::before { transform: translate(.85rem,-50%); }
+.billing-panel .staff-table input[type="checkbox"]:hover:not(:checked) { border-color: var(--slate-400); }
+.billing-panel .staff-table input[type="checkbox"]:focus-visible { outline: 3px solid #0da7a0; outline-offset: 2px; }
+
+/* Global staff table checkbox toggles (lab, radiology, billing, etc.) */
+.staff-page .staff-table input[type="checkbox"] { appearance: none !important; -webkit-appearance: none !important; position: relative; display: inline-block; flex-shrink: 0; width: 2.1rem; height: 1.15rem; min-height: 1.15rem; padding: 0 !important; margin: 0 !important; border-radius: 999px; background: var(--slate-200); border: 1.5px solid var(--slate-300); cursor: pointer; vertical-align: middle; transition: background-color .2s ease, border-color .2s ease; }
+.staff-page .staff-table input[type="checkbox"]::before { content: ""; position: absolute; top: 50%; left: .13rem; width: .8rem; height: .8rem; border-radius: 50%; background: var(--white); box-shadow: 0 1px 3px rgba(7,28,47,.24); transform: translate(0,-50%); transition: transform .2s cubic-bezier(.22,1,.36,1); }
+.staff-page .staff-table input[type="checkbox"]:checked { background: var(--teal-600); border-color: var(--teal-600); }
+.staff-page .staff-table input[type="checkbox"]:checked::before { transform: translate(.85rem,-50%); }
+.staff-page .staff-table input[type="checkbox"]:hover:not(:checked) { border-color: var(--slate-400); }
+.staff-page .staff-table input[type="checkbox"]:focus-visible { outline: 3px solid #0da7a0; outline-offset: 2px; }
+
+/* Pharmacy new prescription */
+.pharmacy-form .staff-editor-section { background: var(--white); border: 1px solid var(--slate-200); border-radius: 16px; padding: 1.4rem; margin-bottom: 1rem; box-shadow: 0 8px 24px rgba(12,39,64,.04); }
+.pharmacy-form .staff-form-grid label { display: grid; gap: .4rem; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--slate-600); }
+.pharmacy-form .staff-form-grid input:not([type="hidden"]), .pharmacy-form .staff-form-grid select, .pharmacy-form .staff-form-grid textarea { min-height: 2.6rem; border: 1px solid var(--slate-300); border-radius: 10px; padding: .55rem .8rem; font: inherit; font-size: .88rem; background: #fbfdfe; color: var(--navy-950); text-transform: none; letter-spacing: normal; }
+.pharmacy-form .staff-form-grid input:focus, .pharmacy-form .staff-form-grid select:focus, .pharmacy-form .staff-form-grid textarea:focus { outline: 2px solid var(--teal-500); border-color: var(--teal-500); box-shadow: 0 0 0 3px rgba(23,190,187,.15); }
+.pharmacy-form .staff-table-wrap { border: 1px solid var(--slate-200); border-radius: 12px; }
+.pharmacy-form .staff-table thead th { background: var(--blue-50); font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; color: var(--navy-900); }
+.pharmacy-form .staff-table tbody tr:hover { background: var(--blue-50); }
+.pharmacy-form .staff-table input, .pharmacy-form .staff-table select { min-height: 2rem; font-size: .8rem; }
+
+/* Pharmacy sections — header polish */
+.pharmacy-form .staff-editor-section { position: relative; overflow: hidden; }
+.pharmacy-form .staff-editor-section::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--teal-500), var(--cyan-400)); }
+.pharmacy-form .staff-editor-section .eyebrow { color: var(--teal-600); font-weight: 800; letter-spacing: .08em; }
+.pharmacy-form .staff-editor-section h2 { font-size: 1.15rem; color: var(--navy-950); margin: .2rem 0 .9rem; }
+.pharmacy-form .staff-form-grid__wide.encounter-picker { max-width: 34rem; }
+
+/* Pharmacy medications table */
+.pharmacy-form .staff-table-wrap { overflow: visible; }
+.pharmacy-form .staff-table { border-collapse: separate; border-spacing: 0 .4rem; }
+.pharmacy-form .staff-table thead th { background: transparent; border-bottom: none; padding: .4rem .7rem; font-size: .68rem; }
+.pharmacy-form .staff-table tbody td { background: var(--white); border-top: 1px solid var(--slate-200); border-bottom: 1px solid var(--slate-200); padding: .55rem .7rem; vertical-align: middle; }
+.pharmacy-form .staff-table tbody td:first-child { border-left: 1px solid var(--slate-200); border-radius: 10px 0 0 10px; }
+.pharmacy-form .staff-table tbody td:last-child { border-right: 1px solid var(--slate-200); border-radius: 0 10px 10px 0; }
+.pharmacy-form .staff-table tbody tr:hover td { background: var(--blue-50); }
+.pharmacy-form .staff-table select { min-height: 2.2rem; border-radius: 8px; font-size: .8rem; }
+.pharmacy-form .staff-table input { min-height: 2.2rem; border-radius: 8px; }
+
+/* Pharmacy medication cell — stack select + custom name */
+.pharmacy-form .staff-table td > select, .pharmacy-form .staff-table td > input { display: block; width: 100%; box-sizing: border-box; }
+.pharmacy-form .staff-table td > input { margin-top: .35rem; }
+
+/* Pharmacy medication cell — more breathing room */
+.pharmacy-form .staff-table td { padding-top: .8rem; padding-bottom: .8rem; }
+.pharmacy-form .staff-table td > input { margin-top: .6rem; }
+
+/* Inventory page */
+.inventory-add-panel { border-radius: 16px; }
+.inventory-panel .staff-panel__header { margin-bottom: .75rem; }
+.inventory-filters { display: flex; align-items: center; gap: .6rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.inventory-search { position: relative; flex: 1; min-width: 14rem; max-width: 26rem; }
+.inventory-search svg { position: absolute; left: .8rem; top: 50%; transform: translateY(-50%); color: var(--slate-500); }
+.inventory-search input { width: 100%; min-height: 2.6rem; border: 1px solid var(--slate-300); border-radius: 10px; padding: .55rem .8rem .55rem 2.3rem; font: inherit; font-size: .88rem; background: var(--white); color: var(--navy-950); }
+.inventory-search input:focus { outline: 2px solid var(--teal-500); border-color: var(--teal-500); box-shadow: 0 0 0 3px rgba(23,190,187,.15); }
+.inventory-filter-pill { display: inline-flex; align-items: center; gap: .4rem; min-height: 2.6rem; padding: .5rem 1rem; border: 1px solid var(--slate-300); border-radius: 999px; background: var(--white); color: var(--slate-700); font: inherit; font-size: .8rem; font-weight: 700; cursor: pointer; transition: all .15s; }
+.inventory-filter-pill:hover { border-color: var(--amber-500, #d97706); color: #b45309; }
+.inventory-filter-pill.is-active { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+.inventory-count { margin-left: auto; font-size: .78rem; color: var(--slate-600); font-weight: 600; }
+.inventory-table-wrap { border: 1px solid var(--slate-200); border-radius: 14px; overflow-x: auto; }
+.inventory-table thead th { background: linear-gradient(180deg, var(--blue-50), var(--blue-100)); color: var(--navy-900); font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; border-bottom: 1px solid var(--slate-200); }
+.inventory-table tbody tr { transition: background .15s; }
+.inventory-table tbody tr:hover { background: rgba(13,167,160,.05); }
+.inventory-sku { display: inline-block; padding: .2rem .55rem; border-radius: 6px; background: var(--blue-100); color: var(--blue-700); font-size: .7rem; font-weight: 800; letter-spacing: .04em; }
+.inventory-status { display: inline-flex; align-items: center; gap: .3rem; padding: .25rem .65rem; border-radius: 999px; font-size: .72rem; font-weight: 700; white-space: nowrap; }
+.inventory-status--ok { background: #d1fae5; color: #065f46; }
+.inventory-status--low { background: #fef3c7; color: #92400e; }
+.inventory-movements { list-style: none; margin: 0; padding: 0; border: 1px solid var(--slate-200); border-radius: 14px; overflow: hidden; }
+.inventory-movement { display: flex; align-items: center; gap: .8rem; padding: .85rem 1rem; border-bottom: 1px solid var(--slate-200); background: var(--white); }
+.inventory-movement:last-child { border-bottom: none; }
+.inventory-movement__icon { flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 8px; display: grid; place-items: center; background: var(--cyan-100); color: var(--teal-600); font-weight: 800; font-size: .85rem; }
+.inventory-movement__icon--out { background: #fef3c7; color: #92400e; }
+.inventory-movement__body { flex: 1; min-width: 0; display: grid; gap: .1rem; }
+.inventory-movement__top { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.inventory-movement__top strong { font-size: .85rem; color: var(--navy-950); }
+.inventory-movement__type { padding: .15rem .55rem; border-radius: 999px; font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+.inventory-movement__type--in { background: #d1fae5; color: #065f46; }
+.inventory-movement__type--out { background: #fee2e2; color: #991b1b; }
+.inventory-movement__body small { color: var(--slate-600); font-size: .75rem; }
+.inventory-movement__time { flex-shrink: 0; color: var(--slate-600); font-size: .78rem; white-space: nowrap; }
+@media (max-width: 640px) { .inventory-movement__time { display: none; } }
+
+/* Inventory add panel + catalog loader */
+.inventory-add-panel .staff-form-grid { background: var(--blue-50); border: 1px solid var(--slate-200); border-radius: 14px; padding: 1rem; }
+.inventory-add-panel .staff-form-grid label { display: grid; gap: .35rem; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--slate-600); min-width: 0; }
+.inventory-add-panel .staff-form-grid input, .inventory-add-panel .staff-form-grid select { min-height: 2.6rem; border: 1px solid var(--slate-300); border-radius: 10px; padding: .55rem .8rem; font: inherit; font-size: .88rem; background: var(--white); color: var(--navy-950); width: 100%; box-sizing: border-box; }
+.inventory-add-panel .staff-form-grid input:focus, .inventory-add-panel .staff-form-grid select:focus { outline: 2px solid var(--teal-500); border-color: var(--teal-500); box-shadow: 0 0 0 3px rgba(23,190,187,.15); }
+.inventory-add-panel .btn--compact { min-height: 2.6rem; padding: .55rem 1.25rem; border-radius: 10px; font-weight: 700; }
+.inventory-catalog-loader { display: flex; align-items: end; gap: .75rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--slate-300); }
+.inventory-catalog-loader__field { display: grid; gap: .35rem; min-width: 14rem; flex: 1; max-width: 22rem; }
+.inventory-catalog-loader__field label { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--slate-600); }
+.inventory-catalog-loader__field select { min-height: 2.6rem; border: 1px solid var(--slate-300); border-radius: 10px; padding: .55rem .8rem; font: inherit; font-size: .88rem; background: var(--white); color: var(--navy-950); width: 100%; }
+.inventory-catalog-loader__field select:focus { outline: 2px solid var(--teal-500); border-color: var(--teal-500); }
+.inventory-catalog-loader .btn { min-height: 2.6rem; white-space: nowrap; }

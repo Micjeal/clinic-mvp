@@ -7,6 +7,7 @@ import { Permissions } from "@clinic/permissions";
 import { UnbilledCharges } from "@/features/billing/components/unbilled-charges";
 import { AuthorizationError } from "@/server/errors";
 import Link from "next/link";
+import { ReceiptText } from "lucide-react";
 
 export const metadata = { title: "Billing" };
 
@@ -31,17 +32,25 @@ export default async function BillingPage() {
 
   return (
     <div className="staff-page">
-      <StaffPageHeader eyebrow="Finance" title="Billing" description="Invoices, payments and outstanding balances." actions={<Link className="btn" href="/staff/billing/new">New invoice</Link>} />
+      <div className="staff-page-heading staff-page-heading--doctor lab-order-heading">
+        <div className="staff-doctor-avatar lab-order-heading__icon" aria-hidden="true"><ReceiptText size={26} /></div>
+        <div className="doctor-identity-copy">
+          <p className="eyebrow">Finance</p>
+          <h1>Billing</h1>
+          <p>Unbilled charges accumulate automatically — review, confirm and invoice.</p>
+        </div>
+        <div className="staff-page-heading__actions"><Link className="btn" href="/staff/billing/new">New invoice</Link></div>
+      </div>
       <div className="staff-kpi-grid">
         <div className="staff-kpi"><span>Invoices</span><strong>{invoices.length}</strong></div>
         <div className="staff-kpi"><span>Collected</span><strong>{collected.toLocaleString()} UGX</strong></div>
         <div className="staff-kpi"><span>Outstanding</span><strong>{outstanding.toLocaleString()} UGX</strong></div>
       </div>
-      <section className="staff-panel">
+      <section className="staff-panel billing-panel">
         <div className="staff-panel__header"><h2>Unbilled charges</h2><span className="staff-table-sub">{charges.length} pending — auto-captured from lab, imaging and pharmacy</span></div>
         <UnbilledCharges charges={charges as never} facilities={facilities} />
       </section>
-      <section className="staff-panel">
+      <section className="staff-panel billing-panel">
         <div className="staff-table-wrap">
           <table className="staff-table">
             <thead><tr><th>Invoice</th><th>Patient</th><th>Status</th><th className="staff-col-amount">Total</th><th className="staff-col-amount">Balance</th><th>Issued</th></tr></thead>
